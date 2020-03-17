@@ -252,7 +252,7 @@ create index productOrder
 
 create index supplierId
     on ProductOrder (supplierId);
-
+# prisma2 stuff
 create table if not exists _Migration
 (
     revision           int auto_increment

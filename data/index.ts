@@ -4,6 +4,7 @@ const prisma = new PrismaClient()
 
 // A `main` function so that we can use async/await
 // this initializes the database with one admin employee
+// no need to run this except once
 async function main() {
   const mainUser = await prisma.employee.create({
     data: {
