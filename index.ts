@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 // A `main` function so that we can use async/await
+// this initializes the database with one admin employee
 async function main() {
   const mainUser = await prisma.employee.create({
     data: {
@@ -16,7 +17,7 @@ async function main() {
         },
       },
       role: 'ADMIN',
-      name: 'Alice',
+      name: 'Monkey',
       address: '102 bush blvd.',
       city: 'Seattle',
       state: 'WA',

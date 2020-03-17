@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node index.ts",
+    "db:init": "ts-node index.ts",
     "prisma2:generate": "prisma2 generate",
     "prisma2:init": "prisma2 migrate save --name 'init' --experimental && prisma2 migrate up --experimental --verbose",
     "prisma2:migrate-up": "prisma2 migrate up --experimental --verbose",

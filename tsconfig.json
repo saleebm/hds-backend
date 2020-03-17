@@ -7,6 +7,9 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "alwaysStrict": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "noImplicitReturns": true,
     "strictNullChecks": true
   }
 }
