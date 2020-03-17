@@ -4,8 +4,10 @@ export default () => {
   return (
     <Layout>
       <div className="page">
-        <h1>Home Design Solutions</h1>
-        <main>TODO: a lot of work...</main>
+        <h1>Home Design Solutions: Admin Portal</h1>
+        <main>
+          <p>TODO: a lot of work...</p>
+        </main>
       </div>
       <style jsx>{`
         .post {
