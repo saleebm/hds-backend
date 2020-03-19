@@ -1,6 +1,9 @@
 module.exports = {
   experimental: {
-    modern: true
+    modern: true,
+  },
+  env: {
+    TOKEN_STORAGE_KEY: process.env.TOKEN_STORAGE_KEY,
   },
   webpack(config, { isServer }) {
     // Thanks to https://github.com/zeit/next.js/issues/7755#issuecomment-508633125

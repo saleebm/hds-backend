@@ -247,3 +247,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+keys/*
+!keys/.gitkeep
