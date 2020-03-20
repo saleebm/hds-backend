@@ -1,0 +1,5 @@
+const TOKEN_STORAGE_KEY = process.env.TOKEN_STORAGE_KEY
+export const STORAGE_KEYS = {
+  ACCESS_TOKEN: `${TOKEN_STORAGE_KEY}-at`,
+  REFRESH_TOKEN: `${TOKEN_STORAGE_KEY}-rt`,
+}

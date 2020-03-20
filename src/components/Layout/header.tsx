@@ -6,6 +6,8 @@ function isActive(pathname: string): boolean {
   )
 }
 
+//todo redux for state management
+// and refresh token subscription
 export const Header = () => (
   <nav>
     <Link href="/">

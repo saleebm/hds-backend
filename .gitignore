@@ -249,3 +249,5 @@ $RECYCLE.BIN/
 
 keys/*
 !keys/.gitkeep
+
+.dist/*

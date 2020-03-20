@@ -13,6 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(204)
   } else {
     // todo filters in query params
+    // returns all employees
     const empData = await prisma.employee.findMany({ orderBy: { id: 'asc' } })
     res.status(200).json({ employees: empData })
   }

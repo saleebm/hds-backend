@@ -7,8 +7,9 @@ import { SecurityUtils } from '../src/utils/crypto'
 
 dotenv.config()
 
+const keyFilePath = path.resolve('keys', 'key.pem')
+
 const _readFile = promisify(readFile)
-const keyPath = path.resolve(__dirname, '../keys')
 
 const SIGNING_SECRET = process.env.TOKEN_SIGNING_SECRET
 
@@ -17,7 +18,7 @@ async function createUserJWTSecret() {
   if (!SIGNING_SECRET) {
     throw new Error('env is not parsed properly. missing TOKEN_SIGNING_SECRET')
   }
-  const privateKey = await _readFile(path.resolve(keyPath, 'key.pem'))
+  const privateKey = await _readFile(keyFilePath)
   const encryptWithSecret = SecurityUtils.encryptWithSecret(
     privateKey,
     SIGNING_SECRET

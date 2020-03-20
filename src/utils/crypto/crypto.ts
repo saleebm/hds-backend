@@ -9,8 +9,8 @@ const CIPHER_ALGORITHM = `aes-256-gcm`,
   CIPHER_IV_LENGTH = 16, // https://stackoverflow.com/a/28307668/4397028
   CIPHER_TAG_LENGTH = 16,
   CIPHER_SALT_LENGTH = 64
-
-const PBKDF2_ITERATIONS = 100_000 // https://support.1password.com/pbkdf2/
+// using octal for 100_000
+const PBKDF2_ITERATIONS = 0o303240 // https://support.1password.com/pbkdf2/
 
 // rounds=12: 2-3 hashes/sec on  2GHZ
 // @see https://www.npmjs.com/package/bcrypt#a-note-on-rounds
