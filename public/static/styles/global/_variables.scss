@@ -1,0 +1,16 @@
+@import '../common/colors';
+
+$themePrimary: #f5989d;
+
+$darkbackground: $color-black;
+$darktextcolor: $color-white;
+$lightbackground: $color-white;
+$lighttextcolor: $color-black;
+
+$input-disabled: saturate(70%) opacity(0.7) contrast(70%);
+
+$drop-shadow-toggle-closed: drop-shadow(0 1px 0 rgba($color-indigo-dark, 0.7));
+$drop-shadow-toggle-open: drop-shadow(0 1px 0 rgba($color-indigo-lighter, 0.7));
+$filter-input-toggle: drop-shadow(0 7px 12px rgba($color-indigo-light, 0.72)) opacity(0.9);
+
+$error-color: $color-red-dark;

@@ -1,17 +1,11 @@
 import Link from 'next/link'
 
-function isActive(pathname: string): boolean {
-  return (
-    typeof document !== 'undefined' && document.location.pathname === pathname
-  )
-}
-
 //todo redux for state management
 // and refresh token subscription
-export const Header = () => (
+export const Header = ({ pathname }: { pathname: string }) => (
   <nav>
     <Link href="/">
-      <a className="bold" data-active={isActive('/')}>
+      <a className="bold" data-active={pathname === '/' || pathname === ''}>
         Blog
       </a>
     </Link>
