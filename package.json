@@ -107,6 +107,7 @@
     "prettier": "^1.19.1",
     "prettier-config-standard": "^1.0.1",
     "prisma2": "^2.0.0-preview024",
+    "sass": "^1.26.3",
     "ts-node": "^8.7.0",
     "typescript": "next",
     "webpack": "^4.42.0",
