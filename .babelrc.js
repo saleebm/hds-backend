@@ -20,6 +20,12 @@ module.exports = {
         },
       },
     ],
+    [
+      '@babel/plugin-transform-react-jsx',
+      {
+        pragmaFrag: 'React.Fragment',
+      },
+    ],
     '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-proposal-nullish-coalescing-operator',
     '@babel/plugin-syntax-dynamic-import',
