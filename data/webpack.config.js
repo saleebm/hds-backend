@@ -11,16 +11,38 @@ module.exports = {
   },
   devtool: 'source-map',
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+    extensions: ['.js', '.mjs', '.jsx', '.json', '.ts', '.tsx'],
   },
   externals: [nodeExternals()],
-  target: 'async-node',
+  target: 'node',
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'babel-loader',
         exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  useBuiltIns: 'entry',
+                  corejs: 3,
+                  targets: {
+                    esmodules: false,
+                    node: true,
+                  },
+                },
+              ],
+              '@babel/preset-typescript',
+            ],
+            plugins: [
+              '@babel/plugin-proposal-optional-chaining',
+              '@babel/plugin-proposal-nullish-coalescing-operator',
+            ],
+          },
+        },
       },
       {
         test: /\.jsx?$/,
@@ -28,6 +50,25 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  useBuiltIns: 'usage',
+                  corejs: 3,
+                  targets: {
+                    esmodules: false,
+                    node: true,
+                  },
+                },
+              ],
+            ],
+            plugins: [
+              '@babel/plugin-proposal-optional-chaining',
+              '@babel/plugin-proposal-nullish-coalescing-operator',
+            ],
+          },
         },
       },
     ],

@@ -1,2 +1,2 @@
-export * from './auth-token'
 export * from './cookie-service'
+export * from './auth-service'

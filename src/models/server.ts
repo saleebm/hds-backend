@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import fs from 'fs'
 
 export interface ServerCtx {
   req: NextApiRequest
@@ -7,11 +6,6 @@ export interface ServerCtx {
   pathname: string
 }
 
-export interface GetKeysReturnType {
-  privateKey: string
-  publicKey: string
-}
-export interface CryptoLocker {
-  _readFile: Promise<typeof fs.readFile>
-  getKeys: () => Promise<GetKeysReturnType>
+export interface AuthPayload {
+  readonly email: string
 }

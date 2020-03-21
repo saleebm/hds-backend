@@ -1,16 +1,25 @@
-import { PrismaClient } from '@prisma/client'
+import 'core-js'
+import 'regenerator-runtime/runtime'
+import dotenv from 'dotenv'
+import path from 'path'
+import * as PrismaClient from '@prisma/client'
+// the only dependency from the main files
 // noinspection TypeScriptPreferShortImport
-import { jwtOptionsFactory, passwordFactory } from './crypto'
-const prisma = new PrismaClient()
+import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
 
-const ADMIN_PASSWORD = 'hihihi12'
+dotenv.config({ path: path.resolve('../', '.env') })
+const prisma = new PrismaClient.PrismaClient()
+
+const ADMIN_PASSWORD = 'byqipyuyxlyteuajjbewsatxldvfbuqs'
 
 // A `main` function so that we can use async/await
 // this initializes the database with one admin employee
 // no need to run this except once
 async function main() {
-  const { jwtUserSecret } = await jwtOptionsFactory.createUserJWTSecret()
-  const password = await passwordFactory.encryptUserPassword(ADMIN_PASSWORD)
+  // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
+  const { hash } = await cryptoFactory.encryptUserPassword(ADMIN_PASSWORD)
+  const jwtUserSecret = await cryptoFactory.generateJWTSecret(32)
+
   const mainUser = await prisma.employee.create({
     data: {
       locationId: {
@@ -32,9 +41,10 @@ async function main() {
       phone: '(333) 111-2222',
       email: 'monkeys1@banana.waffle', //todo assert email is unique from the client side by adding route
       jwtUserSecret,
-      password,
+      password: hash,
     },
     include: {
+      // this creates the location along with the user
       locationId: true,
     },
   })
@@ -49,18 +59,16 @@ async function testUserPassword(userId: number) {
   const user = await prisma.employee.findOne({ where: { id: userId } })
   const loginInputPassword = ADMIN_PASSWORD
 
-  console.log(user && user.password)
-
   if (!user) {
-    throw new Error('no user found')
+    throw new Error('no user found.')
   }
 
-  const match = await passwordFactory.verifyUserPassword({
+  const match = await cryptoFactory.verifyUserPassword({
     storedPasswordHash: user.password,
     reqBodyPassword: loginInputPassword,
   })
 
-  console.log(match)
+  console.log(`Does password match: ${match}`)
 }
 
 try {
