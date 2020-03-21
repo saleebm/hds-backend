@@ -5,6 +5,7 @@ export type DecodedToken = {
   readonly exp: number
 }
 
+// limit to server side use
 export class AuthToken {
   readonly decodedToken: DecodedToken
 

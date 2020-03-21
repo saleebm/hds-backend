@@ -1,5 +1,4 @@
 import crypto, { randomBytes } from 'crypto'
-import bcrypt from 'bcrypt'
 
 // Background:
 // https://security.stackexchange.com/questions/184305/why-would-i-ever-use-aes-256-cbc-if-aes-256-gcm-is-more-secure
@@ -12,20 +11,12 @@ const CIPHER_ALGORITHM = `aes-256-gcm`,
 // using octal for 100_000
 const PBKDF2_ITERATIONS = 0o303240 // https://support.1password.com/pbkdf2/
 
-// rounds=12: 2-3 hashes/sec on  2GHZ
-// @see https://www.npmjs.com/package/bcrypt#a-note-on-rounds
-const SALT_ROUNDS = 12
 /**
- * todo make this server only to reduce client bundle size
  * encrypt the user password into the database
  * @param secret
  * @param data
  */
 export const SecurityUtils = {
-  hashWithBcrypt: async (str: string) => await bcrypt.hash(str, SALT_ROUNDS),
-  bcryptHashIsValid: async (value: string, hash: string) =>
-    await bcrypt.compare(value, hash),
-
   generateRandomString: async (chars: number): Promise<string> => {
     const buffer = await randomBytes(chars / 2)
     return buffer.toString('hex')
