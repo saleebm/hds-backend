@@ -7,5 +7,9 @@ export interface ServerCtx {
 }
 
 export interface AuthPayload {
-  readonly email: string
+  readonly userId: number
+}
+
+export interface RefreshTokenPayload {
+  readonly userSecret: string
 }

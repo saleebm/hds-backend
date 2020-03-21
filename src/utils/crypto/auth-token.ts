@@ -1,17 +1,18 @@
 import jwt from 'jsonwebtoken'
 
+// on second thought, storing the email in the token is a bad idea.
 export type DecodedToken = {
-  readonly email: string
+  readonly userId: number
   readonly exp: number
 }
 
-// limit to server side use
+// limit to server side use unlike the auth service
 export class AuthToken {
   readonly decodedToken: DecodedToken
 
   constructor(readonly token?: string) {
     // we are going to default to an expired decodedToken
-    this.decodedToken = { email: '', exp: 0 }
+    this.decodedToken = { userId: -1, exp: 0 }
 
     // then try and decode the jwt using jwt-decode
     try {

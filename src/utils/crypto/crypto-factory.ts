@@ -14,8 +14,6 @@ const verifyUserPassword = async ({
   storedPasswordHash: string
   reqBodyPassword: string
 }) => {
-  console.log(`req: ${reqBodyPassword}`)
-  console.log(`stored: ${storedPasswordHash}\r`)
   return await SecurityUtils.checkSaltHash({
     hash: storedPasswordHash,
     password: reqBodyPassword,

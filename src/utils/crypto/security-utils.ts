@@ -28,6 +28,11 @@ export const SecurityUtils = {
     const buffer = await crypto.randomBytes(chars / 2)
     return buffer.toString('hex')
   },
+  /**
+   * the tool to match the req body password to the hash in db
+   * @param password  req body pw
+   * @param hash stored in db
+   */
   async checkSaltHash({ password, hash }: { password: string; hash: string }) {
     const privateKey = await this.getPrivateKey()
 

@@ -34,6 +34,7 @@ const handleError = (res: NextApiResponse, error: Error) => {
     type: 'ERROR',
     status,
     code,
+    message: error.message,
   })
 }
 

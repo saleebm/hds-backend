@@ -1,5 +1,9 @@
 export class KnownError extends Error {
-  constructor(public code: string, public status: number = 400) {
+  constructor(
+    public code: string,
+    public status: number = 400,
+    public message: string = ''
+  ) {
     super(code)
   }
 }
@@ -46,6 +50,11 @@ export class UnauthenticatedError extends KnownError {
   }
 }
 
+export class FailedLoginError extends KnownError {
+  constructor() {
+    super('Unauthenticated', 401, 'Wrong username or password')
+  }
+}
 export class UnsupportedMethodError extends KnownError {
   constructor() {
     super('UnsupportedMethod')
