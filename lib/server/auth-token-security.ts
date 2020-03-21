@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { AuthPayload, RefreshTokenPayload } from '@Types'
+import { AuthPayload } from '@Types'
 
 // 1 hour
 const AUTH_TOKEN_EXPIRES_IN = 60 * 60
@@ -10,19 +10,19 @@ export const AuthTokenSecurity = {
   // creates the token
   sign: ({
     payload,
-    userSigningSecret,
+    signingSecret,
     isRefreshToken,
     jwtOptions,
   }: {
-    payload: AuthPayload | RefreshTokenPayload
-    userSigningSecret: string
+    payload: AuthPayload
+    signingSecret: string
     isRefreshToken: boolean
     jwtOptions?: jwt.SignOptions
   }): Promise<string> => {
     return new Promise((resolve, reject) => {
       jwt.sign(
         payload,
-        userSigningSecret,
+        signingSecret,
         Object.assign(
           {
             expiresIn: isRefreshToken
@@ -49,21 +49,21 @@ export const AuthTokenSecurity = {
   ): AuthPayload | null | string | { [key: string]: any } => {
     return jwt.decode(token)
   },
-  // actual verification
+  // actual verification of accessToken
   verify: ({
     token,
-    userSigningSecret,
+    envSigningSecret,
     userJwtSecret,
   }: {
     token: string
-    userSigningSecret: string
+    envSigningSecret: string
     userJwtSecret: string
   }): Promise<AuthPayload> => {
     // https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,
-        userSigningSecret,
+        envSigningSecret,
         { algorithms: ['HS512'], jwtid: userJwtSecret },
         (err, decoded) => {
           if (err) {

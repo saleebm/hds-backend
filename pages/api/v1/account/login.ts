@@ -9,6 +9,8 @@ import {
 import { cryptoFactory } from '@Utils/crypto'
 import { AuthTokenSecurity } from '@Lib/server/auth-token-security'
 import { IncomingMessage } from 'http'
+import { getEnv } from '@Pages/api/v1/account/_get-env'
+import { getAccessToken } from '@Pages/api/v1/account/_get-access-token'
 
 const prisma = new PrismaClient()
 
@@ -23,6 +25,7 @@ export type LoginRequestSuccess = {
 }
 
 /**
+ * POST
  * @param req
  * @param res
  */
@@ -57,29 +60,23 @@ export default handler(
       if (!match) {
         throw new FailedLoginError()
       }
-      const signingSignature = process.env.TOKEN_SIGNING_SECRET
       // token signing secret must be in env
-      if (!signingSignature) {
-        throw new Error('Server misconfiguration')
-      }
-      //todo
+      const { signingSignature } = getEnv()
+
       // generate access token and refresh token
       // sign them both with env secret and ship
-      const accessToken = await AuthTokenSecurity.sign({
-        payload: { userId: employee.id },
-        isRefreshToken: false,
-        userSigningSecret: signingSignature,
-        jwtOptions: {
-          // critical to set the jwtid here as this is what verifies it on the server in addition to the signing secret, so I can sleep tight
-          jwtid: employee.jwtUserSecret,
-        },
+      const accessToken = await getAccessToken({
+        jwtid: employee.jwtUserSecret,
+        userId: employee.id,
+        signingSecret: signingSignature,
       })
       const refreshToken = await AuthTokenSecurity.sign({
-        payload: { userSecret: employee.jwtUserSecret },
+        payload: { userId: employee.id },
         isRefreshToken: true,
-        userSigningSecret: signingSignature,
+        signingSecret: signingSignature,
         jwtOptions: {
           subject: `${employee.id}`,
+          jwtid: employee.jwtUserSecret,
         },
       })
       return {

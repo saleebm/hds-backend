@@ -9,26 +9,32 @@
 - `npm run prisma2:init`
 - to create a test user with a script, run seed:build and seed:run
 
-### TODO
+# TODO
 
 ---
+
+## auth service
 
 1.  API docs.
 2.  Employee authentication
 
-    1.  ~~fix seed so that I can actually have a password and matches~~
-    2.  set up utils for token generation module
-    3.  set up oauth endpoint and integrate strategy with secrets.
-    4.  ```js
-        const postmanTests = () => Promise.resolve(this.stepThree)
-        return postmanTests.res.success
-          ? 'set up login dashboard'
-          : 'repeat steps 2 - 4'
-        ```
+    ~~1. fix seed so that I can actually have a password and matches~~
+    ~~2. set up utils for token generation module~~
+    ~~3. set up oauth endpoint and integrate strategy with secrets.~~
+    ~~4. `js const postmanTests = () => Promise.resolve(this.stepThree) return postmanTests.res.success ? 'set up login dashboard' : 'repeat steps 2 - 4'`~~
+
+    5. refresh token endpoint
+    6. reset password endpoint
 
 3.  Check if front facing users need auth (ie customer entity)
-4.  HOC for auth checking in api
-5.  Config for auth codes and responses
+~~4. HOC for auth checking in api~~
+~~5. Config for auth codes and responses~~
+
+---
+
+## admin console
+
+1. Forms: login / register / reset password
 
 # Keys for encryption
 

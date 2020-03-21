@@ -9,7 +9,3 @@ export interface ServerCtx {
 export interface AuthPayload {
   readonly userId: number
 }
-
-export interface RefreshTokenPayload {
-  readonly userSecret: string
-}
