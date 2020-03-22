@@ -5,7 +5,7 @@ import { isServer } from '@Utils/common'
 import { NextPageContext } from 'next'
 
 export class CookieService {
-  cookieMan: typeof Cookie | undefined = undefined
+  cookieMan: typeof Cookie
   constructor() {
     this.cookieMan = Cookie
   }

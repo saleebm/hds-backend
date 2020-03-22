@@ -38,7 +38,7 @@ export default handler(async (req) => {
     const empId = parseInt(userDataDecoded.sub)
 
     //todo probably could cut this down in half
-    // too redundant
+    // too redundant, could just verify the jwtid right away
     // do it later when mind is running right
     if (!isNaN(empId)) {
       const emp = await prisma.employee.findOne({ where: { id: empId } })

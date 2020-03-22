@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { ThemeProvider } from '@material-ui/core/styles'
-import CssBaseline from '@material-ui/core/CssBaseline'
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
 import { theme } from '@Config'
 import { Layout } from '@Components/Layout'
+import { withRedux } from '@Lib/hoc'
 
 import '@Static/styles/index.global.scss'
 
@@ -19,7 +19,6 @@ function App({ pageProps, Component, router }: AppPropsType) {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
       <Layout pathname={router.pathname}>
         <Component {...pageProps} />
       </Layout>
@@ -27,4 +26,4 @@ function App({ pageProps, Component, router }: AppPropsType) {
   )
 }
 
-export default App
+export default withRedux(App)

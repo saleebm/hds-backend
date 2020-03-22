@@ -1,11 +1,14 @@
-import axios, { AxiosInstance } from 'axios'
-import { isServer } from '@Utils/common'
+import { Resource } from 'rest-hooks'
 
-let axiosInstance: AxiosInstance
+export class EmployeeResource extends Resource {
+  static urlRoot = 'http://localhost:3000/api/v1/account/'
 
-export default function() {
-  if (isServer() || !axiosInstance) {
-    axiosInstance = axios.create()
+  readonly id: number | undefined = undefined
+  readonly username: string = ''
+  readonly email: string = ''
+  readonly isAdmin: boolean = false
+
+  pk() {
+    return this.id?.toString()
   }
-  return axiosInstance
 }
