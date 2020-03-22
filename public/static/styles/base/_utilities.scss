@@ -1,5 +1,5 @@
-$default-browser-font-size: 16px;
-$base-font-size: 11px;
+$default-browser-font-size: 18px;
+$base-font-size: 13px;
 
 /// Returns the value in rem for a given pixel value.
 /// @param {Number} $value - The pixel value to be converted.
@@ -77,7 +77,8 @@ $base-font-size: 11px;
 
   @if $level == 1 {
     @each $key, $value in $map {
-      $output: $output + '#{$newline}- #{$key} #{available-names($value, $level + 1)}';
+      $output: $output +
+        '#{$newline}- #{$key} #{available-names($value, $level + 1)}';
     }
   } @else {
     $output: '(';

@@ -38,12 +38,13 @@ export default handler(
     }
   ): Promise<LoginRequestSuccess> => {
     // bail
-    if (req.method !== 'POST') throw new NotImplementedError()
+    if (req.method?.toLowerCase() !== 'post') throw new NotImplementedError()
 
     // missing parameters
     if (!req.body || !req.body.email || !req.body.password) {
       throw new MissingParameterError()
     }
+    console.log(req.body)
     const employee = await prisma.employee.findOne({
       where: { email: req.body.email },
     })

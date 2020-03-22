@@ -18,7 +18,7 @@ const prisma = new PrismaClient()
  */
 export default handler(async (req) => {
   // first make sure the method is post
-  if (req.method !== 'POST') throw new NotImplementedError()
+  if (req.method?.toLowerCase() !== 'post') throw new NotImplementedError()
 
   if (!req.body || !req.body.refreshToken) throw new MissingParameterError()
 

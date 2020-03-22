@@ -1,10 +1,12 @@
+import { LoginForm } from '@Components/Forms'
+
 export default () => {
   return (
     <>
       <div className="page">
         <h1>Home Design Solutions: Admin Portal</h1>
         <main>
-          <p>TODO: a lot of work...</p>
+          <LoginForm />
         </main>
       </div>
       <style jsx>{`

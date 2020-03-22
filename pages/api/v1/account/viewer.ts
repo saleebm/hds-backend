@@ -11,7 +11,7 @@ import { checkAuth } from '@Pages/api/v1/account/_check-auth'
  */
 export default handler(async (req) => {
   // first make sure the method is post
-  if (req.method !== 'POST') throw new NotImplementedError()
+  if (req.method?.toLowerCase() !== 'POST') throw new NotImplementedError()
 
   const { userId } = await checkAuth(req.headers)
 
