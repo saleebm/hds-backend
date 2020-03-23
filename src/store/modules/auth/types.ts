@@ -28,7 +28,6 @@ type ThunkActionDispatch<
 export interface IAuthState {
   readonly currentUser?: CurrentUserType
   readonly isAuthenticated: boolean
-  readonly loadingAccount: boolean
 }
 
 //todo use this with bindActionCreators, like in React-Redux example...

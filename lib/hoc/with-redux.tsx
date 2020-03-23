@@ -1,15 +1,15 @@
 import { FC } from 'react'
 import { Provider } from 'react-redux'
 import App from 'next/app'
-import { Store } from 'redux'
 
 import { isServer } from '@Utils/common'
 import { configureStore } from '@Store/configure-store'
 import { AppPropsWithStore } from '@Types/_app'
+import { ServerSideProps } from '@Types'
 
 interface InitStoreOptions {
   initialStoreState?: any
-  ctx?: AppPropsWithStore
+  ctx?: AppPropsWithStore | ServerSideProps
 }
 
 export interface AppProviderProps {
@@ -21,9 +21,9 @@ type NextProvider<Props> = FC<Props> & {
   getInitialProps: (ctx: AppPropsWithStore) => Promise<{} | any>
 }
 
-const initStore = ({ initialStoreState, ctx }: InitStoreOptions): Store => {
+export const initStore = ({ initialStoreState, ctx }: InitStoreOptions) => {
   const storeKey: string = '__HDS_REDUX_STORE__'
-  const createStore = (ctx?: AppPropsWithStore) =>
+  const createStore = (ctx?: AppPropsWithStore | ServerSideProps) =>
     configureStore(initialStoreState, { ctx })
 
   // if window is undefined
@@ -39,7 +39,7 @@ const initStore = ({ initialStoreState, ctx }: InitStoreOptions): Store => {
 }
 
 function initOnContext(ctx: AppPropsWithStore) {
-  ctx.ctx.store = initStore({ ctx, initialStoreState: {} })
+  ctx.ctx.store = initStore({ ctx })
 
   return ctx
 }
@@ -79,7 +79,8 @@ export function withRedux(WrappedApp: any) {
 
     return {
       ...appProps,
-      initialStoreState: store?.getState(),
+      initialStoreState:
+        typeof store?.getState() === 'function' ? store.getState() : {},
     }
   }
 

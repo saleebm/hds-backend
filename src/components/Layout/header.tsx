@@ -1,39 +1,88 @@
 import Link from 'next/link'
+import { RootStateType } from '@Store/modules/types'
+import { connect } from 'react-redux'
+import { bindActionCreators, Dispatch } from 'redux'
+import { RootAction } from '@Store/modules/root-action'
+import { setErrorAction } from '@Store/modules/global/action'
+import { refreshJWTAction } from '@Store/modules/auth/action'
+import { useEffect } from 'react'
 
-//todo
-// show a nav for authenticated users / unauthenticated users
-export const Header = ({ pathname }: { pathname: string }) => (
-  <nav>
-    <Link href="/">
-      <a className="bold" data-active={pathname === '/' || pathname === ''}>
-        Blog
-      </a>
-    </Link>
-    <style jsx>{`
-      nav {
-        display: flex;
-        padding: 2rem;
-        align-items: center;
-        flex-flow: row nowrap;
-      }
+type HeaderProps = { pathname: string } & ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>
 
-      .bold {
-        font-weight: bold;
-      }
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
+  bindActionCreators(
+    {
+      setErrorDispatch: setErrorAction,
+      refreshToken: refreshJWTAction,
+    },
+    dispatch
+  )
 
-      a {
-        text-decoration: none;
-        color: #000;
-        display: inline-block;
+const mapStateToProps: (
+  state: RootStateType
+) => {
+  isAuthenticated: boolean
+  user: { last: string; first: string } | null
+} = (state: RootStateType) => {
+  const { authReducer } = state
+  return authReducer?.isAuthenticated
+    ? {
+        isAuthenticated: authReducer.isAuthenticated,
+        user: {
+          first: authReducer.currentUser!.firstName!,
+          last: authReducer.currentUser!.lastName!,
+        },
       }
+    : {
+        isAuthenticated: false,
+        user: null,
+      }
+}
 
-      a[data-active='true'] {
-        color: gray;
-      }
+// todo
+export const Header = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(({ pathname, refreshToken, isAuthenticated }: HeaderProps) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshToken()
+    }
+  }, [isAuthenticated, refreshToken])
+  return (
+    <nav>
+      <Link href="/">
+        <a className="bold" data-active={pathname === '/' || pathname === ''}>
+          Blog
+        </a>
+      </Link>
+      <style jsx>{`
+        nav {
+          display: flex;
+          padding: 2rem;
+          align-items: center;
+          flex-flow: row nowrap;
+        }
 
-      a + a {
-        margin-left: 1rem;
-      }
-    `}</style>
-  </nav>
-)
+        .bold {
+          font-weight: bold;
+        }
+
+        a {
+          text-decoration: none;
+          color: #000;
+          display: inline-block;
+        }
+
+        a[data-active='true'] {
+          color: gray;
+        }
+
+        a + a {
+          margin-left: 1rem;
+        }
+      `}</style>
+    </nav>
+  )
+})

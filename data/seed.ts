@@ -39,7 +39,7 @@ async function main() {
       state: 'WA',
       zip: 99999,
       phone: '(333) 111-2222',
-      email: 'monkeys1@banana.waffle', //todo assert email is unique from the client side by adding route
+      email: 'monkeys1@banana.waffle',
       jwtUserSecret,
       password: hash,
     },

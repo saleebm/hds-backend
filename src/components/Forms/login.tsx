@@ -3,10 +3,10 @@ import { bindActionCreators, Dispatch } from 'redux'
 import { useCallback } from 'react'
 import { connect } from 'react-redux'
 
+import Input from '@material-ui/core/Input'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FormControl from '@material-ui/core/FormControl'
-import FilledInput from '@material-ui/core/FilledInput'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import FormHelperText from '@material-ui/core/FormHelperText'
@@ -68,33 +68,37 @@ function LoginForm({
         .then((res) => {
           if (typeof res === 'object' && 'data' in res && !!res.data) {
             // data will contain tokens and user data, so pass that over to loginUserAction dispatch thunk to handle
-            loginUser({
-              loginSuccessResponse: (res.data as unknown) as LoginRequestSuccess,
-            })
+            try {
+              loginUser({
+                loginSuccessResponse: (res.data as unknown) as LoginRequestSuccess,
+              })
+            } catch (e) {
+              setErrorDispatch({ error: e, reference: 'login user dispatch' })
+            }
           }
         })
     },
-    [axios, setError, loginUser]
+    [axios, setError, loginUser, setErrorDispatch]
   )
 
   return (
     <form noValidate onSubmit={handleSubmit(loginRequest)}>
       <FormControl className={classes.margin}>
         <InputLabel
-          variant={'filled'}
+          id={'email-label'}
           error={!!errors.email}
           required
           htmlFor="email"
         >
-          Email
+          Email address
         </InputLabel>
-        <FilledInput
-          autoFocus
+        <Input
+          aria-invalid={!!errors.email}
           type={'email'}
           autoComplete={'email'}
-          error={!!errors.email}
           name={'email'}
-          aria-invalid={!!errors.email}
+          required
+          id={'email'}
           aria-describedby="error-email-required error-email-pattern error-email-validate"
           inputRef={register({
             required: true,
@@ -104,7 +108,7 @@ function LoginForm({
                 const { data } = await axios.get(
                   `account/email-exists?email=${value}`
                 )
-                console.log(data)
+                // console.log(data)
                 if (data && 'exists' in data) {
                   // data.exists is either true or false
                   return data.exists
@@ -114,16 +118,14 @@ function LoginForm({
               }
             },
           })}
-          startAdornment={
-            <InputAdornment position="start">
+          endAdornment={
+            <InputAdornment position="end">
               <AccountCircle />
             </InputAdornment>
           }
         />
         {!!errors.email && errors.email?.type === 'required' && (
-          <FormHelperText id={'error-email-required'}>
-            This is required
-          </FormHelperText>
+          <FormHelperText id={'error-email-required'}>Required</FormHelperText>
         )}
         {!!errors.email && errors.email?.type === 'pattern' && (
           <FormHelperText id={'error-email-pattern'}>
@@ -138,15 +140,16 @@ function LoginForm({
       </FormControl>
       <FormControl className={classes.margin}>
         <InputLabel
-          variant={'filled'}
           error={!!errors.password}
           required
           htmlFor="password"
+          id={'password-label'}
         >
           Password
         </InputLabel>
-        <FilledInput
-          autoFocus
+        <Input
+          id={'password'}
+          inputMode={'text'}
           type={'password'}
           autoComplete={'current-password'}
           error={!!errors.password}
@@ -154,8 +157,8 @@ function LoginForm({
           aria-invalid={!!errors.password ? 'true' : 'false'}
           aria-describedby="error-password-required"
           inputRef={register({ required: true })}
-          startAdornment={
-            <InputAdornment position="start">
+          endAdornment={
+            <InputAdornment position="end">
               <SecurityRounded />
             </InputAdornment>
           }

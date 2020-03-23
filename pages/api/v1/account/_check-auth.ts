@@ -26,7 +26,7 @@ export const checkAuth = async (headers: IncomingHttpHeaders) => {
   const bearerToken = Array.isArray(authHeader) ? authHeader[0] : authHeader
 
   if (bearerToken && bearerToken.split(' ')[0] === 'Bearer') {
-    console.log(bearerToken)
+    // console.log(bearerToken)
     const token = bearerToken.split(' ')[1]
     const userDataDecoded = await AuthTokenSecurity.decode(token)
 

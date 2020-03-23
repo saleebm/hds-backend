@@ -1,5 +1,5 @@
-$default-browser-font-size: 18px;
-$base-font-size: 13px;
+$default-browser-font-size: 1rem;
+$base-font-size: 0.88rem;
 
 /// Returns the value in rem for a given pixel value.
 /// @param {Number} $value - The pixel value to be converted.
@@ -104,10 +104,10 @@ $base-font-size: 13px;
   @for $i from 1 through length($maps) {
     @each $key, $value in nth($maps, $i) {
       $map: map-merge(
-        $map,
-        (
-          $key: $value,
-        )
+                      $map,
+                      (
+                              $key: $value,
+                      )
       );
 
       @if type-of($value) == map and type-of(map-get($map, $key)) == map {

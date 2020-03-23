@@ -6,7 +6,6 @@ import { IAuthState } from '../types'
 export const authState: IAuthState = {
   currentUser: undefined,
   isAuthenticated: false,
-  loadingAccount: true,
 }
 
 // todo as part of refresh token action
@@ -32,9 +31,6 @@ export const AuthReducer = (
       case AuthActionTypes.Logout:
         draft.currentUser = undefined
         draft.isAuthenticated = false
-        return draft
-      case AuthActionTypes.LoadingAccount:
-        draft.loadingAccount = action.payload
         return draft
       default:
         return state

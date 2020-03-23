@@ -9,6 +9,7 @@ export default function () {
       //todo port needs to be established
       baseURL: isServer() ? 'http://localhost:3000/api/v1/' : '/api/v1/',
       method: 'get',
+      withCredentials: true,
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',

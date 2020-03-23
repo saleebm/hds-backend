@@ -7,7 +7,6 @@ export enum AuthActionTypes {
   CheckAuthStatus = '@auth/CHECK_AUTH_STATUS',
   CheckAuthStatusSuccess = '@auth/CHECK_AUTH_STATUS_SUCCESS',
   RefreshToken = '@auth/REFRESH_TOKEN',
-  LoadingAccount = '@auth/LOADING_ACCOUNT',
 }
 
 export type CurrentUserType = {
@@ -52,12 +51,6 @@ export interface ICheckAuthStatusSuccessAction
   payload: CurrentUserType
 }
 
-export interface ILoadingAccount
-  extends Action<AuthActionTypes.LoadingAccount> {
-  type: typeof AuthActionTypes.LoadingAccount
-  payload: boolean
-}
-
 export interface IRefreshJWTAction
   extends Action<AuthActionTypes.RefreshToken> {
   type: typeof AuthActionTypes.RefreshToken
@@ -70,4 +63,3 @@ export type AuthActions =
   | ICheckAuthStatusAction
   | ICheckAuthStatusSuccessAction
   | IRefreshJWTAction
-  | ILoadingAccount

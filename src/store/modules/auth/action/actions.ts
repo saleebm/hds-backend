@@ -1,13 +1,13 @@
 import Router from 'next/router'
-import { Dispatch } from 'redux'
 import { IAuthState, UserResult } from '../types'
 import { authService } from '@Services'
 import { setErrorAction } from '@Store/modules/global/action'
 import { AuthActionTypes } from './types'
 import { ThunkDispatch } from 'redux-thunk'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
+import { Viewer } from '@Pages/api/v1/account/viewer'
+import { Refresh } from '@Pages/api/v1/account/refresh'
 
-// todo
 export const loginUserAction = ({
   loginSuccessResponse,
 }: {
@@ -22,14 +22,17 @@ export const loginUserAction = ({
       refreshToken: loginSuccessResponse.refreshToken,
       ctx,
     })
+    // catch errors
     .catch((e) => console.warn(e))
     .then(() => {
+      // put user in store
       dispatch({
         type: AuthActionTypes.LoginSuccess,
         payload: { lastName, firstName, userId, email },
       })
     })
     .then(() => {
+      // put user in place
       Router.push('/dashboard', undefined, {})
     })
 }
@@ -48,27 +51,41 @@ export const logoutUserAction = () => async (
   dispatch({ type: AuthActionTypes.Logout })
 }
 
-export const setAccountLoadingOff = () => (dispatch: Dispatch) => {
-  dispatch({
-    type: AuthActionTypes.LoadingAccount,
-    payload: false,
-  })
-}
-
-// todo
 export const refreshJWTAction = (): UserResult<Promise<void>> => async (
   dispatch,
   getState,
   { ctx }
-) => {}
-
-const loadingAccountFinished = () => async (dispatch: Dispatch) => {
-  return dispatch({
-    type: AuthActionTypes.LoadingAccount,
-    payload: false,
-  })
+) => {
+  const refreshToken = authService.getRefreshToken(ctx)
+  const accessToken = authService.getAccessToken(ctx)
+  if (refreshToken) {
+    try {
+      const { getAxiosInstance } = await import('@Lib/axios-instance')
+      const refreshTokenPayload = await getAxiosInstance().post<Refresh>(
+        'account/refresh',
+        {
+          refreshToken: refreshToken,
+        },
+        {
+          headers: {
+            authentication: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      if (refreshTokenPayload.data && refreshTokenPayload.data.accessToken) {
+        const { accessToken } = refreshTokenPayload.data
+        // console.log(accessToken)
+        dispatch({ type: AuthActionTypes.RefreshToken })
+        // do not pass context since we want to set it on the client only
+        authService.setAccessToken(accessToken)
+      }
+    } catch (e) {
+      console.warn('failed to refresh jwt', e)
+    }
+  }
 }
 
+// removes user from store and clears cookies
 async function errorResolver(dispatch: any, e: any) {
   dispatch(
     setErrorAction({
@@ -77,20 +94,45 @@ async function errorResolver(dispatch: any, e: any) {
     })
     // log out because we check tokens exist before running this action, so remove tokens
   )
-  await Promise.all([
-    dispatch(loadingAccountFinished()),
-    dispatch(logoutUserAction()),
-  ])
+  dispatch(logoutUserAction())
 }
 
-// todo
+// store viewer in store
+// check auth by making api call
 export const checkAuthStatusAction = (): UserResult<Promise<void>> => async (
   dispatch,
   getState,
   { ctx }
 ) => {
-  try {
-  } catch (e) {
-    await errorResolver(dispatch, e)
+  const authToken = authService.getAccessToken(ctx)
+  if (!!authToken) {
+    try {
+      // dynamic import saves client data if server
+      const { getAxiosInstance } = await import('@Lib/axios-instance')
+      const authCodeResponse = await getAxiosInstance().post<Viewer>(
+        'account/viewer',
+        undefined,
+        {
+          headers: {
+            authorization: `Bearer ${authToken}`,
+          },
+          withCredentials: true,
+        }
+      )
+
+      if (authCodeResponse.data && authCodeResponse.data.userId) {
+        const {
+          employee: { lastName, firstName, email, userId },
+        } = authCodeResponse.data
+        dispatch({
+          type: AuthActionTypes.CheckAuthStatusSuccess,
+          payload: { lastName, firstName, email, userId },
+        })
+      } else {
+        await errorResolver(dispatch, authCodeResponse)
+      }
+    } catch (e) {
+      await errorResolver(dispatch, e)
+    }
   }
 }

@@ -14,30 +14,30 @@ module.exports = {
     commonjs: true,
     es6: true,
     jest: true,
-    node: true
+    node: true,
   },
 
   parserOptions: {
     ecmaVersion: 11,
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true
-    }
+      jsx: true,
+    },
   },
 
   settings: {
-    'react': {
-      version: 'detect'
+    react: {
+      version: 'detect',
     },
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx']
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
-      typescript: {}
-    }
+      typescript: {},
+    },
   },
   globals: {
-    React: 'writable'
+    React: 'writable',
   },
 
   overrides: [
@@ -48,11 +48,11 @@ module.exports = {
         ecmaVersion: 11,
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true
+          jsx: true,
         },
 
         // typescript-eslint specific options
-        warnOnUnsupportedTypeScriptVersion: true
+        warnOnUnsupportedTypeScriptVersion: true,
       },
       plugins: ['@typescript-eslint'],
       // If adding a typescript-eslint version of an existing ESLint rule,
@@ -78,16 +78,16 @@ module.exports = {
             functions: false,
             classes: false,
             variables: false,
-            typedefs: false
-          }
+            typedefs: false,
+          },
         ],
         'no-unused-vars': 'off',
         '@typescript-eslint/no-unused-vars': [
           'warn',
           {
             args: 'none',
-            ignoreRestSiblings: true
-          }
+            ignoreRestSiblings: true,
+          },
         ],
         'no-useless-constructor': 'off',
         '@typescript-eslint/no-useless-constructor': 'warn',
@@ -96,9 +96,9 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 0,
         '@typescript-eslint/ban-ts-ignore': 0,
         '@typescript-eslint/explicit-member-accessibility': 0,
-        '@typescript-eslint/camelcase': 0
-      }
-    }
+        '@typescript-eslint/camelcase': 0,
+      },
+    },
   ],
 
   // NOTE: When adding rules here, you need to make sure they are compatible with
@@ -108,7 +108,7 @@ module.exports = {
     'array-callback-return': 'warn',
     'default-case': ['warn', { commentPattern: '^no default$' }],
     'dot-location': ['warn', 'property'],
-    'eqeqeq': ['warn', 'smart'],
+    eqeqeq: ['warn', 'smart'],
     'new-parens': 'warn',
     'no-array-constructor': 'warn',
     'no-caller': 'warn',
@@ -143,10 +143,10 @@ module.exports = {
           ['&', '|', '^', '~', '<<', '>>', '>>>'],
           ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
           ['&&', '||'],
-          ['in', 'instanceof']
+          ['in', 'instanceof'],
         ],
-        allowSamePrecedence: false
-      }
+        allowSamePrecedence: false,
+      },
     ],
     'no-multi-str': 'warn',
     'no-native-reassign': 'warn',
@@ -179,24 +179,24 @@ module.exports = {
       {
         allowShortCircuit: true,
         allowTernary: true,
-        allowTaggedTemplates: true
-      }
+        allowTaggedTemplates: true,
+      },
     ],
     'no-unused-labels': 'warn',
     'no-unused-vars': [
       'warn',
       {
         args: 'none',
-        ignoreRestSiblings: true
-      }
+        ignoreRestSiblings: true,
+      },
     ],
     'no-use-before-define': [
       'warn',
       {
         functions: false,
         classes: false,
-        variables: false
-      }
+        variables: false,
+      },
     ],
     'no-useless-computed-key': 'warn',
     'no-useless-concat': 'warn',
@@ -207,14 +207,14 @@ module.exports = {
       {
         ignoreDestructuring: false,
         ignoreImport: false,
-        ignoreExport: false
-      }
+        ignoreExport: false,
+      },
     ],
     'no-with': 'warn',
     'no-whitespace-before-property': 'warn',
     'require-yield': 'warn',
     'rest-spread-spacing': ['warn', 'never'],
-    'strict': ['warn', 'never'],
+    strict: ['warn', 'never'],
     'unicode-bom': ['warn', 'never'],
     'use-isnan': 'warn',
     'valid-typeof': 'warn',
@@ -224,14 +224,14 @@ module.exports = {
         object: 'require',
         property: 'ensure',
         message:
-          'Please use import() instead. More info: https://facebook.github.io/create-react-app/docs/code-splitting'
+          'Please use import() instead. More info: https://facebook.github.io/create-react-app/docs/code-splitting',
       },
       {
         object: 'System',
         property: 'import',
         message:
-          'Please use import() instead. More info: https://facebook.github.io/create-react-app/docs/code-splitting'
-      }
+          'Please use import() instead. More info: https://facebook.github.io/create-react-app/docs/code-splitting',
+      },
     ],
     'getter-return': 'warn',
 
@@ -250,8 +250,8 @@ module.exports = {
       'warn',
       {
         allowAllCaps: true,
-        ignore: []
-      }
+        ignore: [],
+      },
     ],
     'react/jsx-uses-react': 'warn',
     'react/jsx-uses-vars': 'warn',
@@ -274,8 +274,8 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': [
       'warn',
       {
-        aspects: ['noHref', 'invalidHref']
-      }
+        aspects: ['noHref', 'invalidHref'],
+      },
     ],
     'jsx-a11y/aria-activedescendant-has-tabindex': 'warn',
     'jsx-a11y/aria-props': 'warn',
@@ -305,14 +305,14 @@ module.exports = {
       {
         VariableDeclarator: {
           array: false,
-          object: false
+          object: false,
         },
         AssignmentExpression: {
           array: false,
-          object: true
-        }
-      }
+          object: true,
+        },
+      },
     ],
-    'prettier/prettier': 'warn'
-  }
+    'prettier/prettier': 0,
+  },
 }
