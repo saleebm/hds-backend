@@ -23,7 +23,11 @@ export default handler(async (req) => {
   if (!isEmail(req.query.email.toString())) return { exists: false }
 
   const possibleEmpByEmail = await prisma.employee.findOne({
-    where: { email: req.query.email.toString() },
+    where: {
+      email: Array.isArray(req.query.email)
+        ? req.query.email[0]
+        : req.query.email,
+    },
   })
 
   return {

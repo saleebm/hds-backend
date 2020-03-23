@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
-//todo redux for state management
-// and refresh token subscription
+//todo
+// show a nav for authenticated users / unauthenticated users
 export const Header = ({ pathname }: { pathname: string }) => (
   <nav>
     <Link href="/">

@@ -1,5 +1,8 @@
 import { useForm } from 'react-hook-form'
+import { bindActionCreators, Dispatch } from 'redux'
 import { useCallback } from 'react'
+import { connect } from 'react-redux'
+
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FormControl from '@material-ui/core/FormControl'
@@ -14,6 +17,11 @@ import { createStyles } from '@material-ui/styles'
 import { emailRegEx } from '@Utils/common'
 import { getAxiosInstance } from '@Lib/axios-instance'
 
+import { RootAction } from '@Store/modules/root-action'
+import { setErrorAction } from '@Store/modules/global/action'
+import { loginUserAction } from '@Store/modules/auth/action'
+import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
@@ -22,7 +30,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export function LoginForm() {
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
+  bindActionCreators(
+    {
+      setErrorDispatch: setErrorAction,
+      loginUser: loginUserAction,
+    },
+    dispatch
+  )
+
+function LoginForm({
+  setErrorDispatch,
+  loginUser,
+}: ReturnType<typeof mapDispatchToProps>) {
   const classes = useStyles()
   const {
     register,
@@ -41,18 +61,20 @@ export function LoginForm() {
       await axios
         .post<{ data: any }>('account/login', props)
         .catch((e) => {
+          console.warn(e)
+          // the only error possible at this point, since email has to be in system to even submit
           setError('password', 'validate', 'Wrong password')
         })
         .then((res) => {
-          console.log(
-            typeof res === 'object' && 'data' in res && !!res.data
-              ? res.data
-              : 'no data'
-          )
-          console.log('success')
+          if (typeof res === 'object' && 'data' in res && !!res.data) {
+            // data will contain tokens and user data, so pass that over to loginUserAction dispatch thunk to handle
+            loginUser({
+              loginSuccessResponse: (res.data as unknown) as LoginRequestSuccess,
+            })
+          }
         })
     },
-    [axios, setError]
+    [axios, setError, loginUser]
   )
 
   return (
@@ -72,19 +94,23 @@ export function LoginForm() {
           autoComplete={'email'}
           error={!!errors.email}
           name={'email'}
-          aria-invalid={!!errors.email ? 'true' : 'false'}
+          aria-invalid={!!errors.email}
           aria-describedby="error-email-required error-email-pattern error-email-validate"
           inputRef={register({
             required: true,
             pattern: emailRegEx,
             validate: async (value) => {
-              const { data } = await axios.get(
-                `account/email-exists?email=${value}`
-              )
-              console.log(data)
-              if (data && 'exists' in data) {
-                // data.exists is either true or false
-                return data.exists
+              try {
+                const { data } = await axios.get(
+                  `account/email-exists?email=${value}`
+                )
+                console.log(data)
+                if (data && 'exists' in data) {
+                  // data.exists is either true or false
+                  return data.exists
+                }
+              } catch (e) {
+                console.warn(e)
               }
             },
           })}
@@ -149,3 +175,5 @@ export function LoginForm() {
     </form>
   )
 }
+
+export default connect(null, mapDispatchToProps)(LoginForm)

@@ -4,22 +4,25 @@ datasource mysql {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 
 enum Role {
-  USER ADMIN
+  MODERATOR ADMIN
 }
 
 model Supplier {
-  id      Int    @id @default(autoincrement())
-  name    String
-  address String
-  city    String
-  state   String
-  zip     Int
-  phone   String
-  email   String @unique
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  city      String
+  state     String
+  zip       Int
+  phone     String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
@@ -42,7 +45,8 @@ model ProductOrder {
   quantityPurchased Int
   costEach          Int
   extendedCost      Int
-  dueDate           DateTime  @default(now())
+  dueDate           DateTime
+  orderDate         DateTime  @default(now())
 }
 
 model Location {
@@ -55,16 +59,21 @@ model Location {
 }
 
 model Employee {
-  id         Int      @id @default(autoincrement())
-  locationId Location
-  role       Role     @default(USER)
-  name       String
-  address    String
-  city       String
-  state      String
-  zip        Int
-  phone      String
-  email      String   @unique
+  id            Int      @id @default(autoincrement())
+  locationId    Location
+  role          Role     @default(value: MODERATOR)
+  firstName     String
+  lastName      String
+  address       String
+  city          String
+  state         String
+  zip           Int
+  phone         String
+  email         String   @unique
+  password      String
+  jwtUserSecret String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Inventory {
@@ -76,16 +85,18 @@ model Inventory {
   serialNumber Int
 }
 
-
+// todo will customer need authentication?
 model Customer {
-  id      Int    @id @default(autoincrement())
-  name    String
-  address String
-  city    String
-  state   String
-  zip     Int
-  phone   String
-  email   String @unique
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  city      String
+  state     String
+  zip       Int
+  phone     String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Job {

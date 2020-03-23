@@ -5,7 +5,7 @@
       "tag": "CreateEnum",
       "enum": "Role",
       "values": [
-        "USER",
+        "MODERATOR",
         "ADMIN"
       ]
     },
@@ -136,6 +136,56 @@
           "field": "email"
         },
         "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Supplier",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Supplier",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Supplier",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Supplier",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Supplier",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
       }
     },
     {
@@ -360,12 +410,19 @@
       "arity": "Required"
     },
     {
+      "tag": "CreateField",
+      "model": "ProductOrder",
+      "field": "orderDate",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
       "tag": "CreateDirective",
       "location": {
         "path": {
           "tag": "Field",
           "model": "ProductOrder",
-          "field": "dueDate"
+          "field": "orderDate"
         },
         "directive": "default"
       }
@@ -377,7 +434,7 @@
         "path": {
           "tag": "Field",
           "model": "ProductOrder",
-          "field": "dueDate"
+          "field": "orderDate"
         },
         "directive": "default"
       },
@@ -549,13 +606,20 @@
         },
         "directive": "default"
       },
-      "argument": "",
-      "value": "USER"
+      "argument": "value",
+      "value": "MODERATOR"
     },
     {
       "tag": "CreateField",
       "model": "Employee",
-      "field": "name",
+      "field": "firstName",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "lastName",
       "type": "String",
       "arity": "Required"
     },
@@ -610,6 +674,70 @@
           "field": "email"
         },
         "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "password",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "jwtUserSecret",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
       }
     },
     {
@@ -799,6 +927,56 @@
           "field": "email"
         },
         "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Customer",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Customer",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Customer",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Customer",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Customer",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
       }
     },
     {

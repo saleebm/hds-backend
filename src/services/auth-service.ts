@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 import { NextPageContext } from 'next'
 import { STORAGE_KEYS } from '@Config'
 import { cookieService, CookieService } from './cookie-service'
-import { ServerCtx } from '@Types'
+import { ServerCtx, ServerSideProps } from '@Types'
+import { AppPropsWithStore } from '@Types/_app'
 
 // client storage provider
 class AuthStorageProvider {
@@ -15,17 +16,15 @@ class AuthStorageProvider {
   logIn = async ({
     authToken,
     refreshToken,
-    jwtAuthExpiration,
     ctx,
   }: {
-    authToken: any
-    refreshToken: any
-    jwtAuthExpiration: any
-    ctx?: ServerCtx | NextPageContext
+    authToken: string
+    refreshToken: string
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
   }) => {
     await Promise.all([
-      this.setAccessToken(authToken, jwtAuthExpiration, ctx),
-      this.setRefreshToken(refreshToken, jwtAuthExpiration, ctx),
+      this.setAccessToken(authToken, ctx),
+      this.setRefreshToken(refreshToken, ctx),
     ])
   }
 
@@ -36,11 +35,11 @@ class AuthStorageProvider {
   // Access Token
   setAccessToken = (
     token: string,
-    jwtAuthExpiration: any,
-    ctx?: ServerCtx | NextPageContext
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
   ) => {
     const expiryDate: Date = new Date(0) // The 0 there is the key, which sets the date to the epoch
 
+    const jwtAuthExpiration = this.getExpiryFromToken(token)
     // if passed an auth exp value and it is a number, set exp date
     if (jwtAuthExpiration && !isNaN(jwtAuthExpiration)) {
       expiryDate.setUTCSeconds(parseInt(jwtAuthExpiration))
@@ -56,10 +55,13 @@ class AuthStorageProvider {
       ctx
     )
   }
-  getAccessToken = (ctx?: ServerCtx | NextPageContext) =>
-    this.storageService.getItem(STORAGE_KEYS.ACCESS_TOKEN, ctx)
+  getAccessToken = (
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
+  ) => this.storageService.getItem(STORAGE_KEYS.ACCESS_TOKEN, ctx)
 
-  removeAccessToken = (ctx?: ServerCtx | NextPageContext) => {
+  removeAccessToken = (
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
+  ) => {
     console.log(`removing access token`)
     this.storageService.removeItem(STORAGE_KEYS.ACCESS_TOKEN, ctx)
   }
@@ -68,11 +70,11 @@ class AuthStorageProvider {
   // Refresh Token
   setRefreshToken = (
     token: string,
-    jwtAuthExpiration: any,
-    ctx?: ServerCtx | NextPageContext
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
   ) => {
     const expiryDate = new Date(0) // The 0 there is the key, which sets the date to the epoch
 
+    const jwtAuthExpiration = this.getExpiryFromToken(token)
     // if passed an auth exp value and it is a number, set exp date
     if (jwtAuthExpiration && !isNaN(jwtAuthExpiration)) {
       expiryDate.setUTCSeconds(parseInt(jwtAuthExpiration))
@@ -87,10 +89,13 @@ class AuthStorageProvider {
       ctx
     )
   }
-  getRefreshToken = (ctx?: ServerCtx | NextPageContext) =>
-    this.storageService.getItem(STORAGE_KEYS.REFRESH_TOKEN, ctx)
+  getRefreshToken = (
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
+  ) => this.storageService.getItem(STORAGE_KEYS.REFRESH_TOKEN, ctx)
 
-  removeRefreshToken = (ctx?: ServerCtx | NextPageContext) => {
+  removeRefreshToken = (
+    ctx?: ServerCtx | NextPageContext | AppPropsWithStore | ServerSideProps
+  ) => {
     console.log(`removing refresh token`)
     this.storageService.removeItem(STORAGE_KEYS.REFRESH_TOKEN, ctx)
   }

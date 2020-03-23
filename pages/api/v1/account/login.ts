@@ -11,6 +11,8 @@ import { AuthTokenSecurity } from '@Lib/server/auth-token-security'
 import { IncomingMessage } from 'http'
 import { getEnv } from '@Pages/api/v1/account/_get-env'
 import { getAccessToken } from '@Pages/api/v1/account/_get-access-token'
+import { EmployeeRes } from '@Types/api-res'
+import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 
 const prisma = new PrismaClient()
 
@@ -22,7 +24,7 @@ export type LoginRequestBody = {
 export type LoginRequestSuccess = {
   accessToken: string
   refreshToken: string
-}
+} & EmployeeRes
 
 /**
  * POST
@@ -44,20 +46,20 @@ export default handler(
     if (!req.body || !req.body.email || !req.body.password) {
       throw new MissingParameterError()
     }
-    console.log(req.body)
+    // console.log(req.body)
     const employee = await prisma.employee.findOne({
       where: { email: req.body.email },
     })
-    // if no employee by email
+    // if no employee found by email, should not happen because client login verifies this
     if (!employee) {
       throw new UnauthenticatedError()
     } else {
-      // verify pass
+      // verify pw
       const match = await cryptoFactory.verifyUserPassword({
         reqBodyPassword: req.body.password,
         storedPasswordHash: employee.password,
       })
-      // bail! wrong password or email
+      // bail! wrong password or email!
       if (!match) {
         throw new FailedLoginError()
       }
@@ -83,6 +85,7 @@ export default handler(
       return {
         accessToken,
         refreshToken,
+        employee: getEmpData(employee),
       }
     }
   }

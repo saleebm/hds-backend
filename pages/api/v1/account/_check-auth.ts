@@ -15,9 +15,7 @@ const prisma = new PrismaClient()
  * returns userId if authenticated, wrap with try catch for token decryption may throw an exception
  * @param headers
  */
-export const checkAuth = async (
-  headers: IncomingHttpHeaders
-): Promise<{ userId?: number; jwtUserSecret?: string }> => {
+export const checkAuth = async (headers: IncomingHttpHeaders) => {
   const authHeader = headers.Authorization || headers.authorization
   const { signingSignature } = getEnv()
 
@@ -28,6 +26,7 @@ export const checkAuth = async (
   const bearerToken = Array.isArray(authHeader) ? authHeader[0] : authHeader
 
   if (bearerToken && bearerToken.split(' ')[0] === 'Bearer') {
+    console.log(bearerToken)
     const token = bearerToken.split(' ')[1]
     const userDataDecoded = await AuthTokenSecurity.decode(token)
 
@@ -52,6 +51,8 @@ export const checkAuth = async (
         return {
           userId: userIdVerified.userId,
           jwtUserSecret: emp.jwtUserSecret,
+          // return it diligently since fields unchecked in db for auth access rights
+          employee: emp,
         }
       }
     }

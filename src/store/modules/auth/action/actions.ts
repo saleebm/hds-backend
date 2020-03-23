@@ -4,13 +4,30 @@ import { authService } from '@Services'
 import { setErrorAction } from '@Store/modules/global/action'
 import { AuthActionTypes } from './types'
 import { ThunkDispatch } from 'redux-thunk'
+import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
 // todo
-export const loginUserAction = (): UserResult<Promise<void>> => async (
-  dispatch,
-  getState,
-  { ctx }
-) => {}
+export const loginUserAction = ({
+  loginSuccessResponse,
+}: {
+  loginSuccessResponse: LoginRequestSuccess
+}): UserResult<Promise<void>> => async (dispatch, getState, { ctx }) => {
+  // save tokens in cookie jar
+  await authService
+    .logIn({
+      authToken: loginSuccessResponse.accessToken,
+      refreshToken: loginSuccessResponse.refreshToken,
+      ctx,
+    })
+    .catch((e) => console.warn(e))
+
+  // store user in global auth state
+  const { lastName, email, firstName, userId } = loginSuccessResponse.employee
+  dispatch({
+    type: AuthActionTypes.LoginSuccess,
+    payload: { lastName, firstName, userId, email },
+  })
+}
 
 // todo
 export const registerUserAction = (): UserResult<Promise<void>> => async (

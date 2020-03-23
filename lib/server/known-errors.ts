@@ -61,6 +61,12 @@ export class UnsupportedMethodError extends KnownError {
   }
 }
 
+export class InvalidArgumentError extends KnownError {
+  constructor(invalidArgErrorMessage: string) {
+    super('InvalidArgument', 400, invalidArgErrorMessage)
+  }
+}
+
 export class NotFoundError extends KnownError {
   constructor() {
     super('NotFoundError', 404)
