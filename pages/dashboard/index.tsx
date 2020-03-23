@@ -1,5 +1,3 @@
-import { GetServerSideProps } from 'next'
-
 function Dashboard() {
   return (
     <>
@@ -8,13 +6,7 @@ function Dashboard() {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  //todo
-  // check if user is authenticated first,
-  // if so, make sure data is in store
-  // else, redirect to /
-  return {
-    props: {},
-  }
-}
+// make this easy
+export { getServerSideProps } from '../index'
+
 export default Dashboard

@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import { Dispatch } from 'redux'
 import { IAuthState, UserResult } from '../types'
 import { authService } from '@Services'
@@ -12,6 +13,8 @@ export const loginUserAction = ({
 }: {
   loginSuccessResponse: LoginRequestSuccess
 }): UserResult<Promise<void>> => async (dispatch, getState, { ctx }) => {
+  // store user in global auth state
+  const { lastName, email, firstName, userId } = loginSuccessResponse.employee
   // save tokens in cookie jar
   await authService
     .logIn({
@@ -20,13 +23,15 @@ export const loginUserAction = ({
       ctx,
     })
     .catch((e) => console.warn(e))
-
-  // store user in global auth state
-  const { lastName, email, firstName, userId } = loginSuccessResponse.employee
-  dispatch({
-    type: AuthActionTypes.LoginSuccess,
-    payload: { lastName, firstName, userId, email },
-  })
+    .then(() => {
+      dispatch({
+        type: AuthActionTypes.LoginSuccess,
+        payload: { lastName, firstName, userId, email },
+      })
+    })
+    .then(() => {
+      Router.push('/dashboard', undefined, {})
+    })
 }
 
 // todo

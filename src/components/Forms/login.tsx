@@ -44,6 +44,7 @@ function LoginForm({
   loginUser,
 }: ReturnType<typeof mapDispatchToProps>) {
   const classes = useStyles()
+  const axios = getAxiosInstance()
   const {
     register,
     handleSubmit,
@@ -54,7 +55,6 @@ function LoginForm({
     email: string
     password: string
   }>({ reValidateMode: 'onBlur', mode: 'onBlur' })
-  const axios = getAxiosInstance()
 
   const loginRequest = useCallback(
     async (props: { email: string; password: string }) => {

@@ -7,12 +7,12 @@ import { Viewer } from '@Pages/api/v1/account/viewer'
 
 function MainPage() {
   return (
-    <>
+    <div>
       <h1>Home Design Solutions: Admin Portal</h1>
       <main>
         <LoginForm />
       </main>
-    </>
+    </div>
   )
 }
 
@@ -20,7 +20,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const authToken = authService.getAccessToken(ctx as ServerSideProps)
 
   console.log(`Access token: ${authToken}`)
-  if (!!authToken) {
+  console.log(`Req url: ${ctx.req.url}`)
+
+  if (!!authToken && ctx.req.url === '/') {
     // dynamic import saves client data
     const { getAxiosInstance } = await import('@Lib/axios-instance')
 
@@ -45,11 +47,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             ctx.res.end()
           }
         })
-    } catch (e) {}
-
-    return {
-      props: {},
-    }
+    } catch {}
+  } // if no auth token and not going to login page, redirect to login
+  else if (!authToken && ctx.req.url !== '/') {
+    ctx.res.writeHead(302, 'Unauthenticated', { Location: '/' })
+    ctx.res.end()
   }
   // else, nothing to do
   return {
