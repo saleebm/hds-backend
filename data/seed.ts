@@ -7,19 +7,23 @@ import * as PrismaClient from '@prisma/client'
 // noinspection TypeScriptPreferShortImport,ES6PreferShortImport
 import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
 
+// loading dot env from root for signing key needed in cryptoFactory
 dotenv.config({ path: path.resolve('../', '.env') })
 const prisma = new PrismaClient.PrismaClient()
 
 const ADMIN_PASSWORD = 'byqipyuyxlyteuajjbewsatxldvfbuqs'
 
 // A `main` function so that we can use async/await
-// this initializes the database with one admin employee
+// this initializes the database with one admin employee, main product, inventory, and supplier
 // no need to run this except once
 async function main() {
   // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
-  const { hash } = await cryptoFactory.encryptUserPassword(ADMIN_PASSWORD)
+  const { passwordHash } = await cryptoFactory.encryptUserPassword(
+    ADMIN_PASSWORD
+  )
   const jwtUserSecret = await cryptoFactory.generateJWTSecret(32)
 
+  // employee and location
   const mainUser = await prisma.employee.create({
     data: {
       locationId: {
@@ -41,14 +45,52 @@ async function main() {
       phone: '(333) 111-2222',
       email: 'monkeys1@banana.waffle',
       jwtUserSecret,
-      password: hash,
+      password: passwordHash,
     },
     include: {
       // this creates the location along with the user
       locationId: true,
     },
   })
-  console.log(mainUser)
+
+  // product and inventory
+  const mainProduct = await prisma.product.create({
+    data: {
+      bidProducts: undefined,
+      description: '',
+      inventory: {
+        create: {
+          aisle: 1,
+          bin: '#37ew9983',
+          locationId: {
+            connect: { id: mainUser.locationId.id },
+          },
+          serialNumber: 1234,
+        },
+      },
+      unitCost: 12000,
+      price: 23000,
+      modelNumber: 1,
+      productCategory: 'Homes',
+    },
+  })
+  // supplier
+  const mainSupplier = await prisma.supplier.create({
+    data: {
+      address: '101 sand villa rd',
+      city: 'jax',
+      state: 'FL',
+      email: 'indiesupplier@yahoo.org',
+      name: 'fat john',
+      phone: '301-123-9876',
+      zip: 32388,
+    },
+  })
+
+  console.log(`mainUser: \r\n ${JSON.stringify(mainUser)}`)
+  console.log(`mainProduct: \r\n ${JSON.stringify(mainProduct)}`)
+  console.log(`mainSupplier: \r\n ${JSON.stringify(mainSupplier)}`)
+
   return {
     userId: mainUser.id,
   }

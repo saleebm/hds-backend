@@ -13,6 +13,9 @@
 
 ---
 
+## data fetching
+1. useSWR
+
 ## auth service
 
 1.  API docs.
@@ -23,7 +26,7 @@
     ~~3. set up oauth endpoint and integrate strategy with secrets.~~
     ~~4. `js const postmanTests = () => Promise.resolve(this.stepThree) return postmanTests.res.success ? 'set up login dashboard' : 'repeat steps 2 - 4'`~~
 
-    5. refresh token endpoint
+    ~~5. refresh token endpoint~~
     6. reset password endpoint
 
 3.  Check if front facing users need auth (ie customer entity)

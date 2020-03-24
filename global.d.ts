@@ -8,6 +8,7 @@ declare global {
     interface ProcessEnv {
       TOKEN_STORAGE_KEY: string
       TOKEN_SIGNING_SECRET: string
+      SENDGRID_API_KEY: string
     }
   }
 }

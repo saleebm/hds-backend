@@ -130,6 +130,9 @@ build/Release
 node_modules/
 jspm_packages/
 
+# not prisma ts generated file
+!node_modules/@prisma/client/index.d.ts
+
 # TypeScript v1 declaration files
 typings/
 

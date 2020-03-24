@@ -11,6 +11,7 @@ import { Store } from 'redux'
 import { RootStateType } from '@Store/modules/types'
 import { refreshJWTAction } from '@Store/modules/auth/action'
 import { RootAction } from '@Store/modules/root-action'
+import { authService } from '@Services'
 
 interface InitStoreOptions {
   initialStoreState?: any
@@ -92,12 +93,27 @@ export function withRedux(WrappedApp: any) {
     ctx: AppPropsWithStore
   ): Promise<{} | AppProviderProps> {
     const {
-      ctx: { store },
+      ctx: { store, req, res },
     } = initOnContext(ctx)
     let appProps = {}
 
     if (typeof App.getInitialProps === 'function') {
       appProps = await App.getInitialProps.call(WrappedApp, ctx)
+    }
+
+    // using GIP instead of GSSP because then I can statically generate those pages
+    // routing authenticated/unauthenticated server side
+    // also used in Dashboard to control routing
+    if (req && res) {
+      const authToken = authService.getAccessToken(ctx)
+      // there is an auth token and the req url is not the dashboard
+      if (!!authToken && req.url === '/') {
+        // get the viewer
+        res.writeHead(302, 'Authenticated', { Location: '/dashboard' }).end()
+      } // if no auth token and not going to login page, redirect to login
+      else if (!authToken && req.url !== '/') {
+        res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
+      }
     }
 
     return {

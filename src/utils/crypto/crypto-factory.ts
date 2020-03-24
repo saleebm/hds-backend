@@ -24,4 +24,5 @@ export const cryptoFactory = {
   encryptUserPassword,
   verifyUserPassword,
   generateJWTSecret: (n: number) => SecurityUtils.generateRandomString(n),
+  generateDefaultSecret: () => SecurityUtils.generateRandomString(16),
 }

@@ -5,6 +5,7 @@ import { readFile } from 'fs'
 
 const cryptoPbkdf2 = promisify(crypto.pbkdf2)
 
+// make sure private key is there
 const keyFilePath = resolve('keys', 'key.pem')
 
 const _readFile = promisify(readFile)
@@ -35,6 +36,9 @@ export const SecurityUtils = {
    */
   async checkSaltHash({ password, hash }: { password: string; hash: string }) {
     const privateKey = await this.getPrivateKey()
+    if (!privateKey) {
+      throw new Error('Private key not found')
+    }
 
     const secret = Buffer.from(privateKey)
 
@@ -73,7 +77,7 @@ export const SecurityUtils = {
    * @param data The data to encrypt
    * @return the salt used to encrypt the secret, and hash, the secret encrypted
    */
-  async encryptWithSecret(data: string): Promise<{ hash: string }> {
+  async encryptWithSecret(data: string): Promise<{ passwordHash: string }> {
     const privateKey = await this.getPrivateKey()
     const secret = Buffer.from(privateKey)
 
@@ -101,7 +105,7 @@ export const SecurityUtils = {
     // console.log(tag.length)
 
     return {
-      hash: Buffer.concat([
+      passwordHash: Buffer.concat([
         // Data as required by:
         // Salt for Key: https://nodejs.org/api/crypto.html#crypto_crypto_pbkdf2sync_password_salt_iterations_keylen_digest
         // IV: https://nodejs.org/api/crypto.html#crypto_class_decipher

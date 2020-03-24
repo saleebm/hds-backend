@@ -9,6 +9,8 @@ import {
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
 import { cryptoFactory } from '@Utils/crypto'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
+import { generateCode } from '@Pages/api/v1/account/_generate-code'
+import { sendEmail } from '@Lib/server/send-email'
 
 const prisma = new PrismaClient()
 
@@ -25,18 +27,17 @@ export default handler(async (req) => {
 
   const { userId, employee } = await checkAuth(req.headers)
   // throw if unauthenticated
-  if (!userId || (userId && isNaN(userId)) || employee.role !== 'ADMIN') {
+  if (!userId || employee.role !== 'ADMIN') {
     // unauthorized
-    // no userId from auth headers
+    // no userId from auth headers or not admin
     throw new UnauthenticatedError()
   }
 
-  // invalid password supplied?
+  // invalid password supplied? does not care if it is empty, that is handled below by generateDefaultPasswordOrReturn()
   if (
-    !req.body.password ||
-    (req.body.password && Array.isArray(req.body.password)
+    req.body.password && Array.isArray(req.body.password)
       ? req.body.password[0].length < 8
-      : req.body.password.length < 8)
+      : req.body.password.length < 8
   ) {
     throw new InvalidArgumentError('Password must be 8 characters or greater')
   }
@@ -58,13 +59,26 @@ export default handler(async (req) => {
     throw new DatabaseNotEquippedError('Create a location first')
   }
 
+  // no password provided
+  // generate default password
+  const generateDefaultPasswordOrReturn = async () => {
+    // no password provided?
+    if (!req.body.password) {
+      const defaultPassword = await cryptoFactory.generateDefaultSecret()
+      return await cryptoFactory.encryptUserPassword(defaultPassword)
+    }
+    // else encrypt supplied password and return that
+    return await cryptoFactory.encryptUserPassword(req.body.password)
+  }
+
+  // input body -
+  // must be validated client side
   const {
     address,
     city,
     email,
     firstName,
     lastName,
-    password,
     phone,
     role = 'MODERATOR',
     state,
@@ -73,10 +87,12 @@ export default handler(async (req) => {
   } = req.body as CreateEmployee
 
   // encrypt pw
-  const { hash } = await cryptoFactory.encryptUserPassword(password)
+  const { passwordHash } = await generateDefaultPasswordOrReturn()
+  // generate some random secret unique to user for signing the jwt provided to them on login
   const jwtUserSecret = await cryptoFactory.generateJWTSecret(32)
 
   try {
+    // creates the user
     const userCreated = await prisma.employee.create({
       data: {
         address,
@@ -87,20 +103,31 @@ export default handler(async (req) => {
         phone,
         role,
         state,
+        /** makes sure if location supplied is a number, then just connects it to that number */
         locationId:
           typeof locationId === 'object'
             ? locationId
             : { connect: { id: locationId } },
         jwtUserSecret,
-        password: hash,
+        password: passwordHash,
         zip,
       },
       include: {
-        // if location created anew, then include it in create op response
+        /** if location created anew, then include it in create op response */
         locationId: typeof locationId === 'object',
       },
     })
 
+    // if no password was supplied and user has been created successfully
+    // then now generate code. this has to be done after the user is created obv.
+    if (!req.body.password && !!userCreated) {
+      // first generate magicCode for user to go to reset password
+      const magicCode = await generateCode(userCreated.id)
+      await sendEmail(userCreated.email, magicCode)
+    }
+    /**
+     *  getEmpData prevents leaking of secure data to viewer, filtering out the user fields necessary
+     */
     return {
       userId: userCreated.id,
       employee: getEmpData(userCreated),
