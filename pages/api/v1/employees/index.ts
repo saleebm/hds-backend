@@ -11,14 +11,14 @@ import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 const prisma = new PrismaClient()
 
 /**
- * POST
+ * post
  * Returns one employee by id, if supplied, defaults to id of user requesting
  * @param req.body: { empId: number }
  * @param res.data.employee: employeeData | undefined if not found
  */
 export default handler(async (req) => {
   // bail if not getting
-  if (req.method?.toLowerCase() !== 'get') {
+  if (req.method?.toLowerCase() !== 'post') {
     throw new NotImplementedError()
   }
   const { userId, employee } = await checkAuth(req.headers)

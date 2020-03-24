@@ -2,7 +2,6 @@ import { Action } from 'redux'
 
 export enum AuthActionTypes {
   LoginSuccess = '@auth/USER_AUTHENTICATE_SUCCESS',
-  RegisterSuccess = '@auth/USER_REGISTER_SUCCESS',
   Logout = '@auth/USER_LOGOUT',
   CheckAuthStatus = '@auth/CHECK_AUTH_STATUS',
   CheckAuthStatusSuccess = '@auth/CHECK_AUTH_STATUS_SUCCESS',
@@ -23,12 +22,6 @@ export type CurrentUserType = {
    * The Id of the user. Equivalent to WP_User-&gt;ID
    */
   readonly userId: number
-}
-
-export interface IRegisterUserAction
-  extends Action<AuthActionTypes.RegisterSuccess> {
-  type: typeof AuthActionTypes.RegisterSuccess
-  payload: CurrentUserType
 }
 
 export interface ILoginUserAction extends Action<AuthActionTypes.LoginSuccess> {
@@ -57,7 +50,6 @@ export interface IRefreshJWTAction
 }
 
 export type AuthActions =
-  | IRegisterUserAction
   | ILoginUserAction
   | ILogoutUserAction
   | ICheckAuthStatusAction

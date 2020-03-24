@@ -17,7 +17,6 @@ export const AuthReducer = (
     switch (action.type) {
       case AuthActionTypes.CheckAuthStatusSuccess:
       case AuthActionTypes.LoginSuccess:
-      case AuthActionTypes.RegisterSuccess:
         const { email, firstName, lastName, userId } = action.payload
         draft.currentUser = {
           email,

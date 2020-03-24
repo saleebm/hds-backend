@@ -55,6 +55,13 @@ export class FailedLoginError extends KnownError {
     super('Unauthenticated', 401, 'Wrong username or password')
   }
 }
+
+export class DatabaseNotEquippedError extends KnownError {
+  constructor(message = '') {
+    super('DatabaseNotEquipped', 400, message)
+  }
+}
+
 export class UnsupportedMethodError extends KnownError {
   constructor() {
     super('UnsupportedMethod')
@@ -84,4 +91,10 @@ export function isKnownErrorOfType(
   aKnownError: AKnownError
 ): boolean {
   return error.code === new aKnownError().code
+}
+
+export class InternalServerError extends Error {
+  constructor() {
+    super('Oops')
+  }
 }

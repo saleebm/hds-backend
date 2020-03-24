@@ -40,13 +40,6 @@ export const loginUserAction = ({
     })
 }
 
-// todo
-export const registerUserAction = (): UserResult<Promise<void>> => async (
-  dispatch,
-  getState,
-  { ctx }
-) => {}
-
 export const logoutUserAction = () => async (
   dispatch: ThunkDispatch<IAuthState, any, any>
 ) => {

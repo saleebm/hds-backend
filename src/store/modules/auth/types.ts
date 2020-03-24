@@ -6,7 +6,6 @@ import {
   CurrentUserType,
   loginUserAction,
   logoutUserAction,
-  registerUserAction,
 } from './action'
 import { ThunkExtraArgs } from '@Store/modules/types'
 
@@ -36,7 +35,6 @@ export interface IAuthState {
 // "type Action does not fit.."
 export interface IAuthActionDispatchs {
   loginUserAction: ThunkActionDispatch<typeof loginUserAction>
-  registerUserAction: ThunkActionDispatch<typeof registerUserAction>
   logoutUserAction: ThunkActionDispatch<typeof logoutUserAction>
   checkAuthStatusAction: ThunkActionDispatch<typeof checkAuthStatusAction>
 }
