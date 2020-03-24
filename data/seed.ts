@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import * as PrismaClient from '@prisma/client'
 // the only dependency from the main files
-// noinspection TypeScriptPreferShortImport
+// noinspection TypeScriptPreferShortImport,ES6PreferShortImport
 import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
 
 dotenv.config({ path: path.resolve('../', '.env') })

@@ -51,6 +51,7 @@ class AuthStorageProvider {
       {
         expires: !!expiryDate ? expiryDate : undefined,
         path: '/',
+        sameSite: 'strict',
       },
       ctx
     )
@@ -84,6 +85,7 @@ class AuthStorageProvider {
       token,
       {
         expires: expiryDate,
+        sameSite: 'strict',
         path: '/',
       },
       ctx

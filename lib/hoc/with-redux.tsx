@@ -6,6 +6,11 @@ import { isServer } from '@Utils/common'
 import { configureStore } from '@Store/configure-store'
 import { AppPropsWithStore } from '@Types/_app'
 import { ServerSideProps } from '@Types'
+import throttle from 'lodash.throttle'
+import { Store } from 'redux'
+import { RootStateType } from '@Store/modules/types'
+import { refreshJWTAction } from '@Store/modules/auth/action'
+import { RootAction } from '@Store/modules/root-action'
 
 interface InitStoreOptions {
   initialStoreState?: any
@@ -49,9 +54,27 @@ export function withRedux(WrappedApp: any) {
     initialStoreState,
     ...rest
   }) => {
-    // apolloClient, store will be available on: getDataFromTree & next.js ssr
-    // else initialize and reuse on: next.js csr
-    const reduxStore = initStore({ initialStoreState })
+    // initialize and reuse on: next.js csr
+    const reduxStore: Store<RootStateType, RootAction> = initStore({
+      initialStoreState,
+    })
+
+    const checkAuthorized = (state: RootStateType) =>
+      state.authReducer.isAuthenticated
+
+    const unsubscribe = reduxStore.subscribe(
+      throttle(() => {
+        if (!checkAuthorized(reduxStore.getState())) {
+          console.log('not refreshing jwt')
+          return
+        }
+        try {
+          console.log('refreshing jwt action')
+          reduxStore.dispatch(refreshJWTAction() as any)
+        } catch (e) {}
+        return () => unsubscribe()
+      }, 300000)
+    )
 
     return (
       <Provider store={reduxStore}>
@@ -80,7 +103,9 @@ export function withRedux(WrappedApp: any) {
     return {
       ...appProps,
       initialStoreState:
-        typeof store?.getState() === 'function' ? store.getState() : {},
+        store && typeof store.getState() === 'function'
+          ? store.getState()
+          : undefined,
     }
   }
 

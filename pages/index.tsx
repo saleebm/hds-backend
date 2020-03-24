@@ -1,20 +1,13 @@
 import { GetServerSideProps } from 'next'
-
-import { LoginForm } from '@Components/Forms'
 import { authService } from '@Services'
 import { ServerSideProps } from '@Types'
+import { IndexView } from '@Components/Views'
 
 function MainPage() {
-  return (
-    <div>
-      <h1>Home Design Solutions: Admin Portal</h1>
-      <main>
-        <LoginForm />
-      </main>
-    </div>
-  )
+  return <IndexView />
 }
 
+// routing authenticated/unauthenticated server side
 // also used in Dashboard to control routing
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   // auth token is managed by store actions

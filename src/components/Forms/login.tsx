@@ -3,7 +3,7 @@ import { bindActionCreators, Dispatch } from 'redux'
 import { useCallback } from 'react'
 import { connect } from 'react-redux'
 
-import Input from '@material-ui/core/Input'
+import Input from '@material-ui/core/OutlinedInput'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FormControl from '@material-ui/core/FormControl'
@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import { AccountCircle, SecurityRounded } from '@material-ui/icons'
+import { AccountCircle, SecurityRounded, SendTwoTone } from '@material-ui/icons'
 import { createStyles } from '@material-ui/styles'
 
 import { emailRegEx } from '@Utils/common'
@@ -22,9 +22,14 @@ import { setErrorAction } from '@Store/modules/global/action'
 import { loginUserAction } from '@Store/modules/auth/action'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
+import styles from './form.module.scss'
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
+      margin: theme.spacing(1),
+    },
+    label: {
       margin: theme.spacing(1),
     },
   })
@@ -82,13 +87,18 @@ function LoginForm({
   )
 
   return (
-    <form noValidate onSubmit={handleSubmit(loginRequest)}>
+    <form
+      className={styles.form}
+      noValidate
+      onSubmit={handleSubmit(loginRequest)}
+    >
       <FormControl className={classes.margin}>
         <InputLabel
           id={'email-label'}
           error={!!errors.email}
           required
           htmlFor="email"
+          className={classes.label}
         >
           Email address
         </InputLabel>
@@ -144,6 +154,7 @@ function LoginForm({
           required
           htmlFor="password"
           id={'password-label'}
+          className={classes.label}
         >
           Password
         </InputLabel>
@@ -172,7 +183,14 @@ function LoginForm({
           </FormHelperText>
         )}
       </FormControl>
-      <Button variant={'outlined'} type={'submit'} disabled={isSubmitting}>
+      <Button
+        size={'large'}
+        endIcon={<SendTwoTone />}
+        className={classes.margin}
+        variant={'outlined'}
+        type={'submit'}
+        disabled={isSubmitting}
+      >
         <Typography>Submit</Typography>
       </Button>
     </form>

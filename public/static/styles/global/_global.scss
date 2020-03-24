@@ -2,101 +2,24 @@ html {
   font-family: font-family();
   /* Load system fonts */
   font-size: ($base-font-size / $default-browser-font-size) * 100%;
-  position: relative;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  // This needs to come after -webkit-font-smoothin
-  -webkit-font-smoothing: antialiased;
-  //https://developer.mozilla.org/en-US/docs/Web/CSS/text-size-adjust#Browser_compatibility
-  -moz-osx-font-smoothing: grayscale;
-  text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
-}
-
-*,
-:after,
-:before,
-:focus-within,
-:focus,
-*::before,
-*::after {
-  outline: none;
-  box-sizing: inherit;
-  // Safari
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-tap-highlight-color: transparent;
-}
-
-small,
-.text_small {
-  font-size: font-size(caption);
-  line-height: line-height(caption);
-}
-
-[type='button']::-moz-focus-inner,
-[type='reset']::-moz-focus-inner,
-[type='submit']::-moz-focus-inner {
-  border-style: none;
-}
-
-/**
- * Form elements render using OS defaults,
- * so font-family inheritance must be specifically declared
- */
-button,
-button span,
-input,
-optgroup,
-select,
-textarea,
-a {
-  font-family: font-family(sans-serif);
-  font-size: font-size(button);
-  line-height: line-height(button);
-  text-decoration: none;
-  font-variation-settings: 'wght' 500, 'GRAD' 151;
-
-  &::-moz-focus-inner {
-    border-style: none;
-  }
-
-  &:focus {
-    filter: drop-shadow(2px 2px 3px rgba(200, 0, 0, 0.33));
-  }
 }
 
 
 body {
   font-family: font-family(sans-serif);
   font-weight: 600;
-  position: relative;
-  z-index: 1;
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
   font-variation-settings: 'wght' 600, 'GRAD' 72;
   font-optical-sizing: auto;
   font-kerning: normal;
   font-variant-ligatures: contextual common-ligatures;
   font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
-
-  &::backdrop {
-    background-color: inherit;
-  }
 }
 
 ol,
 ul {
   font-size: font-size(caption);
   line-height: line-height(caption);
-  list-style: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
 }
 
 h1,

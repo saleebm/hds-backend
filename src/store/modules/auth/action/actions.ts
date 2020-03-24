@@ -1,12 +1,14 @@
 import Router from 'next/router'
+import { ThunkDispatch } from 'redux-thunk'
+
 import { IAuthState, UserResult } from '../types'
 import { authService } from '@Services'
 import { setErrorAction } from '@Store/modules/global/action'
 import { AuthActionTypes } from './types'
-import { ThunkDispatch } from 'redux-thunk'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 import { Viewer } from '@Pages/api/v1/account/viewer'
 import { Refresh } from '@Pages/api/v1/account/refresh'
+import { getAxiosInstance } from '@Lib/axios-instance'
 
 export const loginUserAction = ({
   loginSuccessResponse,
@@ -33,7 +35,8 @@ export const loginUserAction = ({
     })
     .then(() => {
       // put user in place
-      Router.push('/dashboard', undefined, {})
+      // replace to prevent user from going back to login screen
+      Router.replace('/dashboard')
     })
 }
 
@@ -47,8 +50,16 @@ export const registerUserAction = (): UserResult<Promise<void>> => async (
 export const logoutUserAction = () => async (
   dispatch: ThunkDispatch<IAuthState, any, any>
 ) => {
-  await authService.logOut()
-  dispatch({ type: AuthActionTypes.Logout })
+  await authService
+    .logOut()
+    .then(() => {
+      dispatch({ type: AuthActionTypes.Logout })
+    })
+    .then(() => {
+      // put user in place
+      // replace does not leave url history
+      Router.replace('/')
+    })
 }
 
 export const refreshJWTAction = (): UserResult<Promise<void>> => async (
@@ -60,7 +71,6 @@ export const refreshJWTAction = (): UserResult<Promise<void>> => async (
   const accessToken = authService.getAccessToken(ctx)
   if (refreshToken) {
     try {
-      const { getAxiosInstance } = await import('@Lib/axios-instance')
       const refreshTokenPayload = await getAxiosInstance().post<Refresh>(
         'account/refresh',
         {
@@ -108,7 +118,6 @@ export const checkAuthStatusAction = (): UserResult<Promise<void>> => async (
   if (!!authToken) {
     try {
       // dynamic import saves client data if server
-      const { getAxiosInstance } = await import('@Lib/axios-instance')
       const authCodeResponse = await getAxiosInstance().post<Viewer>(
         'account/viewer',
         undefined,
