@@ -19,3 +19,12 @@
     padding: 1.3rem;
   }
 }
+
+.dashboardWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+  height: 100%;
+}

@@ -1,9 +1,7 @@
+import { DashboardView } from '@Components/Views/dashboard'
+
 function Dashboard() {
-  return (
-    <>
-      <h1>dashboard</h1>
-    </>
-  )
+  return <DashboardView />
 }
 
 // make this easy

@@ -18,7 +18,6 @@ export type EmployeesBodyArgs = FindManyEmployeeArgs
 /**
  * post
  * Returns many employees
- * @param req.body: { empId: number }
  * @param res.data.employees: employeeData[] | undefined if not found
  */
 export default handler(async (req) => {

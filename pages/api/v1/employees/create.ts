@@ -41,6 +41,14 @@ export default handler(async (req) => {
     throw new InvalidArgumentError('Password must be 8 characters or greater')
   }
 
+  // invalid role supplied??
+  if (
+    typeof req.body.role !== 'undefined' ||
+    req.body.role !== 'ADMIN' ||
+    req.body.role !== 'MODERATOR'
+  )
+    throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
+
   // use a location as default
   const locations = await prisma.location.findMany()
   const defaultLocation =

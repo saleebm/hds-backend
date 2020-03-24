@@ -1,11 +1,11 @@
 @font-face {
-    font-family: "IBM Plex Serif";
-    font-style: normal;
-    font-weight: 400;
-    src: url("/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.eot");
-    src: local("IBM Plex Serif Thin"), local("IBMPlexSerif-Thin"),
-        url("/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.woff2") format("woff2"),
-        url("/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.woff") format("woff"),
-        url("/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.ttf") format("truetype"),
-        url("/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.otf") format("opentype");
+  font-family: 'IBM Plex Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.eot');
+  src: local('IBM Plex Serif Thin'), local('IBMPlexSerif-Thin'),
+    url('/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.woff2') format('woff2'),
+    url('/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.woff') format('woff'),
+    url('/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.ttf') format('truetype'),
+    url('/static/fonts/IBM-Plex-Serif/IBMPlexMono-Thin.otf') format('opentype');
 }

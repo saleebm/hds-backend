@@ -4,9 +4,10 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 // todo don't import from dist
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
+import { withRedux } from '@Lib/hoc'
+import { ErrorBoundary } from '@Components/Elements/ErrorBoundary'
 import { darkTheme } from '@Config'
 import { Layout } from '@Components/Layout'
-import { withRedux } from '@Lib/hoc'
 
 import '@Static/styles/index.global.scss'
 
@@ -20,7 +21,7 @@ function App({ pageProps, Component, router }: AppPropsType) {
   }, [])
 
   return (
-    <>
+    <ErrorBoundary>
       <ThemeProvider theme={darkTheme}>
         <Layout pathname={router.pathname}>
           <Component {...pageProps} />
@@ -33,7 +34,7 @@ function App({ pageProps, Component, router }: AppPropsType) {
           min-height: 100vh;
         }
       `}</style>
-    </>
+    </ErrorBoundary>
   )
 }
 
