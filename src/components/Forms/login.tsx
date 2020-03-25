@@ -24,7 +24,7 @@ import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
 import styles from './form.module.scss'
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
       margin: theme.spacing(1),
@@ -166,7 +166,7 @@ function LoginForm({
           error={!!errors.password}
           name={'password'}
           aria-invalid={!!errors.password ? 'true' : 'false'}
-          aria-describedby="error-password-required"
+          aria-describedby="error-password-required error-password-validate"
           inputRef={register({ required: true })}
           endAdornment={
             <InputAdornment position="end">
@@ -175,10 +175,12 @@ function LoginForm({
           }
         />
         {!!errors.password && errors.password?.type === 'required' && (
-          <FormHelperText id={'error-name-required'}>Required</FormHelperText>
+          <FormHelperText id={'error-password-required'}>
+            Required
+          </FormHelperText>
         )}
         {!!errors.password && errors.password?.type === 'validate' && (
-          <FormHelperText id={'error-name-required'}>
+          <FormHelperText id={'error-password-validate'}>
             Wrong password
           </FormHelperText>
         )}

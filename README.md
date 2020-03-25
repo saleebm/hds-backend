@@ -4,9 +4,12 @@
 
 - generate keys for encryption as [stated below](keys-for-encryption)
 - make sure .env has correct mysql_url for prisma2 in the prisma folder.
+- also make sure .env in root dir is configured properly
 - create user hds_user and database hds.
-- `grant all privileges on hds.* to hds_user@localhost`
-- `npm run prisma2:init`
+  - `create database hds;`
+  - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
+  - `grant all privileges on hds.\* to hds_user@localhost;`
+- finally run `npm run prisma2:init` to have prisma generate database schema
 - to create a test user with a script, run seed:build and seed:run
 
 # TODO
@@ -14,6 +17,7 @@
 ---
 
 ## data fetching
+
 1. useSWR
 
 ## auth service
@@ -27,11 +31,12 @@
     ~~4. `js const postmanTests = () => Promise.resolve(this.stepThree) return postmanTests.res.success ? 'set up login dashboard' : 'repeat steps 2 - 4'`~~
 
     ~~5. refresh token endpoint~~
+
     6. reset password endpoint
 
 3.  Check if front facing users need auth (ie customer entity)
-~~4. HOC for auth checking in api~~
-~~5. Config for auth codes and responses~~
+    ~~4. HOC for auth checking in api~~
+    ~~5. Config for auth codes and responses~~
 
 ---
 

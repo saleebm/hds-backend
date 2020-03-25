@@ -34,21 +34,23 @@ export default handler(async (req) => {
   }
 
   // invalid password supplied? does not care if it is empty, that is handled below by generateDefaultPasswordOrReturn()
-  if (
-    req.body.password && Array.isArray(req.body.password)
-      ? req.body.password[0].length < 8
-      : req.body.password.length < 8
-  ) {
-    throw new InvalidArgumentError('Password must be 8 characters or greater')
+  if (req.body.password) {
+    if (
+      Array.isArray(req.body.password)
+        ? req.body.password[0].length < 8
+        : req.body.password.length < 8
+    )
+      throw new InvalidArgumentError('Password must be 8 characters or greater')
   }
 
   // invalid role supplied??
-  if (
-    typeof req.body.role !== 'undefined' ||
-    req.body.role !== 'ADMIN' ||
-    req.body.role !== 'MODERATOR'
-  )
-    throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
+  if (typeof req.body.role !== 'undefined') {
+    if (
+      req.body.role.toString() !== 'ADMIN' &&
+      req.body.role.toString() !== 'MODERATOR'
+    )
+      throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
+  }
 
   // use a location as default
   const locations = await prisma.location.findMany()
@@ -122,9 +124,10 @@ export default handler(async (req) => {
     // then now generate code. this has to be done after the user is created obv.
     if (!req.body.password && !!userCreated) {
       // first generate magicCode for user to go to reset password
-      const magicCode = await generateCode(userCreated.id)
+      const magicCode = await generateCode(userCreated.id, prisma)
       await sendEmail(userCreated.email, magicCode)
     }
+
     /**
      *  getEmpData prevents leaking of secure data to viewer, filtering out the user fields necessary
      */

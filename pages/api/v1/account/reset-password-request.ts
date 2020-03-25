@@ -1,0 +1,36 @@
+import { handler } from '@Lib/server'
+import {
+  MissingParameterError,
+  UnauthenticatedError,
+} from '@Lib/server/known-errors'
+import { generateCode } from '@Pages/api/v1/account/_generate-code'
+import { sendEmail } from '@Lib/server/send-email'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+/**
+ * sends email to reset password
+ * @param req.body.password || req.body.code
+ * @return success boolean
+ */
+export default handler(async (req) => {
+  if (!req.body.email) {
+    throw new MissingParameterError()
+  }
+
+  const employee = await prisma.employee.findOne({
+    where: { email: req.body.email.toString() },
+  })
+
+  if (!employee) {
+    throw new UnauthenticatedError()
+  }
+
+  const magicCode = await generateCode(employee.id, prisma)
+  await sendEmail(employee.email, magicCode)
+
+  return {
+    success: true,
+  }
+})

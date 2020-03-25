@@ -1,7 +1,6 @@
 html {
   font-family: font-family();
   /* Load system fonts */
-  font-size: ($base-font-size / $default-browser-font-size) * 100%;
   scroll-behavior: smooth;
 }
 
@@ -15,12 +14,6 @@ body {
   font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
 }
 
-ol,
-ul {
-  font-size: font-size(caption);
-  line-height: line-height(caption);
-}
-
 h1,
 h2,
 h3,
@@ -28,48 +21,22 @@ h4,
 h5,
 h6,
 p {
-  font-weight: 400;
-  letter-spacing: -0.5px;
   font-variation-settings: 'wght' 400;
 }
 
 h1 {
-  font-size: font-size(display-large);
-  font-weight: 500;
-  font-style: normal;
-  line-height: line-height(display-large);
-  letter-spacing: -1px;
   font-variation-settings: 'wght' 500;
 }
 
 h2 {
-  font-size: font-size(heading);
-  font-style: normal;
-  line-height: line-height(heading);
   letter-spacing: -0.5px;
   font-variation-settings: 'wght' 400;
 }
 
 h3 {
-  font-size: font-size(subheading);
-  font-weight: 300;
-  line-height: line-height(subheading);
   font-variation-settings: 'wght' 300;
 }
 
-h4 {
-  font-size: font-size(display-medium);
-  line-height: line-height(display-medium);
-}
-
-h5 {
-  font-size: font-size(display-small);
-  line-height: line-height(display-small);
-}
-
 h6 {
-  font-size: font-size(display-small);
-  font-weight: 300;
-  line-height: line-height(display-small);
   font-variation-settings: 'wght' 300;
 }

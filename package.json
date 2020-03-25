@@ -17,7 +17,7 @@
     "prisma2:migrate-save": "prisma2 migrate save --experimental",
     "prisma2:migrate-up": "prisma2 migrate up --experimental --verbose",
     "prisma2:preview": "prisma2 migrate save --experimental --preview",
-    "prisma2:anew": "npm run prisma2:migrate-save && npm run prisma2:migrate-up && npm run prisma2:generate",
+    "prisma2:migrate": "npm run prisma2:migrate-save && npm run prisma2:migrate-up && npm run prisma2:generate",
     "seed": "npm run seed:build && npm run seed:run",
     "seed:build": "webpack --config ./data/webpack.config.js --node-args=\"--experimental-modules\"",
     "seed:run": "node ./.dist/main.js --experimental-modules",

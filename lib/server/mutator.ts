@@ -2,7 +2,7 @@ import fetch from 'isomorphic-unfetch'
 import { KnownError } from './known-errors'
 
 export default async (
-  token: string,
+  token: string | undefined,
   url: string,
   body: Record<string, any> = {}
 ) => {

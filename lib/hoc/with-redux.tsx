@@ -111,7 +111,11 @@ export function withRedux(WrappedApp: any) {
         // get the viewer
         res.writeHead(302, 'Authenticated', { Location: '/dashboard' }).end()
       } // if no auth token and not going to login page, redirect to login
-      else if (!authToken && req.url !== '/') {
+      else if (
+        !authToken &&
+        req.url !== '/' &&
+        !req.url?.match(/^\/auth\/.+/)
+      ) {
         res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
       }
     }

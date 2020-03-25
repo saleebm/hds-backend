@@ -11,11 +11,12 @@
     display: flex;
     align-items: center;
     flex-flow: column nowrap;
-    justify-content: center;
+    justify-content: space-evenly;
     width: 100%;
     max-width: 450px;
     height: 100%;
     min-height: 400px;
+    max-height: 700px;
     padding: 1.3rem;
   }
 }
@@ -27,4 +28,25 @@
   flex-flow: column nowrap;
   justify-content: stretch;
   height: 100%;
+}
+
+.authPage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+
+  .innerAuth {
+    max-width: 600px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+  }
 }

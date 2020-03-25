@@ -1,13 +1,24 @@
-import React from 'react';
-import {AuthPage} from '@Components/Views/auth-page';
-import { NextPageContext } from 'next';
+import React from 'react'
+import { AuthPage } from '@Components/Views/auth-page'
+import { GetServerSideProps } from 'next'
 
 function AuthWithCode({ initialCode }: { initialCode: string }) {
-  return <AuthPage initialCode={initialCode} />;
+  return <AuthPage initialCode={initialCode} />
 }
 
-AuthWithCode.getInitialProps = async (ctx: NextPageContext) => {
-  return { initialCode: ctx.query.code };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const initialCode =
+    (typeof ctx.params === 'object' &&
+      'code' in ctx.params &&
+      ctx.params.code) ||
+    undefined
 
-export default AuthWithCode;
+  console.log(initialCode)
+  return {
+    props: {
+      initialCode,
+    },
+  }
+}
+
+export default AuthWithCode
