@@ -16,9 +16,13 @@
 
 ---
 
+## General cool stuff
+
+1. add toast notification system to root
+
 ## data fetching
 
-1. useSWR
+1. useSWR for lists?
 
 ## auth service
 

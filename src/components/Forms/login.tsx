@@ -115,7 +115,7 @@ function LoginForm({
 
   return (
     <>
-      <Typography variant={'h2'} className={classes.margin}>
+      <Typography variant={'h3'} className={classes.margin}>
         {isLogin ? 'Login' : 'Reset Password'}
       </Typography>
       <form
@@ -185,45 +185,54 @@ function LoginForm({
             </FormHelperText>
           )}
         </FormControl>
-        {isLogin && (
-          <FormControl className={classes.margin}>
-            <InputLabel
-              error={!!errors.password}
-              required
-              htmlFor="password"
-              id={'password-label'}
-              className={classes.label}
-            >
-              Password
-            </InputLabel>
-            <Input
-              id={'password'}
-              inputMode={'text'}
-              type={'password'}
-              autoComplete={'current-password'}
-              error={!!errors.password}
-              name={'password'}
-              aria-invalid={!!errors.password ? 'true' : 'false'}
-              aria-describedby="error-password-required error-password-validate"
-              inputRef={register({ required: true })}
-              endAdornment={
-                <InputAdornment position="end">
-                  <SecurityRounded />
-                </InputAdornment>
-              }
-            />
-            {!!errors.password && errors.password?.type === 'required' && (
-              <FormHelperText id={'error-password-required'}>
-                Required
-              </FormHelperText>
-            )}
-            {!!errors.password && errors.password?.type === 'validate' && (
-              <FormHelperText id={'error-password-validate'}>
-                Wrong password
-              </FormHelperText>
-            )}
-          </FormControl>
-        )}
+        <FormControl
+          style={{
+            ...(isLogin
+              ? {}
+              : { display: 'none !important', visibility: 'hidden' }),
+          }}
+          disabled={!isLogin}
+          aria-hidden={!isLogin}
+          aria-disabled={!isLogin}
+          className={classes.margin}
+        >
+          <InputLabel
+            error={!!errors.password}
+            required
+            htmlFor="password"
+            id={'password-label'}
+            className={classes.label}
+          >
+            Password
+          </InputLabel>
+          <Input
+            id={'password'}
+            inputMode={'text'}
+            type={'password'}
+            autoComplete={'current-password'}
+            error={!!errors.password}
+            name={'password'}
+            aria-invalid={!!errors.password ? 'true' : 'false'}
+            aria-describedby="error-password-required error-password-validate"
+            inputRef={register({ required: true })}
+            endAdornment={
+              <InputAdornment position="end">
+                <SecurityRounded />
+              </InputAdornment>
+            }
+          />
+          {!!errors.password && errors.password?.type === 'required' && (
+            <FormHelperText id={'error-password-required'}>
+              Required
+            </FormHelperText>
+          )}
+          {!!errors.password && errors.password?.type === 'validate' && (
+            <FormHelperText id={'error-password-validate'}>
+              Wrong password
+            </FormHelperText>
+          )}
+        </FormControl>
+
         <Button
           size={'large'}
           endIcon={<SendTwoTone />}

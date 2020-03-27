@@ -51,15 +51,6 @@ model ProductOrder {
   orderDate         DateTime  @default(now())
 }
 
-model Location {
-  id      Int    @id @default(autoincrement())
-  address String
-  city    String
-  state   String
-  zip     Int
-  phone   String
-}
-
 model MagicCode {
   code      String   @id
   user      Employee
@@ -68,7 +59,7 @@ model MagicCode {
 
 model Employee {
   id            Int        @id @default(autoincrement())
-  locationId    Location
+  locationId    Location   @relation(references: [id])
   role          Role       @default(value: MODERATOR)
   firstName     String
   lastName      String
@@ -91,6 +82,16 @@ model Inventory {
   locationId Location[]
   aisle      Int
   bin        String
+}
+
+model Location {
+  id        Int        @id @default(autoincrement())
+  address   String
+  city      String
+  state     String
+  zip       Int
+  phone     String
+  employees Employee[]
 }
 
 model Customer {
@@ -116,7 +117,7 @@ model Job {
   actualEnd      DateTime?
 }
 
-// the single order for a customer
+// the single order for a customer comes first
 // dueDate is long term
 model CustomerOrder {
   id                Int       @id @default(autoincrement())

@@ -16,7 +16,13 @@ export const loginUserAction = ({
   loginSuccessResponse: LoginRequestSuccess
 }): UserResult<Promise<void>> => async (dispatch, getState, { ctx }) => {
   // store user in global auth state
-  const { lastName, email, firstName, userId } = loginSuccessResponse.employee
+  const {
+    lastName,
+    email,
+    firstName,
+    userId,
+    role,
+  } = loginSuccessResponse.employee
   // save tokens in cookie jar
   await authService
     .logIn({
@@ -30,7 +36,7 @@ export const loginUserAction = ({
       // put user in store
       dispatch({
         type: AuthActionTypes.LoginSuccess,
-        payload: { lastName, firstName, userId, email },
+        payload: { lastName, firstName, userId, email, role },
       })
     })
     .then(() => {
@@ -123,11 +129,11 @@ export const checkAuthStatusAction = (): UserResult<Promise<any>> => async (
       )
       if (authCodeResponse.data && authCodeResponse.data.userId) {
         const {
-          employee: { lastName, firstName, email, userId },
+          employee: { lastName, firstName, email, userId, role },
         } = authCodeResponse.data
         return dispatch({
           type: AuthActionTypes.CheckAuthStatusSuccess,
-          payload: { lastName, firstName, email, userId },
+          payload: { lastName, firstName, email, userId, role },
         })
       } else {
         return await errorResolver(dispatch, authCodeResponse)

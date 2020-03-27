@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken'
 import { AuthPayload } from '@Types'
 
-// 1 hour
-const AUTH_TOKEN_EXPIRES_IN = 60 * 60
+// 1 day
+const AUTH_TOKEN_EXPIRES_IN = 60 * 60 * 24
 // 1 year
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 365
 

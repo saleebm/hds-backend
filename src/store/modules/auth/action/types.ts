@@ -9,19 +9,26 @@ export enum AuthActionTypes {
 }
 
 export type CurrentUserType = {
+  /**
+   * first name of user
+   */
   readonly firstName: string
   /**
-   * Last name of the user. This is equivalent to the WP_User-&gt;user_last_name property.
+   * Last name of the user.
    */
   readonly lastName: string
   /**
-   * Email of the user. This is equivalent to the WP_User-&gt;user_email property.
+   * Email of the user.
    */
   readonly email: string
   /**
-   * The Id of the user. Equivalent to WP_User-&gt;ID
+   * The Id of the user.
    */
   readonly userId: number
+  /**
+   * the role
+   */
+  readonly role: 'ADMIN' | 'MODERATOR' | string
 }
 
 export interface ILoginUserAction extends Action<AuthActionTypes.LoginSuccess> {

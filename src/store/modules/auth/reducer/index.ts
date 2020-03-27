@@ -17,12 +17,13 @@ export const AuthReducer = (
     switch (action.type) {
       case AuthActionTypes.CheckAuthStatusSuccess:
       case AuthActionTypes.LoginSuccess:
-        const { email, firstName, lastName, userId } = action.payload
+        const { email, firstName, lastName, userId, role } = action.payload
         draft.currentUser = {
           email,
           firstName,
           lastName,
           userId,
+          role,
         }
         draft.isAuthenticated = true
         // replace the current state...

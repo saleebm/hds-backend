@@ -109,12 +109,12 @@ export function withRedux(WrappedApp: any) {
           )
           if (authCodeResponse.data && authCodeResponse.data.userId) {
             const {
-              employee: { lastName, firstName, email, userId },
+              employee: { lastName, firstName, email, userId, role },
             } = authCodeResponse.data
             // dispatch
             store.dispatch({
               type: AuthActionTypes.CheckAuthStatusSuccess,
-              payload: { lastName, firstName, email, userId },
+              payload: { lastName, firstName, email, userId, role },
             })
             // the req url is the login index page... and authenticated ^
             if (req.url === '/') {

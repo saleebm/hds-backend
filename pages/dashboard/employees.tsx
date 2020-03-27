@@ -6,7 +6,7 @@ import { DashboardView } from '@Components/Views/dashboard'
 export type Employees = Array<ReturnType<typeof getEmpData>>
 
 export interface EmployeesProps {
-  employeeData: Employees
+  readonly employeeData: Readonly<Employees>
 }
 
 function EmployeesPage({ employeeData }: EmployeesProps) {
@@ -20,10 +20,15 @@ function EmployeesPage({ employeeData }: EmployeesProps) {
 export const getStaticProps: GetStaticProps<EmployeesProps> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
-  const employees = await prismaClient.employee.findMany()
+  const employees = await prismaClient.employee.findMany({
+    include: { locationId: true },
+  })
+  const employeeData = Object.freeze(
+    employees.map((emp) => ({ ...getEmpData(emp) }))
+  )
   return {
     props: {
-      employeeData: employees.map((emp) => ({ ...getEmpData(emp) })),
+      employeeData,
     },
   }
 }

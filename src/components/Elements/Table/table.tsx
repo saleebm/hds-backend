@@ -1,5 +1,5 @@
 import React, { forwardRef, Ref } from 'react'
-import MaterialTable, { Column } from 'material-table'
+import MaterialTable, { Column, MaterialTableProps } from 'material-table'
 import AddBox from '@material-ui/icons/AddBox'
 import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import Check from '@material-ui/icons/Check'
@@ -59,30 +59,13 @@ const tableIcons = {
     <ViewColumn {...props} ref={ref} />
   )),
 }
-interface Row<P> {
-  name: string
-  props: P
-}
 
-interface TableFunctions<P> {
-  onRowAdd?: (newData: Partial<Row<P>>) => Promise<any>
-  onRowUpdate?: (
-    newData?: Partial<Row<P>>,
-    oldData?: Partial<Row<P>>
-  ) => Promise<any>
-  onRowDelete?: (oldData: Partial<Row<P>>) => Promise<any>
-}
+interface TableState<P extends object> extends MaterialTableProps<P> {}
 
-interface TableState<P> extends React.ComponentProps<typeof MaterialTable> {
-  columns: Array<Column<Partial<Row<P>>>>
-  data: Partial<Row<P>>[]
-  functions: TableFunctions<P>
-}
-
-export default function Table<P>({
+export default function Table<P extends object>({
   columns,
   data,
-  functions,
+  editable,
   ...rest
 }: TableState<P>) {
   return (
@@ -91,11 +74,16 @@ export default function Table<P>({
       icons={tableIcons}
       columns={columns}
       data={data}
-      editable={{
-        onRowAdd: functions.onRowAdd,
-        onRowUpdate: functions.onRowUpdate,
-        onRowDelete: functions.onRowDelete,
+      options={{
+        addRowPosition: 'last',
+        draggable: false,
+        columnsButton: true,
+        actionsColumnIndex: -1,
+        sorting: true,
+        thirdSortClick: true,
       }}
+      isLoading={!data}
+      editable={editable}
     />
   )
 }

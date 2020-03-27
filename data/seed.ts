@@ -105,7 +105,6 @@ async function main() {
     )
   }
 
-  // much faster than await in each for loop arg
   await Promise.all(customerCreateInput)
 
   await setUpInventory()
