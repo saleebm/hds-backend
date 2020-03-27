@@ -96,36 +96,41 @@ export function withRedux(WrappedApp: any) {
       }
       if (!!store && authToken) {
         // did not work with checkAuthStatusAction thunk for some reason
-        const authCodeResponse = await getAxiosInstance().post<Viewer>(
-          'account/viewer',
-          undefined,
-          {
-            headers: {
-              authorization: `Bearer ${authToken}`,
-            },
-            withCredentials: true,
+        try {
+          const authCodeResponse = await getAxiosInstance().post<Viewer>(
+            'account/viewer',
+            undefined,
+            {
+              headers: {
+                authorization: `Bearer ${authToken}`,
+              },
+              withCredentials: true,
+            }
+          )
+          if (authCodeResponse.data && authCodeResponse.data.userId) {
+            const {
+              employee: { lastName, firstName, email, userId },
+            } = authCodeResponse.data
+            // dispatch
+            store.dispatch({
+              type: AuthActionTypes.CheckAuthStatusSuccess,
+              payload: { lastName, firstName, email, userId },
+            })
+            // the req url is the login index page... and authenticated ^
+            if (req.url === '/') {
+              // redirect to dashboard
+              res
+                .writeHead(302, 'Authenticated', { Location: '/dashboard' })
+                .end()
+            } // if not authorized by server and not going to login page or auth page (reset password), redirect to login
+          } else {
+            redirectUnauthenticated()
           }
-        )
-        if (authCodeResponse.data && authCodeResponse.data.userId) {
-          const {
-            employee: { lastName, firstName, email, userId },
-          } = authCodeResponse.data
-          // dispatch
-          store.dispatch({
-            type: AuthActionTypes.CheckAuthStatusSuccess,
-            payload: { lastName, firstName, email, userId },
-          })
-          // the req url is the login index page... and authenticated ^
-          if (req.url === '/') {
-            // redirect to dashboard
-            res
-              .writeHead(302, 'Authenticated', { Location: '/dashboard' })
-              .end()
-          } // if not authorized by server and not going to login page or auth page (reset password), redirect to login
-        } else {
+        } catch (e) {
           redirectUnauthenticated()
-        } //no auth token at all
+        }
       } else {
+        //no auth token at all
         redirectUnauthenticated()
       }
     }

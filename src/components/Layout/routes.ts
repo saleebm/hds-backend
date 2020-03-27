@@ -8,6 +8,7 @@ import {
   GpsFixedTwoTone,
   LoyaltyTwoTone,
   MonetizationOnTwoTone,
+  MoneySharp,
   ReceiptTwoTone,
 } from '@material-ui/icons'
 
@@ -74,6 +75,13 @@ export default Object.freeze([
     prettyName: 'Bids',
     includeInNav: true,
     icon: AttachMoneyTwoTone,
+  },
+  {
+    pathname: '/customer-sales',
+    slug: '/customer-sales',
+    prettyName: 'Customer Sales',
+    includeInNav: true,
+    icon: MoneySharp,
   },
   {
     pathname: '/customer-orders',

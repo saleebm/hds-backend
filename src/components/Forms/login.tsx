@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { bindActionCreators, Dispatch } from 'redux'
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { connect } from 'react-redux'
 
 import Input from '@material-ui/core/OutlinedInput'
@@ -48,6 +48,19 @@ function LoginForm({
   setErrorDispatch,
   loginUser,
 }: ReturnType<typeof mapDispatchToProps>) {
+  const [status, setStatus] = useState<string | undefined>(undefined)
+
+  const [isLogin, setIsLogin] = useState(true)
+  const formInput = useMemo(
+    () =>
+      isLogin
+        ? {
+            email: '',
+            password: '',
+          }
+        : { email: '' },
+    [isLogin]
+  )
   const classes = useStyles()
   const axios = getAxiosInstance()
   const {
@@ -56,13 +69,10 @@ function LoginForm({
     errors,
     setError,
     formState: { isSubmitting },
-  } = useForm<{
-    email: string
-    password: string
-  }>({ reValidateMode: 'onBlur', mode: 'onBlur' })
+  } = useForm<typeof formInput>({ reValidateMode: 'onBlur', mode: 'onBlur' })
 
   const loginRequest = useCallback(
-    async (props: { email: string; password: string }) => {
+    async (props) => {
       await axios
         .post<{ data: any }>('account/login', props)
         .catch((e) => {
@@ -86,116 +96,156 @@ function LoginForm({
     [axios, setError, loginUser, setErrorDispatch]
   )
 
+  const resetPasswordRequest = useCallback(
+    async (body: { email: string }) => {
+      await axios
+        .post('account/reset-password-request', body)
+        .catch((e) => {
+          console.warn(e)
+          setError('email', 'validate', 'Email does not exits')
+        })
+        .then((res) => {
+          if (res && res.data && res.data.success) {
+            setStatus('Success. Please check your email.')
+          }
+        })
+    },
+    [setError, axios]
+  )
+
   return (
-    <form
-      className={styles.form}
-      noValidate
-      onSubmit={handleSubmit(loginRequest)}
-    >
-      <FormControl className={classes.margin}>
-        <InputLabel
-          id={'email-label'}
-          error={!!errors.email}
-          required
-          htmlFor="email"
-          className={classes.label}
-        >
-          Email address
-        </InputLabel>
-        <Input
-          aria-invalid={!!errors.email}
-          type={'email'}
-          autoComplete={'email'}
-          name={'email'}
-          required
-          id={'email'}
-          aria-describedby="error-email-required error-email-pattern error-email-validate"
-          inputRef={register({
-            required: true,
-            pattern: emailRegEx,
-            validate: async (value) => {
-              try {
-                const { data } = await axios.get(
-                  `account/email-exists?email=${value}`
-                )
-                // console.log(data)
-                if (data && 'exists' in data) {
-                  // data.exists is either true or false
-                  return data.exists
-                }
-              } catch (e) {
-                console.warn(e)
-              }
-            },
-          })}
-          endAdornment={
-            <InputAdornment position="end">
-              <AccountCircle />
-            </InputAdornment>
-          }
-        />
-        {!!errors.email && errors.email?.type === 'required' && (
-          <FormHelperText id={'error-email-required'}>Required</FormHelperText>
-        )}
-        {!!errors.email && errors.email?.type === 'pattern' && (
-          <FormHelperText id={'error-email-pattern'}>
-            Invalid email
-          </FormHelperText>
-        )}
-        {!!errors.email && errors.email?.type === 'validate' && (
-          <FormHelperText id={'error-email-validate'}>
-            Email does not exist in system
-          </FormHelperText>
-        )}
-      </FormControl>
-      <FormControl className={classes.margin}>
-        <InputLabel
-          error={!!errors.password}
-          required
-          htmlFor="password"
-          id={'password-label'}
-          className={classes.label}
-        >
-          Password
-        </InputLabel>
-        <Input
-          id={'password'}
-          inputMode={'text'}
-          type={'password'}
-          autoComplete={'current-password'}
-          error={!!errors.password}
-          name={'password'}
-          aria-invalid={!!errors.password ? 'true' : 'false'}
-          aria-describedby="error-password-required error-password-validate"
-          inputRef={register({ required: true })}
-          endAdornment={
-            <InputAdornment position="end">
-              <SecurityRounded />
-            </InputAdornment>
-          }
-        />
-        {!!errors.password && errors.password?.type === 'required' && (
-          <FormHelperText id={'error-password-required'}>
-            Required
-          </FormHelperText>
-        )}
-        {!!errors.password && errors.password?.type === 'validate' && (
-          <FormHelperText id={'error-password-validate'}>
-            Wrong password
-          </FormHelperText>
-        )}
-      </FormControl>
-      <Button
-        size={'large'}
-        endIcon={<SendTwoTone />}
-        className={classes.margin}
-        variant={'outlined'}
-        type={'submit'}
-        disabled={isSubmitting}
+    <>
+      <Typography variant={'h2'} className={classes.margin}>
+        {isLogin ? 'Login' : 'Reset Password'}
+      </Typography>
+      <form
+        className={styles.form}
+        noValidate
+        onSubmit={
+          isLogin
+            ? handleSubmit(loginRequest)
+            : handleSubmit(resetPasswordRequest)
+        }
       >
-        <Typography>Submit</Typography>
+        <FormControl className={classes.margin}>
+          <InputLabel
+            id={'email-label'}
+            error={!!errors.email}
+            required
+            htmlFor="email"
+            className={classes.label}
+          >
+            Email address
+          </InputLabel>
+          <Input
+            aria-invalid={!!errors.email}
+            type={'email'}
+            autoComplete={'email'}
+            name={'email'}
+            required
+            id={'email'}
+            aria-describedby="error-email-required error-email-pattern error-email-validate"
+            inputRef={register({
+              required: true,
+              pattern: emailRegEx,
+              validate: async (value) => {
+                try {
+                  const { data } = await axios.get(
+                    `account/email-exists?email=${value}`
+                  )
+                  // console.log(data)
+                  if (data && 'exists' in data) {
+                    // data.exists is either true or false
+                    return data.exists
+                  }
+                } catch (e) {
+                  console.warn(e)
+                }
+              },
+            })}
+            endAdornment={
+              <InputAdornment position="end">
+                <AccountCircle />
+              </InputAdornment>
+            }
+          />
+          {!!errors.email && errors.email?.type === 'required' && (
+            <FormHelperText id={'error-email-required'}>
+              Required
+            </FormHelperText>
+          )}
+          {!!errors.email && errors.email?.type === 'pattern' && (
+            <FormHelperText id={'error-email-pattern'}>
+              Invalid email
+            </FormHelperText>
+          )}
+          {!!errors.email && errors.email?.type === 'validate' && (
+            <FormHelperText id={'error-email-validate'}>
+              Email does not exist in system
+            </FormHelperText>
+          )}
+        </FormControl>
+        {isLogin && (
+          <FormControl className={classes.margin}>
+            <InputLabel
+              error={!!errors.password}
+              required
+              htmlFor="password"
+              id={'password-label'}
+              className={classes.label}
+            >
+              Password
+            </InputLabel>
+            <Input
+              id={'password'}
+              inputMode={'text'}
+              type={'password'}
+              autoComplete={'current-password'}
+              error={!!errors.password}
+              name={'password'}
+              aria-invalid={!!errors.password ? 'true' : 'false'}
+              aria-describedby="error-password-required error-password-validate"
+              inputRef={register({ required: true })}
+              endAdornment={
+                <InputAdornment position="end">
+                  <SecurityRounded />
+                </InputAdornment>
+              }
+            />
+            {!!errors.password && errors.password?.type === 'required' && (
+              <FormHelperText id={'error-password-required'}>
+                Required
+              </FormHelperText>
+            )}
+            {!!errors.password && errors.password?.type === 'validate' && (
+              <FormHelperText id={'error-password-validate'}>
+                Wrong password
+              </FormHelperText>
+            )}
+          </FormControl>
+        )}
+        <Button
+          size={'large'}
+          endIcon={<SendTwoTone />}
+          className={classes.margin}
+          variant={'outlined'}
+          type={'submit'}
+          disabled={isSubmitting}
+        >
+          <Typography>Submit</Typography>
+        </Button>
+        {status && <Typography variant={'body2'}>{status}</Typography>}
+      </form>
+      <Button
+        type={'button'}
+        variant={'text'}
+        size={'small'}
+        title={'show reset password form'}
+        onClick={() => setIsLogin((current) => !current)}
+      >
+        {isLogin ? 'Reset password' : 'Login'}
       </Button>
-    </form>
+    </>
   )
 }
 

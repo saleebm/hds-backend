@@ -8,7 +8,7 @@
 - create user hds_user and database hds.
   - `create database hds;`
   - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
-  - `grant all privileges on hds.\* to hds_user@localhost;`
+  - `grant all privileges on hds.* to hds_user@localhost;`
 - finally run `npm run prisma2:init` to have prisma generate database schema
 - to create a test user with a script, run seed:build and seed:run
 
