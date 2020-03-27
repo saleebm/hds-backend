@@ -79,6 +79,7 @@ async function main() {
     },
   })
 
+  const customerCreateInput = []
   for (const customer of customerData) {
     const {
       City,
@@ -89,19 +90,23 @@ async function main() {
       StreetAddress,
       ZipCode,
     } = customer
-    const createdCustomer = await prisma.customer.create({
-      data: {
-        address: StreetAddress,
-        city: City,
-        firstName: FirstName,
-        middleInitial: MI,
-        lastName: LastName,
-        state: State,
-        zip: ZipCode,
-      },
-    })
-    console.log(createdCustomer.id)
+    customerCreateInput.push(
+      prisma.customer.create({
+        data: {
+          address: StreetAddress,
+          city: City,
+          firstName: FirstName,
+          middleInitial: MI,
+          lastName: LastName,
+          state: State,
+          zip: ZipCode,
+        },
+      })
+    )
   }
+
+  // much faster than await in each for loop arg
+  await Promise.all(customerCreateInput)
 
   await setUpInventory()
 
@@ -122,24 +127,28 @@ async function setUpInventory() {
 
   if (!currentInventoryID) throw new Error('Inventory must be created first.')
 
+  const productsCreated = []
   for (const appliance of applianceData) {
     const { Brand, Cost, Description, ListPrice, Model, Serial } = appliance
-    const res = await prisma.product.create({
-      data: {
-        brand: Brand,
-        listPrice: `${ListPrice}`,
-        productCategory: 'Appliances',
-        modelNumber: Model,
-        unitCost: `${Cost}`,
-        inventory: {
-          connect: { id: currentInventoryID },
+    productsCreated.push(
+      prisma.product.create({
+        data: {
+          brand: Brand,
+          listPrice: `${ListPrice}`,
+          productCategory: 'Appliances',
+          modelNumber: Model,
+          unitCost: `${Cost}`,
+          inventory: {
+            connect: { id: currentInventoryID },
+          },
+          description: Description,
+          serialNumber: `${Serial}`,
         },
-        description: Description,
-        serialNumber: `${Serial}`,
-      },
-    })
-    console.log(res.id)
+      })
+    )
   }
+  // one blocking call vs 1300 ^
+  await Promise.all(productsCreated).catch((e) => console.error(e))
 }
 
 // check to make sure that the encrypted db password is verified by bcrypt
