@@ -3,7 +3,5 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200322185142-init
-20200324150623-add-magic-code
-20200327030531-remove-customer-sales
-20200327031620-add-customer-sales-with-array-of-orders
+20200327054348-init
+20200327065009-use-string-bc-fractions

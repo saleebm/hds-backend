@@ -1,5 +1,3 @@
-create schema if not exists hds collate utf8mb4_general_ci;
-
 create table if not exists Customer
 (
     address varchar(191) default '' not null,
@@ -252,7 +250,7 @@ create index productOrder
 
 create index supplierId
     on ProductOrder (supplierId);
-# prisma2 stuff
+
 create table if not exists _Migration
 (
     revision           int auto_increment

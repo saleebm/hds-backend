@@ -1,8 +1,10 @@
-import 'core-js'
-import 'regenerator-runtime/runtime'
 import dotenv from 'dotenv'
 import path from 'path'
 import * as PrismaClient from '@prisma/client'
+
+// customers from tab delimited csv
+import customerData from './json/customers.json'
+
 // the only dependency from the main files
 // noinspection TypeScriptPreferShortImport,ES6PreferShortImport
 import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
@@ -53,24 +55,14 @@ async function main() {
     },
   })
 
-  // product and inventory
-  const mainProduct = await prisma.product.create({
+  // inventory
+  const mainInventory = await prisma.inventory.create({
     data: {
-      description: '',
-      inventory: {
-        create: {
-          aisle: 1,
-          bin: '#37ew9983',
-          locationId: {
-            connect: { id: mainUser.locationId.id },
-          },
-          serialNumber: 1234,
-        },
+      aisle: 1,
+      bin: '#37ew9983',
+      locationId: {
+        connect: { id: mainUser.locationId.id },
       },
-      unitCost: 12000,
-      price: 23000,
-      modelNumber: 1,
-      productCategory: 'Homes',
     },
   })
   // supplier
@@ -80,14 +72,38 @@ async function main() {
       city: 'jax',
       state: 'FL',
       email: 'indiesupplier@yahoo.org',
-      name: 'fat john',
+      name: 'The Indie Supplier',
       phone: '301-123-9876',
       zip: 32388,
     },
   })
 
+  for (const customer of customerData) {
+    const {
+      City,
+      FirstName,
+      LastName,
+      MI,
+      State,
+      StreetAddress,
+      ZipCode,
+    } = customer
+    const createdCustomer = await prisma.customer.create({
+      data: {
+        address: StreetAddress,
+        city: City,
+        firstName: FirstName,
+        middleInitial: MI,
+        lastName: LastName,
+        state: State,
+        zip: ZipCode,
+      },
+    })
+    console.log(createdCustomer.id)
+  }
+
   console.log(`mainUser: \r\n ${JSON.stringify(mainUser)}`)
-  console.log(`mainProduct: \r\n ${JSON.stringify(mainProduct)}`)
+  console.log(`mainProduct: \r\n ${JSON.stringify(mainInventory)}`)
   console.log(`mainSupplier: \r\n ${JSON.stringify(mainSupplier)}`)
 
   return {
@@ -115,7 +131,11 @@ async function testUserPassword(userId: number) {
 try {
   main()
     .catch((e) => console.error(e))
-    .then((res) => res && 'userId' in res && testUserPassword(res.userId))
+    .then(
+      async (res) =>
+        res && 'userId' in res && (await testUserPassword(res.userId))
+    )
+    .then(async () => await import('./seed-sample-data'))
     .finally(async () => {
       console.log('disconnecting')
       await prisma.disconnect()

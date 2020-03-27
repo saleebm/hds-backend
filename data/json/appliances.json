@@ -1,0 +1,530 @@
+[
+  {
+    "Model": "JVM136C",
+    "Serial": 10225688,
+    "Brand": "GE",
+    "Description": "Over the Range Microwave ",
+    "Cost": 355,
+    "ListPrice": 499
+  },
+  {
+    "Model": "JVM136B",
+    "Serial": 10255688,
+    "Brand": "GE",
+    "Description": "Over the Range Microwave",
+    "Cost": 325,
+    "ListPrice": 429
+  },
+  {
+    "Model": "JVM136B",
+    "Serial": 10255687,
+    "Brand": "GE",
+    "Description": "Over the Range Microwave",
+    "Cost": 325,
+    "ListPrice": 429
+  },
+  {
+    "Model": "GSD2600",
+    "Serial": 10899455,
+    "Brand": "GE",
+    "Description": "Dishwasher ",
+    "Cost": 299,
+    "ListPrice": 375
+  },
+  {
+    "Model": "GSD2600",
+    "Serial": 10899456,
+    "Brand": "GE",
+    "Description": "Dishwasher ",
+    "Cost": 299,
+    "ListPrice": 375
+  },
+  {
+    "Model": "GSD2600",
+    "Serial": 10899457,
+    "Brand": "GE",
+    "Description": "Dishwasher ",
+    "Cost": 299,
+    "ListPrice": 375
+  },
+  {
+    "Model": "GSD2600",
+    "Serial": 10899458,
+    "Brand": "GE",
+    "Description": "Dishwasher",
+    "Cost": 299,
+    "ListPrice": 375
+  },
+  {
+    "Model": "GSD2600",
+    "Serial": 10899459,
+    "Brand": "GE",
+    "Description": "Dishwasher",
+    "Cost": 299,
+    "ListPrice": 375
+  },
+  {
+    "Model": "SHY99A0x",
+    "Serial": 58344566,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 599,
+    "ListPrice": 899
+  },
+  {
+    "Model": "SHY99A0x",
+    "Serial": 58344544,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 599,
+    "ListPrice": 899
+  },
+  {
+    "Model": "SHY99A0x",
+    "Serial": 58344533,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 599,
+    "ListPrice": 899
+  },
+  {
+    "Model": "SHU33A0x",
+    "Serial": 56799922,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 499,
+    "ListPrice": 739
+  },
+  {
+    "Model": "SHU33A0x",
+    "Serial": 56799924,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 499,
+    "ListPrice": 739
+  },
+  {
+    "Model": "SHU33A0x",
+    "Serial": 56799926,
+    "Brand": "Bosch",
+    "Description": "Dishwasher",
+    "Cost": 499,
+    "ListPrice": 739
+  },
+  {
+    "Model": "WFL 2060",
+    "Serial": 98752454,
+    "Brand": "Bosch",
+    "Description": "Laundry Washer ",
+    "Cost": 579,
+    "ListPrice": 799
+  },
+  {
+    "Model": "WFL 2060",
+    "Serial": 98752459,
+    "Brand": "Bosch",
+    "Description": "Laundry Washer ",
+    "Cost": 579,
+    "ListPrice": 799
+  },
+  {
+    "Model": "WFL 2060",
+    "Serial": 98752469,
+    "Brand": "Bosch",
+    "Description": "Laundry Washer ",
+    "Cost": 579,
+    "ListPrice": 799
+  },
+  {
+    "Model": "WTA 3510",
+    "Serial": 97522146,
+    "Brand": "Bosch",
+    "Description": "Laundry Dryer",
+    "Cost": 399,
+    "ListPrice": 579
+  },
+  {
+    "Model": "WTA 3510",
+    "Serial": 97522149,
+    "Brand": "Bosch",
+    "Description": "Laundry Dryer",
+    "Cost": 399,
+    "ListPrice": 579
+  },
+  {
+    "Model": "WTA 3510",
+    "Serial": 97522167,
+    "Brand": "Bosch",
+    "Description": "Laundry Dryer",
+    "Cost": 399,
+    "ListPrice": 579
+  },
+  {
+    "Model": "SZ632",
+    "Serial": 14825844,
+    "Brand": "Sub Zero",
+    "Description": "Built-in Refrigerator Ð 48Ó",
+    "Cost": 2799,
+    "ListPrice": 3850
+  },
+  {
+    "Model": "SZ632",
+    "Serial": 14825848,
+    "Brand": "Sub Zero",
+    "Description": "Built-in Refrigerator Ð 48Ó",
+    "Cost": 2799,
+    "ListPrice": 3850
+  },
+  {
+    "Model": "SZ680",
+    "Serial": 14556688,
+    "Brand": "Sub Zero",
+    "Description": "Built-in Refrigerator Ð 42Ó",
+    "Cost": 2499,
+    "ListPrice": 3450
+  },
+  {
+    "Model": "SZ424/S",
+    "Serial": 25544886,
+    "Brand": "Sub Zero",
+    "Description": "Built-in Wine Cooler Ð under counter",
+    "Cost": 399,
+    "ListPrice": 599
+  },
+  {
+    "Model": "VGIC-24",
+    "Serial": 95778966,
+    "Brand": "Viking",
+    "Description": "24Ó Professional Gas Range SS",
+    "Cost": 3295,
+    "ListPrice": 3995
+  },
+  {
+    "Model": "VGIC-24",
+    "Serial": 95778998,
+    "Brand": "Viking",
+    "Description": "24Ó Professional Gas Range SS",
+    "Cost": 3295,
+    "ListPrice": 3995
+  },
+  {
+    "Model": "VGIC-24",
+    "Serial": 95778983,
+    "Brand": "Viking",
+    "Description": "24Ó Professional Gas Range SS",
+    "Cost": 3295,
+    "ListPrice": 3995
+  },
+  {
+    "Model": "CVA615",
+    "Serial": 10897781,
+    "Brand": "Miele",
+    "Description": "Built-in Coffee System",
+    "Cost": 1499,
+    "ListPrice": 2799
+  },
+  {
+    "Model": "H398BP2",
+    "Serial": 10755389,
+    "Brand": "Miele",
+    "Description": "Double Wall Oven",
+    "Cost": 2399,
+    "ListPrice": 3750
+  },
+  {
+    "Model": "H398BP2",
+    "Serial": 10755880,
+    "Brand": "Miele",
+    "Description": "Double Wall Oven",
+    "Cost": 2399,
+    "ListPrice": 3750
+  },
+  {
+    "Model": "H398BP2",
+    "Serial": 10757078,
+    "Brand": "Miele",
+    "Description": "Double Wall Oven",
+    "Cost": 2399,
+    "ListPrice": 3750
+  },
+  {
+    "Model": "JGD8348B",
+    "Serial": 34981101,
+    "Brand": "Jenn-Air",
+    "Description": "48Ó Prostyle Downdraft Cooktop",
+    "Cost": 1499,
+    "ListPrice": 2059
+  },
+  {
+    "Model": "JGD8348B",
+    "Serial": 34981115,
+    "Brand": "Jenn-Air",
+    "Description": "48Ó Prostyle Downdraft Cooktop",
+    "Cost": 1499,
+    "ListPrice": 2059
+  },
+  {
+    "Model": "JGD8348B",
+    "Serial": 34981137,
+    "Brand": "Jenn-Air",
+    "Description": "48Ó Prostyle Downdraft Cooktop",
+    "Cost": 1499,
+    "ListPrice": 2059
+  },
+  {
+    "Model": "CVEX4270",
+    "Serial": 34987109,
+    "Brand": "Jenn-Air",
+    "Description": "Double Electric Cooktop",
+    "Cost": 699,
+    "ListPrice": 959
+  },
+  {
+    "Model": "CVEX4270",
+    "Serial": 34987131,
+    "Brand": "Jenn-Air",
+    "Description": "Double Electric Cooktop",
+    "Cost": 699,
+    "ListPrice": 959
+  },
+  {
+    "Model": "CVEX4270",
+    "Serial": 34987166,
+    "Brand": "Jenn-Air",
+    "Description": "Double Electric Cooktop",
+    "Cost": 699,
+    "ListPrice": 959
+  },
+  {
+    "Model": "CVEX4270",
+    "Serial": 34987189,
+    "Brand": "Jenn-Air",
+    "Description": "Double Electric Cooktop",
+    "Cost": 699,
+    "ListPrice": 959
+  },
+  {
+    "Model": "JGD8345A",
+    "Serial": 34986911,
+    "Brand": "Jenn-Air",
+    "Description": "45Ó Downdraft Cooktop",
+    "Cost": 899,
+    "ListPrice": 1489
+  },
+  {
+    "Model": "RDFS30QB",
+    "Serial": 28946653,
+    "Brand": "Thermador",
+    "Description": "Black Free Stand Convection Range",
+    "Cost": 1799,
+    "ListPrice": 2479
+  },
+  {
+    "Model": "RDFS30QB",
+    "Serial": 28946659,
+    "Brand": "Thermador",
+    "Description": "Black Free Stand Convection Range",
+    "Cost": 1799,
+    "ListPrice": 2479
+  },
+  {
+    "Model": "RDFS30QB",
+    "Serial": 28946667,
+    "Brand": "Thermador",
+    "Description": "Stainless 30Ó Free Convection Range",
+    "Cost": 1719,
+    "ListPrice": 2359
+  },
+  {
+    "Model": "RDFS30QB",
+    "Serial": 28946678,
+    "Brand": "Thermador",
+    "Description": "Stainless 30Ó Free Convection Range",
+    "Cost": 1719,
+    "ListPrice": 2359
+  },
+  {
+    "Model": "ARSE665B",
+    "Serial": 5897125,
+    "Brand": "Amana",
+    "Description": "SS Side-by-Side Refrigerator",
+    "Cost": 1249,
+    "ListPrice": 1959
+  },
+  {
+    "Model": "ARSE665B",
+    "Serial": 5897134,
+    "Brand": "Amana",
+    "Description": "SS Side-by-Side Refrigerator",
+    "Cost": 1249,
+    "ListPrice": 1959
+  },
+  {
+    "Model": "ARSE665B",
+    "Serial": 5897167,
+    "Brand": "Amana",
+    "Description": "BL Side-by-Side Refrigerator",
+    "Cost": 1049,
+    "ListPrice": 1669
+  },
+  {
+    "Model": "ACD2238H",
+    "Serial": 5789661,
+    "Brand": "Amana",
+    "Description": "SS Side-by-Side Refrigerator",
+    "Cost": 1495,
+    "ListPrice": 2219
+  },
+  {
+    "Model": "ACD2238H",
+    "Serial": 5789690,
+    "Brand": "Amana",
+    "Description": "SS Side-by-Side Refrigerator",
+    "Cost": 1495,
+    "ListPrice": 2219
+  },
+  {
+    "Model": "777ss",
+    "Serial": 55124789,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer ",
+    "Cost": 129,
+    "ListPrice": 229
+  },
+  {
+    "Model": "777ss",
+    "Serial": 55124791,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer ",
+    "Cost": 129,
+    "ListPrice": 229
+  },
+  {
+    "Model": "777ss",
+    "Serial": 55124799,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer ",
+    "Cost": 129,
+    "ListPrice": 229
+  },
+  {
+    "Model": "Badger5",
+    "Serial": 55247891,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer ",
+    "Cost": 49,
+    "ListPrice": 99.95
+  },
+  {
+    "Model": "Badger5",
+    "Serial": 55247912,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer ",
+    "Cost": 49,
+    "ListPrice": 99.95
+  },
+  {
+    "Model": "Septic120",
+    "Serial": 55347925,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer for Septic Systems",
+    "Cost": 99,
+    "ListPrice": 199.95
+  },
+  {
+    "Model": "Septic120",
+    "Serial": 55347937,
+    "Brand": "Insinkerator",
+    "Description": "In-Sink Disposer for Septic Systems",
+    "Cost": 99,
+    "ListPrice": 199.95
+  },
+  {
+    "Model": "75wc",
+    "Serial": 67555211,
+    "Brand": "U-Line",
+    "Description": "Wine Captain 75 Bottle Ð SS",
+    "Cost": 699,
+    "ListPrice": 999
+  },
+  {
+    "Model": "75wc",
+    "Serial": 67555237,
+    "Brand": "U-Line",
+    "Description": "Wine Captain 75 Bottle Ð Black",
+    "Cost": 599,
+    "ListPrice": 889
+  },
+  {
+    "Model": "BI98",
+    "Serial": 67455891,
+    "Brand": "U-Line",
+    "Description": "Icemaker Ð Black",
+    "Cost": 499,
+    "ListPrice": 798
+  },
+  {
+    "Model": "JE2160SF",
+    "Serial": 15784991,
+    "Brand": "GE",
+    "Description": "Microwave Ð SS",
+    "Cost": 179,
+    "ListPrice": 239
+  },
+  {
+    "Model": "DOP36M94",
+    "Serial": 87599365,
+    "Brand": "Dacor",
+    "Description": "Range Ð 36Ó Pro Dual-Fuel",
+    "Cost": 4395,
+    "ListPrice": 6949
+  },
+  {
+    "Model": "HGER30SNG",
+    "Serial": 87569821,
+    "Brand": "Dacor",
+    "Description": "Heritage 30Ó Stainless Range",
+    "Cost": 2589,
+    "ListPrice": 3999
+  },
+  {
+    "Model": "RNRP36GS",
+    "Serial": 87589209,
+    "Brand": "Dacor",
+    "Description": "Renaissance 36Ó Stainless Range",
+    "Cost": 3899,
+    "ListPrice": 5498.5
+  },
+  {
+    "Model": "HWO127PS",
+    "Serial": 98562234,
+    "Brand": "Dacor",
+    "Description": "27Ó Heritage Collection Wall Oven",
+    "Cost": 2950,
+    "ListPrice": 4019
+  },
+  {
+    "Model": "HWO230PS",
+    "Serial": 98561257,
+    "Brand": "Dacor",
+    "Description": "30Ó Heritage Collection Pro Style Double Oven",
+    "Cost": 3985,
+    "ListPrice": 5399
+  },
+  {
+    "Model": "JGBS66REKSS",
+    "Serial": 845933652,
+    "Brand": "GE",
+    "Description": "30\" 5.0 cu ft. Gas Range in Stainless Steel",
+    "Cost": 525,
+    "ListPrice": 799
+  },
+  {
+    "Model": "GNE27JSMSS",
+    "Serial": 48251622,
+    "Brand": "GE",
+    "Description": "27 cu ft. French Door Refrigerator SS",
+    "Cost": 1495,
+    "ListPrice": 2199
+  }
+]

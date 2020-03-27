@@ -27,24 +27,26 @@ model Supplier {
 
 model Product {
   id              Int      @id @default(autoincrement())
-  modelNumber     Int
+  modelNumber     String
   productCategory String
   description     String
-  unitCost        Int
-  price           Int
+  unitCost        String
+  listPrice       String
+  serialNumber    String
+  brand           String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
 
-// for relation def
+// for relation def, removed though for simplicity's sake
 // @see https://github.com/prisma/prisma2/blob/master/docs/relations.md/#the-relation-attribute
 model ProductOrder {
   id                Int       @id @default(autoincrement())
   productId         Product[]
   supplierId        Supplier
   quantityPurchased Int
-  costEach          Int
-  extendedCost      Int
+  costEach          String
+  extendedCost      String
   dueDate           DateTime
   orderDate         DateTime  @default(now())
 }
@@ -65,9 +67,9 @@ model MagicCode {
 }
 
 model Employee {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   locationId    Location
-  role          Role     @default(value: MODERATOR)
+  role          Role       @default(value: MODERATOR)
   firstName     String
   lastName      String
   address       String
@@ -75,35 +77,33 @@ model Employee {
   state         String
   zip           Int
   phone         String
-  email         String   @unique
+  email         String     @unique
   password      String
   jwtUserSecret String
   magicCode     MagicCode?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model Inventory {
-  id           Int        @id @default(autoincrement())
-  productId    Product[]
-  locationId   Location[]
-  aisle        Int
-  bin          String
-  serialNumber Int
+  id         Int        @id @default(autoincrement())
+  productId  Product[]
+  locationId Location[]
+  aisle      Int
+  bin        String
 }
 
-// todo will customer need authentication?
 model Customer {
-  id        Int      @id @default(autoincrement())
-  name      String
-  address   String
-  city      String
-  state     String
-  zip       Int
-  phone     String
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  firstName     String
+  middleInitial String
+  lastName      String
+  address       String
+  city          String
+  state         String
+  zip           Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Job {
@@ -111,12 +111,13 @@ model Job {
   customerId     Customer
   startDate      DateTime  @default(now())
   scheduledEnd   DateTime
-  scheduledHours Int
-  actualHours    Int?
+  scheduledHours String
+  actualHours    String?
   actualEnd      DateTime?
 }
 
-// the id was composite of customerId and jobId
+// the single order for a customer
+// dueDate is long term
 model CustomerOrder {
   id                Int       @id @default(autoincrement())
   customerId        Customer
@@ -125,25 +126,31 @@ model CustomerOrder {
   orderDate         DateTime  @default(now())
   requestedDate     DateTime
   quantityPurchased Int
-  unitCost          Int
-  extendedCost      Int
+  unitCost          String
+  extendedCost      String
   dueDate           DateTime
 }
 
+// the bill send to the customer monthly
+// sales records, may have multiple customer orders
+// dueDate defaults to 15th of coming month
 model CustomerSale {
-  id              Int           @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
+  billNumber      Int
   customerId      Customer
   customerOrderId CustomerOrder[]
   productId       Product[]
-  saleDate        DateTime      @default(now())
-  saleAmount      Int
+  saleDate        DateTime        @default(now())
+  saleAmount      String
+  createdAt       DateTime        @default(now())
+  dueDate         DateTime
 }
 
 model Bid {
   id            Int      @id @default(autoincrement())
   customerId    Customer
-  requiredHours Int
-  bidAmount     Int
+  requiredHours String
+  bidAmount     String
 }
 
 model BidProduct {
@@ -151,5 +158,5 @@ model BidProduct {
   bidId      Bid
   productId  Product
   saleDate   DateTime @default(now())
-  saleAmount Int
+  saleAmount String
 }
