@@ -56,7 +56,6 @@ async function main() {
   // product and inventory
   const mainProduct = await prisma.product.create({
     data: {
-      bidProducts: undefined,
       description: '',
       inventory: {
         create: {

@@ -10,7 +10,6 @@ const Header = dynamic(() => import('./header'))
 
 type Props = {
   children: ReactNode
-  pathname: string
 } & ReturnType<typeof mapStateToProps>
 
 const mapStateToProps: (
@@ -26,7 +25,7 @@ const mapStateToProps: (
 
 export const Layout = connect(mapStateToProps)((props: Props) => (
   <div className={styles.layout}>
-    {props.isAuthenticated && <Header pathname={props.pathname} />}
+    {props.isAuthenticated && <Header />}
     <div className={styles.mainContent}>{props.children}</div>
   </div>
 ))

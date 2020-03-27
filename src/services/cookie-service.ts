@@ -1,9 +1,9 @@
-import cookie from 'cookie'
-import { default as Cookie } from 'nookies'
 import { ServerCtx, ServerSideProps } from '@Types'
-import { isServer } from '@Utils/common'
-import { NextPageContext } from 'next'
 import { AppPropsWithStore } from '@Types/_app'
+import { isServer } from '@Utils/common'
+import cookie from 'cookie'
+import { NextPageContext } from 'next'
+import { default as Cookie } from 'nookies'
 
 export class CookieService {
   cookieMan: typeof Cookie
@@ -16,9 +16,9 @@ export class CookieService {
   ) =>
     isServer()
       ? this.cookieMan.get(
-          ctx && 'ctx' in ctx ? ctx.ctx || undefined : ctx || undefined,
-          {}
-        )[name]
+        ctx && 'ctx' in ctx ? ctx.ctx || undefined : ctx || undefined,
+        {}
+      )[name]
       : this.cookieMan?.get()[name]
   setItem = (
     name: string,
@@ -28,11 +28,11 @@ export class CookieService {
   ) =>
     isServer()
       ? this.cookieMan.set(
-          ctx && 'ctx' in ctx ? ctx.ctx : ctx,
-          name,
-          value,
-          options || { path: '/' }
-        )
+        ctx && 'ctx' in ctx ? ctx.ctx : ctx,
+        name,
+        value,
+        options || { path: '/' }
+      )
       : this.cookieMan.set(null, name, value, options || { path: '/' })
 
   removeItem = (

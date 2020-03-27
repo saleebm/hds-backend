@@ -102,7 +102,7 @@ async function errorResolver(dispatch: any, e: any) {
 
 // store viewer in store
 // check auth by making api call
-export const checkAuthStatusAction = (): UserResult<Promise<void>> => async (
+export const checkAuthStatusAction = (): UserResult<Promise<any>> => async (
   dispatch,
   getState,
   { ctx }
@@ -121,17 +121,16 @@ export const checkAuthStatusAction = (): UserResult<Promise<void>> => async (
           withCredentials: true,
         }
       )
-
       if (authCodeResponse.data && authCodeResponse.data.userId) {
         const {
           employee: { lastName, firstName, email, userId },
         } = authCodeResponse.data
-        dispatch({
+        return dispatch({
           type: AuthActionTypes.CheckAuthStatusSuccess,
           payload: { lastName, firstName, email, userId },
         })
       } else {
-        await errorResolver(dispatch, authCodeResponse)
+        return await errorResolver(dispatch, authCodeResponse)
       }
     } catch (e) {
       await errorResolver(dispatch, e)

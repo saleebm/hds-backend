@@ -6,12 +6,12 @@ import { isServer } from '@Utils/common'
 import { configureStore } from '@Store/configure-store'
 import { AppPropsWithStore } from '@Types/_app'
 import { ServerSideProps } from '@Types'
-import throttle from 'lodash.throttle'
 import { Store } from 'redux'
 import { RootStateType } from '@Store/modules/types'
-import { refreshJWTAction } from '@Store/modules/auth/action'
-import { RootAction } from '@Store/modules/root-action'
+import { AuthActionTypes } from '@Store/modules/auth/action'
 import { authService } from '@Services'
+import { getAxiosInstance } from '@Lib/axios-instance'
+import { Viewer } from '@Pages/api/v1/account/viewer'
 
 interface InitStoreOptions {
   initialStoreState?: any
@@ -56,26 +56,9 @@ export function withRedux(WrappedApp: any) {
     ...rest
   }) => {
     // initialize and reuse on: next.js csr
-    const reduxStore: Store<RootStateType, RootAction> = initStore({
+    const reduxStore: Store<RootStateType, any> = initStore({
       initialStoreState,
     })
-
-    const checkAuthorized = (state: RootStateType) =>
-      state.authReducer.isAuthenticated
-
-    const unsubscribe = reduxStore.subscribe(
-      throttle(() => {
-        if (!checkAuthorized(reduxStore.getState())) {
-          console.log('not refreshing jwt')
-          return
-        }
-        try {
-          console.log('refreshing jwt action')
-          reduxStore.dispatch(refreshJWTAction() as any)
-        } catch (e) {}
-        return () => unsubscribe()
-      }, 300000)
-    )
 
     return (
       <Provider store={reduxStore}>
@@ -106,26 +89,50 @@ export function withRedux(WrappedApp: any) {
     // also used in Dashboard to control routing
     if (req && res) {
       const authToken = authService.getAccessToken(ctx)
-      // there is an auth token and the req url is not the dashboard
-      if (!!authToken && req.url === '/') {
-        // get the viewer
-        res.writeHead(302, 'Authenticated', { Location: '/dashboard' }).end()
-      } // if no auth token and not going to login page, redirect to login
-      else if (
-        !authToken &&
-        req.url !== '/' &&
-        !req.url?.match(/^\/auth\/.+/)
-      ) {
-        res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
+      const redirectUnauthenticated = () => {
+        if (req.url !== '/' && !req.url?.match(/^\/auth\/.+/)) {
+          res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
+        }
+      }
+      if (!!store && authToken) {
+        // did not work with checkAuthStatusAction thunk for some reason
+        const authCodeResponse = await getAxiosInstance().post<Viewer>(
+          'account/viewer',
+          undefined,
+          {
+            headers: {
+              authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          }
+        )
+        if (authCodeResponse.data && authCodeResponse.data.userId) {
+          const {
+            employee: { lastName, firstName, email, userId },
+          } = authCodeResponse.data
+          // dispatch
+          store.dispatch({
+            type: AuthActionTypes.CheckAuthStatusSuccess,
+            payload: { lastName, firstName, email, userId },
+          })
+          // the req url is the login index page... and authenticated ^
+          if (req.url === '/') {
+            // redirect to dashboard
+            res
+              .writeHead(302, 'Authenticated', { Location: '/dashboard' })
+              .end()
+          } // if not authorized by server and not going to login page or auth page (reset password), redirect to login
+        } else {
+          redirectUnauthenticated()
+        } //no auth token at all
+      } else {
+        redirectUnauthenticated()
       }
     }
 
     return {
       ...appProps,
-      initialStoreState:
-        store && typeof store.getState() === 'function'
-          ? store.getState()
-          : undefined,
+      initialStoreState: store?.getState(),
     }
   }
 

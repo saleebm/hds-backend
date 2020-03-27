@@ -14,7 +14,7 @@ export const sendEmail = async (email: string, code: string) => {
   await sgMailer.send({
     to: email,
     from: 'saleebmina@copt.dev',
-    subject: `Reset your HDS account password"`,
+    subject: `Reset your HDS account password`,
     text: `Login
 
 Reset your password at the following link

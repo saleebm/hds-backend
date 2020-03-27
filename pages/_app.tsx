@@ -11,7 +11,7 @@ import { Layout } from '@Components/Layout'
 
 import '@Static/styles/index.global.scss'
 
-function App({ pageProps, Component, router }: AppPropsType) {
+function App({ pageProps, Component }: AppPropsType) {
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
 
@@ -23,7 +23,7 @@ function App({ pageProps, Component, router }: AppPropsType) {
   return (
     <ErrorBoundary>
       <ThemeProvider theme={darkTheme}>
-        <Layout pathname={router.pathname}>
+        <Layout>
           <Component {...pageProps} />
         </Layout>
         <CssBaseline />
