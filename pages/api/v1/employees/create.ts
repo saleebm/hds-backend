@@ -11,6 +11,7 @@ import { cryptoFactory } from '@Utils/crypto'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { generateCode } from '@Pages/api/v1/account/_generate-code'
 import { sendEmail } from '@Lib/server/send-email'
+import getApiHostUrl from '@Lib/server/get-api-host'
 
 const prisma = new PrismaClient()
 
@@ -123,9 +124,10 @@ export default handler(async (req) => {
     // if no password was supplied and user has been created successfully
     // then now generate code. this has to be done after the user is created obv.
     if (!req.body.password && !!userCreated) {
+      const hostname = getApiHostUrl(req)
       // first generate magicCode for user to go to reset password
       const magicCode = await generateCode(userCreated.id, prisma)
-      await sendEmail(userCreated.email, magicCode)
+      await sendEmail(userCreated.email, magicCode, hostname)
     }
 
     /**

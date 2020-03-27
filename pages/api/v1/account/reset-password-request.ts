@@ -6,6 +6,7 @@ import {
 import { generateCode } from '@Pages/api/v1/account/_generate-code'
 import { sendEmail } from '@Lib/server/send-email'
 import { PrismaClient } from '@prisma/client'
+import getApiHostUrl from '@Lib/server/get-api-host'
 
 const prisma = new PrismaClient()
 
@@ -26,9 +27,10 @@ export default handler(async (req) => {
   if (!employee) {
     throw new UnauthenticatedError()
   }
+  const hostname = getApiHostUrl(req)
 
   const magicCode = await generateCode(employee.id, prisma)
-  await sendEmail(employee.email, magicCode)
+  await sendEmail(employee.email, magicCode, hostname)
 
   return {
     success: true,

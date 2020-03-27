@@ -1,13 +1,15 @@
 import sgMailer from '@sendgrid/mail'
 
 // TODO: implement email sending templates.. ie switch case for implementation - reset password, new account, etc
-export const sendEmail = async (email: string, code: string) => {
-  if (process.env.NODE_ENV === 'development') {
+export const sendEmail = async (
+  email: string,
+  code: string,
+  hostname: string
+): Promise<void> => {
     console.log(`code for ${email}: ${code}`)
-  }
 
   // todo use actual hostname!!!
-  const magicLink = `http://localhost:3000/auth/${code}`
+  const magicLink = `${hostname}/auth/${code}`
 
   sgMailer.setApiKey(process.env.SENDGRID_API_KEY)
 

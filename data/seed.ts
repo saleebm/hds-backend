@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import * as PrismaClient from '@prisma/client'
+import applianceData from './json/appliances.json'
 
 // customers from tab delimited csv
 import customerData from './json/customers.json'
@@ -102,12 +103,42 @@ async function main() {
     console.log(createdCustomer.id)
   }
 
+  await setUpInventory()
+
   console.log(`mainUser: \r\n ${JSON.stringify(mainUser)}`)
   console.log(`mainProduct: \r\n ${JSON.stringify(mainInventory)}`)
   console.log(`mainSupplier: \r\n ${JSON.stringify(mainSupplier)}`)
 
   return {
     userId: mainUser.id,
+  }
+}
+
+async function setUpInventory() {
+  const currentInventory = await prisma.inventory.findMany()
+  let currentInventoryID = undefined
+  if (currentInventory && currentInventory[0])
+    currentInventoryID = currentInventory[0].id
+
+  if (!currentInventoryID) throw new Error('Inventory must be created first.')
+
+  for (const appliance of applianceData) {
+    const { Brand, Cost, Description, ListPrice, Model, Serial } = appliance
+    const res = await prisma.product.create({
+      data: {
+        brand: Brand,
+        listPrice: `${ListPrice}`,
+        productCategory: 'Appliances',
+        modelNumber: Model,
+        unitCost: `${Cost}`,
+        inventory: {
+          connect: { id: currentInventoryID },
+        },
+        description: Description,
+        serialNumber: `${Serial}`,
+      },
+    })
+    console.log(res.id)
   }
 }
 
@@ -135,7 +166,6 @@ try {
       async (res) =>
         res && 'userId' in res && (await testUserPassword(res.userId))
     )
-    .then(async () => await import('./seed-sample-data'))
     .finally(async () => {
       console.log('disconnecting')
       await prisma.disconnect()

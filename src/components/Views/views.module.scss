@@ -27,7 +27,16 @@
   align-items: center;
   flex-flow: column nowrap;
   justify-content: stretch;
+  width: 100%;
   height: 100%;
+
+  .innerDashWrap {
+    position: relative;
+    display: block;
+    flex: 1;
+    max-width: 1420px;
+    margin: 3rem auto;
+  }
 }
 
 .authPage {
@@ -40,13 +49,13 @@
   height: 100%;
 
   .innerAuth {
-    max-width: 600px;
     position: relative;
     display: flex;
     align-items: center;
     flex-flow: column nowrap;
     justify-content: space-evenly;
     width: 100%;
+    max-width: 600px;
     height: 100%;
   }
 }

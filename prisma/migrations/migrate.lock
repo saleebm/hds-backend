@@ -3,5 +3,4 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200327054348-init
-20200327065009-use-string-bc-fractions
+20200327131657-init

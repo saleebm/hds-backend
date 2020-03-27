@@ -260,14 +260,14 @@
       "tag": "CreateField",
       "model": "Product",
       "field": "unitCost",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Product",
       "field": "listPrice",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -406,14 +406,14 @@
       "tag": "CreateField",
       "model": "ProductOrder",
       "field": "costEach",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "ProductOrder",
       "field": "extendedCost",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -1126,14 +1126,14 @@
       "tag": "CreateField",
       "model": "Job",
       "field": "scheduledHours",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Job",
       "field": "actualHours",
-      "type": "Int",
+      "type": "String",
       "arity": "Optional"
     },
     {
@@ -1261,14 +1261,14 @@
       "tag": "CreateField",
       "model": "CustomerOrder",
       "field": "unitCost",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
       "field": "extendedCost",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -1389,7 +1389,7 @@
       "tag": "CreateField",
       "model": "CustomerSale",
       "field": "saleAmount",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -1489,14 +1489,14 @@
       "tag": "CreateField",
       "model": "Bid",
       "field": "requiredHours",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Bid",
       "field": "bidAmount",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -1596,7 +1596,7 @@
       "tag": "CreateField",
       "model": "BidProduct",
       "field": "saleAmount",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     }
   ]
