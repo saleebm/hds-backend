@@ -9,6 +9,7 @@ import { ResetPasswordForm } from '@Components/Forms'
 import { MaterialNextBtn } from '@Components/Elements/Button'
 
 import styles from './views.module.scss'
+import { useSnackbarContext } from '@Utils/reducers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,18 +29,20 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
   const classes = useStyles()
+  const { toggleSnackbar } = useSnackbarContext()
+
   const [state, setState] = useState<{
     userId?: number
-    errorMessage?: string
+    error?: boolean
   } | null>(null)
   // 1. check if code is valid
   useEffect(() => {
     // get the userID
-    mutator(undefined, '/api/v1/account/verify-auth-code', {
+    mutator('/api/v1/account/verify-auth-code', {
       code: initialCode,
     })
       .catch((e) => {
-        setState({ errorMessage: e.message })
+        setState({ error: true })
       })
       .then((data: { userId: string | undefined }) => {
         // console.log(data)
@@ -48,40 +51,38 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
           return
         }
         setState({
-          errorMessage:
-            '<p>Failed to retrieve info.</p> <p>Please contact support or request another password reset from the login page.</p>',
+          error: true,
+          // '<p>Failed to retrieve info.</p> <p>Please contact support or request another password reset from the login page.</p>',
         })
       })
   }, [initialCode])
 
+  const { error } = state || {}
+
+  useEffect(() => {
+    if (error) {
+      toggleSnackbar({
+        message:
+          'Oops, something went wrong. Please request another password change from the login page. For more info, please contact our so called engineers..',
+        isOpen: true,
+        severity: 'warning',
+      })
+    }
+  }, [toggleSnackbar, error])
+
   return (
     <>
-      {state ? (
+      {!!state ? (
         <section className={styles.authPage}>
           <div className={styles.innerAuth}>
-            {state.errorMessage ? (
-              <Typography
-                dangerouslySetInnerHTML={{ __html: state.errorMessage || '' }}
-                variant={'h4'}
-              />
-            ) : (
-              <div className={styles.authPage}>
-                <Typography variant={'h4'}>Reset your password</Typography>
-                {state.userId ? (
+            <div className={styles.authPage}>
+              {!state.error && state.userId && (
+                <>
+                  <Typography variant={'h4'}>Reset your password</Typography>
                   <ResetPasswordForm userId={state.userId} />
-                ) : (
-                  <Typography variant={'body1'}>
-                    {/*TODO*/}
-                    <p>Ooops.</p>
-                    <p>
-                      Please request another password change from the login
-                      page. Something went wrong. Our so-called engineers have
-                      not been notified unfortunately, that is on a todo list.
-                    </p>
-                  </Typography>
-                )}
-              </div>
-            )}
+                </>
+              )}
+            </div>
             <MaterialNextBtn
               nextLinkProps={{ href: '/' }}
               variant={'outlined'}

@@ -23,6 +23,7 @@ import { loginUserAction } from '@Store/modules/auth/action'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
 import styles from './form.module.scss'
+import { useSnackbarContext } from '@Utils/reducers'
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,7 +49,7 @@ function LoginForm({
   setErrorDispatch,
   loginUser,
 }: ReturnType<typeof mapDispatchToProps>) {
-  const [status, setStatus] = useState<string | undefined>(undefined)
+  const { toggleSnackbar } = useSnackbarContext()
 
   const [isLogin, setIsLogin] = useState(true)
   const formInput = useMemo(
@@ -88,12 +89,17 @@ function LoginForm({
                 loginSuccessResponse: (res.data as unknown) as LoginRequestSuccess,
               })
             } catch (e) {
+              toggleSnackbar({
+                message: e.toString(),
+                severity: 'error',
+                isOpen: true,
+              })
               setErrorDispatch({ error: e, reference: 'login user dispatch' })
             }
           }
         })
     },
-    [axios, setError, loginUser, setErrorDispatch]
+    [toggleSnackbar, axios, setError, loginUser, setErrorDispatch]
   )
 
   const resetPasswordRequest = useCallback(
@@ -106,11 +112,15 @@ function LoginForm({
         })
         .then((res) => {
           if (res && res.data && res.data.success) {
-            setStatus('Success. Please check your email.')
+            toggleSnackbar({
+              message: 'Success. Please check your email.',
+              severity: 'success',
+              isOpen: true,
+            })
           }
         })
     },
-    [setError, axios]
+    [toggleSnackbar, setError, axios]
   )
 
   return (
@@ -243,7 +253,6 @@ function LoginForm({
         >
           <Typography>Submit</Typography>
         </Button>
-        {status && <Typography variant={'body2'}>{status}</Typography>}
       </form>
       <Button
         type={'button'}

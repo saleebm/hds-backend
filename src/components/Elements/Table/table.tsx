@@ -1,5 +1,5 @@
 import React, { forwardRef, Ref } from 'react'
-import MaterialTable, { Column, MaterialTableProps } from 'material-table'
+import MaterialTable, { MaterialTableProps } from 'material-table'
 import AddBox from '@material-ui/icons/AddBox'
 import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import Check from '@material-ui/icons/Check'

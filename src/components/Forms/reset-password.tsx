@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
+import Router from 'next/router'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import Input from '@material-ui/core/OutlinedInput'
@@ -12,10 +13,11 @@ import Typography from '@material-ui/core/Typography'
 import { getAxiosInstance } from '@Lib/axios-instance'
 
 import styles from '@Components/Forms/form.module.scss'
+import { useSnackbarContext } from '@Utils/reducers'
 
 function ResetPasswordRequest({ userId }: { userId: number }) {
   const classes = useStyles()
-  const [status, setStatus] = useState<string | undefined>(undefined)
+  const { toggleSnackbar } = useSnackbarContext()
   const axios = getAxiosInstance()
   const {
     register,
@@ -36,15 +38,24 @@ function ResetPasswordRequest({ userId }: { userId: number }) {
           userId,
         })
         .catch((e) => {
-          console.warn(e)
+          toggleSnackbar({
+            message: e.toString(),
+            severity: 'error',
+            isOpen: true,
+          })
         })
         .then((res) => {
           if (res && res.data && res.data.success) {
-            setStatus('Success. You may now login.')
+            toggleSnackbar({
+              message: 'Success. You may now login.',
+              isOpen: true,
+              severity: 'success',
+            })
+            Router.replace('/', undefined, { shallow: true })
           }
         })
     },
-    [userId, axios]
+    [toggleSnackbar, userId, axios]
   )
 
   return (
@@ -142,7 +153,6 @@ function ResetPasswordRequest({ userId }: { userId: number }) {
       >
         <Typography>Submit</Typography>
       </Button>
-      {status && <Typography variant={'body2'}>{status}</Typography>}
     </form>
   )
 }

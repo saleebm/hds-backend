@@ -1,4 +1,4 @@
-import { EmployeeCreateInput, PrismaClient } from '@prisma/client'
+import { EmployeeCreateInput, Location, PrismaClient } from '@prisma/client'
 import { handler } from '@Lib/server'
 import {
   DatabaseNotEquippedError,
@@ -15,7 +15,15 @@ import getApiHostUrl from '@Lib/server/get-api-host'
 
 const prisma = new PrismaClient()
 
-interface CreateEmployee extends EmployeeCreateInput {}
+export type CreateEmployee = {
+  password?: string
+  jwtUserSecret?: string
+  locationId: string | Location
+  zip: string | number
+} & Omit<
+  EmployeeCreateInput,
+  'password' | 'jwtUserSecret' | 'locationId' | 'zip'
+>
 
 /**
  * post
@@ -96,6 +104,8 @@ export default handler(async (req) => {
 
   try {
     // creates the user
+    // intellij giving issue with locationId to string
+    // noinspection SuspiciousTypeOfGuard
     const userCreated = await prisma.employee.create({
       data: {
         address,
@@ -109,11 +119,13 @@ export default handler(async (req) => {
         /** makes sure if location supplied is a number, then just connects it to that number */
         locationId:
           typeof locationId === 'object'
-            ? locationId
-            : { connect: { id: locationId } },
+            ? { connect: { id: locationId.id } }
+            : typeof locationId === 'string'
+            ? { connect: { id: parseInt(locationId) } }
+            : { connect: { id: defaultLocation?.id } },
         jwtUserSecret,
         password: passwordHash,
-        zip,
+        zip: typeof zip === 'string' ? parseInt(zip) : zip,
       },
       include: {
         /** if location created anew, then include it in create op response */

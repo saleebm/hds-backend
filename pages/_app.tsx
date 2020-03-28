@@ -4,6 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 // todo don't import from dist
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
+import { SnackbarProvider } from '@Utils/reducers'
 import { withRedux } from '@Lib/hoc'
 import { ErrorBoundary } from '@Components/Elements/ErrorBoundary'
 import { darkTheme } from '@Config'
@@ -21,12 +22,16 @@ function App({ pageProps, Component }: AppPropsType) {
   }, [])
 
   return (
-    <ErrorBoundary>
+    <>
       <ThemeProvider theme={darkTheme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-        <CssBaseline />
+        <SnackbarProvider>
+          <ErrorBoundary>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+            <CssBaseline />
+          </ErrorBoundary>
+        </SnackbarProvider>
       </ThemeProvider>
       <style jsx global>{`
         #__next {
@@ -34,7 +39,7 @@ function App({ pageProps, Component }: AppPropsType) {
           min-height: 100vh;
         }
       `}</style>
-    </ErrorBoundary>
+    </>
   )
 }
 

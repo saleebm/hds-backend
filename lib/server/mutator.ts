@@ -1,11 +1,14 @@
 import fetch from 'isomorphic-unfetch'
 import { KnownError } from './known-errors'
+import { authService } from '@Services'
+import { ServerCtx } from '@Types'
 
 export default async (
-  token: string | undefined,
   url: string,
-  body: Record<string, any> = {}
+  body: Record<string, any> = {},
+  ctx?: ServerCtx
 ) => {
+  const token = authService.getAccessToken(ctx)
   const res = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(body),
@@ -13,13 +16,15 @@ export default async (
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
+    mode: 'same-origin',
   })
 
   let data
   try {
     data = await res.json()
   } catch (error) {
-    // unknown server error, probably from zeit platform
+    console.error(error)
   }
 
   if (data.type && data.type === 'ERROR') {
