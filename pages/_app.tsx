@@ -22,24 +22,22 @@ function App({ pageProps, Component }: AppPropsType) {
   }, [])
 
   return (
-    <>
-      <ThemeProvider theme={darkTheme}>
-        <SnackbarProvider>
-          <ErrorBoundary>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-            <CssBaseline />
-          </ErrorBoundary>
-        </SnackbarProvider>
-      </ThemeProvider>
+    <ThemeProvider theme={darkTheme}>
+      <SnackbarProvider>
+        <ErrorBoundary>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+          <CssBaseline />
+        </ErrorBoundary>
+      </SnackbarProvider>
       <style jsx global>{`
         #__next {
           width: 100%;
           min-height: 100vh;
         }
       `}</style>
-    </>
+    </ThemeProvider>
   )
 }
 

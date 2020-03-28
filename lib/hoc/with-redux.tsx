@@ -8,10 +8,11 @@ import { AppPropsWithStore } from '@Types/_app'
 import { ServerSideProps } from '@Types'
 import { Store } from 'redux'
 import { RootStateType } from '@Store/modules/types'
-import { AuthActionTypes } from '@Store/modules/auth/action'
+import { AuthActionTypes, refreshJWTAction } from '@Store/modules/auth/action'
 import { authService } from '@Services'
 import { getAxiosInstance } from '@Lib/axios-instance'
 import { Viewer } from '@Pages/api/v1/account/viewer'
+import { useInterval } from '@Utils/hooks'
 
 interface InitStoreOptions {
   initialStoreState?: any
@@ -60,12 +61,24 @@ export function withRedux(WrappedApp: any) {
       initialStoreState,
     })
 
+    const { dispatch } = reduxStore || {}
+    const currentState = reduxStore.getState() || {}
+
+    // refresh token every 5 min
+    useInterval(() => {
+      if (!!currentState && dispatch) {
+        console.log('refreshing jwt')
+        dispatch(refreshJWTAction())
+      }
+    }, 300000)
+
     return (
       <Provider store={reduxStore}>
         <WrappedApp {...rest} />
       </Provider>
     )
   }
+
   // Set the correct displayName in development
   if (process.env.NODE_ENV !== 'production') {
     const displayName = WrappedApp.displayName || WrappedApp.name || 'Component'

@@ -37,6 +37,7 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       margin: theme.spacing(1),
+      display: 'flex',
     },
     label: {
       margin: theme.spacing(1),
@@ -152,7 +153,10 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
   )
 
   return (
-    <Container className={classNames(styles.tableContainer, classes.root)}>
+    <Container
+      maxWidth={'xl'}
+      className={classNames(styles.tableContainer, classes.root)}
+    >
       <Table<ReturnType<typeof getEmpData>>
         title={'Employees'}
         editable={{
