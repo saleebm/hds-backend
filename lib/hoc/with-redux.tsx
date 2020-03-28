@@ -104,7 +104,10 @@ export function withRedux(WrappedApp: any) {
       const authToken = authService.getAccessToken(ctx)
       const redirectUnauthenticated = () => {
         if (req.url !== '/' && !req.url?.match(/^\/auth\/.+/)) {
-          res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
+          if (!res.headersSent) {
+            if (typeof res.writeHead === 'function')
+              res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
+          }
         }
       }
       if (!!store && authToken) {
@@ -131,10 +134,13 @@ export function withRedux(WrappedApp: any) {
             })
             // the req url is the login index page... and authenticated ^
             if (req.url === '/') {
-              // redirect to dashboard
-              res
-                .writeHead(302, 'Authenticated', { Location: '/dashboard' })
-                .end()
+              if (!res.headersSent) {
+                if (typeof res.writeHead === 'function')
+                  // redirect to dashboard
+                  res
+                    .writeHead(302, 'Authenticated', { Location: '/dashboard' })
+                    .end()
+              }
             } // if not authorized by server and not going to login page or auth page (reset password), redirect to login
           } else {
             redirectUnauthenticated()

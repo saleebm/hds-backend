@@ -18,7 +18,7 @@
 
 ## General cool stuff
 
-1. add toast notification system to root
+~~1. add toast notification system to root~~
 
 ## data fetching
 
@@ -36,7 +36,7 @@
 
     ~~5. refresh token endpoint~~
 
-    6. reset password endpoint
+    ~~6. reset password endpoint~~
 
 3.  Check if front facing users need auth (ie customer entity)
     ~~4. HOC for auth checking in api~~
@@ -46,11 +46,14 @@
 
 ## admin console
 
-1. Forms: login / register / reset password
+1. ~~Forms: login / register / reset password~~
+
+2. setting up all the tables
 
 # Keys for encryption
 
 1. Generate:
+   - `cd keys`
    - `openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem`
    - `openssl rsa -in key.pem -pubout -out pubkey.pem`
    - `chmod 400 key.pem cert.pem pubkey.pem`
