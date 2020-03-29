@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { EmployeesTable } from '@Components/Entities/Employees'
 import { DashboardView } from '@Components/Views/dashboard'
@@ -17,15 +17,13 @@ function EmployeesPage({ employeeData }: EmployeesProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps<EmployeesProps> = async () => {
+export const getServerSideProps: GetServerSideProps<EmployeesProps> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
   const employees = await prismaClient.employee.findMany({
     include: { locationId: true },
   })
-  const employeeData = Object.freeze(
-    employees.map((emp) => ({ ...getEmpData(emp) }))
-  )
+  const employeeData = employees.map((emp) => ({ ...getEmpData(emp) }))
   return {
     props: {
       employeeData,
