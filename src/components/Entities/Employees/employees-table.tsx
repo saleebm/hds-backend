@@ -1,43 +1,94 @@
+import { useEffect, useMemo } from 'react'
 import { Column } from 'material-table'
 import { Typography } from '@material-ui/core'
-import { connect } from 'react-redux'
 import { Location } from '@prisma/client'
+import useSWR from 'swr'
 
 import { useSnackbarContext } from '@Utils/reducers'
 import { Employees } from '@Pages/dashboard/employees'
 import { Table } from '@Components/Elements/Table'
-import { RootStateType } from '@Store/modules/types'
-import { CurrentUserType } from '@Store/modules/auth/action'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import mutator from '@Lib/server/mutator'
 import { CreateEmployee } from '@Pages/api/v1/employees/create'
-import { useEffect } from 'react'
+import { Loading } from '@Components/Elements/Loading'
+import { EmployeesBodyArgs } from '@Pages/api/v1/employees/all'
+import { camelCaseToFormal } from '@Utils/common'
 
-interface EmployeesTable extends ReturnType<typeof mapStateToProps> {
+interface EmployeesData {
   readonly employees: Readonly<Employees>
 }
 
-const mapStateToProps: (
-  state: RootStateType
-) => {
-  currentUser: CurrentUserType | undefined
-} = (state: RootStateType) => {
-  return {
-    currentUser: state.authReducer.currentUser,
-  }
+interface EmployeesTable {
+  readonly locations: ReadonlyArray<Location>
+  readonly initialData: Readonly<Employees>
 }
 
-function EmployeesTable({ employees, currentUser }: EmployeesTable) {
-  const { toggleSnackbar } = useSnackbarContext()
-  const { role } = currentUser || {}
+/**
+ * every entity is configured to useSWR with swrConfig at the Dashboard element surrounding each.
+ *
+ * @param locations Needed in order to give options to select for when creating employee
+ * @param initialData initial ssr data
+ * @constructor
+ */
+function EmployeesTable({ locations, initialData }: EmployeesTable) {
+  const {
+    operationVariables,
+  }: { operationVariables: EmployeesBodyArgs } = useMemo(
+    () => ({
+      operationVariables: {
+        first: 30 /*todo use paging*/,
+        include: {
+          locationId: true,
+        },
+      },
+    }),
+    []
+  )
 
-  const columnData: Array<Column<any>> = Array.from(Object.keys(employees[0]))
+  const { data, error, isValidating, revalidate } = useSWR<EmployeesData>(
+    ['/api/v1/employees/all', operationVariables],
+    async () =>
+      await mutator<EmployeesData, EmployeesBodyArgs>(
+        '/api/v1/employees/all',
+        operationVariables
+      ),
+    {
+      onError: async (err, key, config) => {
+        console.log(err, key, config)
+      },
+      initialData: { employees: initialData },
+    }
+  )
+
+  const { toggleSnackbar } = useSnackbarContext()
+
+  useEffect(() => {
+    if (error) {
+      toggleSnackbar({
+        message: error.toString() || 'Oops, there was an error',
+        isOpen: true,
+        severity: 'error',
+      })
+    }
+  }, [error, toggleSnackbar])
+
+  if (!data || (data && data.employees && !Array.isArray(data.employees))) {
+    return <Loading />
+  }
+
+  /**
+   * Maps out the column value to each data variable
+   */
+  const columnData: Array<Column<any>> = Array.from(
+    Object.keys(data.employees[0])
+  )
     .filter((key) => key !== 'tableData')
     .map((value) => {
       switch (value) {
         case 'userId':
+          // can not let this be editable! obv.
           return {
-            title: value.toUpperCase(),
+            title: camelCaseToFormal(value).toUpperCase(),
             field: value,
             disableClick: true,
             editable: 'never',
@@ -47,7 +98,7 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
           return {
             title: value.toUpperCase(),
             field: value,
-            editable: role === 'ADMIN' ? 'always' : 'never',
+            editable: 'always',
             lookup: { ADMIN: 'ADMIN', MODERATOR: 'MODERATOR' },
             initialEditValue: 'MODERATOR',
           }
@@ -55,7 +106,7 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
           return {
             title: 'LOCATION',
             field: value,
-            editable: role === 'ADMIN' ? 'always' : 'never',
+            editable: 'always',
             render: (rowData: Partial<{ locationId: Location }>) => (
               <Typography variant={'body2'}>
                 <span
@@ -65,19 +116,19 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
                 />
               </Typography>
             ),
-            lookup: {
-              /*todo actually do a rest hook here to get the options? */
-              1: 'Phoenix, AZ.',
-            },
+            lookup: locations.reduce((acc, curr) => {
+              ;(acc as { [key: number]: string })[
+                curr.id
+              ] = `${curr.city}, ${curr.state} - ID#${curr.id}`
+              return acc
+            }, {}),
           }
         default:
           return {
-            title: value.toUpperCase(),
-            editable: role === 'ADMIN' ? 'always' : 'never',
+            title: camelCaseToFormal(value).toUpperCase(),
+            editable: 'always',
             field: value,
-            ...(Array.isArray(employees) &&
-            value in employees[0] &&
-            typeof employees[0] === 'number'
+            ...(typeof data.employees[0] === 'number'
               ? { type: 'numeric' }
               : {}),
           }
@@ -113,8 +164,9 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
         city,
         zip,
       } as CreateEmployee)
-      console.log(createdUser)
+      // console.log(createdUser)
       if (createdUser?.userId) {
+        await revalidate()
         toggleSnackbar({
           message: `Employee created with user ID #${createdUser.userId} and will be sent an email to reset password.`,
           isOpen: true,
@@ -131,19 +183,21 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
   }
 
   return (
-    <>
-      <Table<ReturnType<typeof getEmpData>>
-        title={'Employees'}
-        editable={{
-          onRowAdd: role === 'ADMIN' ? onRowAdd : undefined,
-          onRowUpdate: undefined,
-          onRowDelete: undefined,
-        }}
-        columns={columnData}
-        data={(employees as unknown) as Employees}
-      />
-    </>
+    <Table
+      title={'Employees'}
+      editable={{
+        onRowAdd: onRowAdd,
+        onRowUpdate: undefined,
+        onRowDelete: undefined,
+      }}
+      isLoading={isValidating}
+      columns={columnData}
+      data={(data.employees as unknown) as Object[]}
+      optionsToMerge={{
+        toolbar: true,
+      }}
+    />
   )
 }
 
-export default connect(mapStateToProps)(EmployeesTable)
+export default EmployeesTable

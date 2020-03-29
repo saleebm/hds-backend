@@ -4,6 +4,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
+import { Link as MuiLink, SvgIconTypeMap } from '@material-ui/core'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText, { ListItemTextProps } from '@material-ui/core/ListItemText'
@@ -22,11 +23,16 @@ import { logoutUserAction, refreshJWTAction } from '@Store/modules/auth/action'
 import { RootStateType } from '@Store/modules/types'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
+import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 
 const iOS = !isServer() && /iPad|iPhone|iPod/.test(navigator.userAgent)
 
 type ButtonLinkProps = ListItemTextProps & {
   nextLinkProps: Omit<LinkProps, 'passHref'>
+  activePath: string
+  icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
+  prettyName: string
+  pathname: string
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
@@ -61,18 +67,46 @@ const mapStateToProps: (
 }
 
 const NextListItemText = forwardRef<any, ButtonLinkProps>(
-  ({ nextLinkProps, children, ...props }, ref) => (
+  (
+    {
+      nextLinkProps,
+      activePath,
+      classes,
+      icon,
+      prettyName,
+      pathname,
+      children,
+      ...props
+    },
+    ref
+  ) => (
     <Link {...nextLinkProps} passHref>
-      <ListItemText ref={ref} {...props}>
-        {children}
-      </ListItemText>
+      <ListItem
+        className={
+          activePath === pathname
+            ? classNames(classes?.root, 'active')
+            : classes?.root
+        }
+        title={prettyName}
+        button
+        component={MuiLink}
+      >
+        {icon && <ListItemIcon>{React.createElement(icon)}</ListItemIcon>}
+        <ListItemText ref={ref} {...props}>
+          {children}
+        </ListItemText>
+      </ListItem>
     </Link>
   )
 )
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    boxShadow: theme.shadows['1'],
+    boxShadow: theme.shadows['0'],
+    color: theme.palette.text.primary,
+    '&:last-child': {
+      alignSelf: 'flexEnd',
+    },
     '&.active': {
       textDecoration: 'line-through',
       textDecorationColor: theme.palette.background.default,
@@ -85,6 +119,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   fullList: {
     width: 'auto',
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    alignItems: 'flex-start',
+    justifyContent: 'stretch',
+    minHeight: '100vh',
+  },
+  logoutButton: {
+    bottom: 0,
+    left: 0,
+    alignSelf: 'flex-end',
+    position: 'absolute',
   },
 }))
 
@@ -128,8 +173,12 @@ function SwipeableTemporaryDrawer({
       >
         Skip to main content
       </a>
-      <List>
-        <ListItem title={`welcome ${user?.first || ''} ${user?.last || ''}! `}>
+      <List className={classes.fullList} role={'navigation'} component={'nav'}>
+        <ListItem
+          component={'div'}
+          autoFocus
+          title={`welcome ${user?.first || ''} ${user?.last || ''}! `}
+        >
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
@@ -140,28 +189,25 @@ function SwipeableTemporaryDrawer({
         {ROUTE_PATHS.filter(({ includeInNav }) => includeInNav).map(
           ({ pathname, slug, prettyName, icon }) => (
             <Fragment key={slug}>
-              <ListItem
-                className={
-                  activePath === pathname
-                    ? classNames(classes.root, 'active')
-                    : classes.root
-                }
-                title={prettyName}
-                button
-              >
-                {icon && (
-                  <ListItemIcon>{React.createElement(icon)}</ListItemIcon>
-                )}
-                <NextListItemText
-                  nextLinkProps={{ href: pathname }}
-                  primary={prettyName}
-                />
-              </ListItem>
+              <NextListItemText
+                prettyName={prettyName}
+                nextLinkProps={{ href: pathname }}
+                primary={prettyName}
+                icon={icon}
+                classes={classes}
+                activePath={activePath}
+                pathname={pathname}
+              />
               <Divider />
             </Fragment>
           )
         )}
-        <ListItem onClick={logoutDispatch} title={'Logout'} button>
+        <ListItem
+          className={classes.logoutButton}
+          onClick={logoutDispatch}
+          title={'Logout'}
+          button
+        >
           <ListItemIcon>
             <ExitToAppIcon />
           </ListItemIcon>
@@ -179,18 +225,16 @@ function SwipeableTemporaryDrawer({
         isToggled={isOpen}
         onToggleClicked={() => setIsOpen((curr) => !curr)}
       />
-      <nav>
-        <SwipeableDrawer
-          anchor={'left'}
-          open={isOpen}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
-          disableBackdropTransition={!iOS}
-          disableDiscovery={iOS}
-        >
-          {renderList()}
-        </SwipeableDrawer>
-      </nav>
+      <SwipeableDrawer
+        anchor={'left'}
+        open={isOpen}
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}
+        disableBackdropTransition={!iOS}
+        disableDiscovery={iOS}
+      >
+        {renderList()}
+      </SwipeableDrawer>
     </header>
   )
 }

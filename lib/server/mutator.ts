@@ -3,15 +3,15 @@ import { KnownError } from './known-errors'
 import { authService } from '@Services'
 import { ServerCtx } from '@Types'
 
-export default async (
+export default async <EmployeesData, PostBody extends Record<string, any>>(
   url: string,
-  body: Record<string, any> = {},
+  body: PostBody,
   ctx?: ServerCtx
 ) => {
   const token = authService.getAccessToken(ctx)
   const res = await fetch(url, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify(body || {}),
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       'Content-Type': 'application/json',

@@ -7,6 +7,14 @@ import { rootReducer } from './modules/root-reducer'
 import { RootState } from './modules/root-state'
 import { RootStateType, ThunkExtraArgs } from './modules/types'
 
+const composeEnhancers = composeWithDevTools({
+  trace: true,
+/*todo if using immer -
+    serialize: {
+         map: true,
+    },*/
+})
+
 export function configureStore(
   initialState: RootStateType = RootState,
   { ctx }: ThunkExtraArgs
@@ -18,7 +26,7 @@ export function configureStore(
   ]
   const enhancer =
     process.env.NODE_ENV !== 'production'
-      ? composeWithDevTools(applyMiddleware(...middleware))
+      ? composeEnhancers(applyMiddleware(...middleware))
       : applyMiddleware(...middleware)
 
   return createStore<RootStateType, RootAction, any, any>(

@@ -1,5 +1,7 @@
+import { connect } from 'react-redux'
 import React, { forwardRef, Ref } from 'react'
-import MaterialTable, { MaterialTableProps } from 'material-table'
+import merge from 'lodash.merge'
+import MaterialTable, { MaterialTableProps, Options } from 'material-table'
 import AddBox from '@material-ui/icons/AddBox'
 import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import Check from '@material-ui/icons/Check'
@@ -15,6 +17,9 @@ import Remove from '@material-ui/icons/Remove'
 import SaveAlt from '@material-ui/icons/SaveAlt'
 import Search from '@material-ui/icons/Search'
 import ViewColumn from '@material-ui/icons/ViewColumn'
+
+import { RootStateType } from '@Store/modules/types'
+import { CurrentUserType } from '@Store/modules/auth/action'
 
 const tableIcons = {
   Add: forwardRef((props, ref: Ref<any>) => <AddBox {...props} ref={ref} />),
@@ -60,30 +65,53 @@ const tableIcons = {
   )),
 }
 
-interface TableState<P extends object> extends MaterialTableProps<P> {}
+type TableState<P extends object> = MaterialTableProps<P> &
+  ReturnType<typeof mapStateToProps> & {
+    optionsToMerge?: Options
+  }
 
-export default function Table<P extends object>({
+const mapStateToProps: (
+  state: RootStateType
+) => {
+  currentUser: CurrentUserType | undefined
+} = (state: RootStateType) => {
+  return {
+    currentUser: state.authReducer.currentUser,
+  }
+}
+function Table<P extends object>({
   columns,
   data,
   editable,
+  currentUser,
+  optionsToMerge = {},
   ...rest
 }: TableState<P>) {
+  const { role } = currentUser || {}
+
+  const opts = merge(
+    {},
+    {
+      addRowPosition: 'last',
+      draggable: false,
+      columnsButton: true,
+      actionsColumnIndex: -1,
+      sorting: true,
+      thirdSortClick: true,
+    },
+    optionsToMerge
+  )
   return (
-    <MaterialTable
+    <MaterialTable<P>
       {...rest}
       icons={tableIcons}
       columns={columns}
       data={data}
-      options={{
-        addRowPosition: 'last',
-        draggable: false,
-        columnsButton: true,
-        actionsColumnIndex: -1,
-        sorting: true,
-        thirdSortClick: true,
-      }}
+      options={opts}
       isLoading={!data}
-      editable={editable}
+      editable={role === 'ADMIN' ? editable : undefined}
     />
   )
 }
+
+export default connect(mapStateToProps)(Table)

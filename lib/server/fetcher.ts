@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 import { KnownError } from '@Lib/server/known-errors'
 
-export default async (token: string, url: string) => {
+export default async <T>(token: string, url: string) => {
   const res = await fetch(url, {
     method: 'GET',
     headers: {
@@ -21,5 +21,5 @@ export default async (token: string, url: string) => {
     throw new KnownError(data.code, data.status)
   }
 
-  return data
+  return data as Promise<T>
 }

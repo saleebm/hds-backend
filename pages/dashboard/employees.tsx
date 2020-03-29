@@ -1,18 +1,21 @@
 import { GetServerSideProps } from 'next'
+import { Location } from '@prisma/client'
+
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { EmployeesTable } from '@Components/Entities/Employees'
 import { DashboardView } from '@Components/Views/dashboard'
 
-export type Employees = Array<ReturnType<typeof getEmpData>>
+export type Employees = ReadonlyArray<ReturnType<typeof getEmpData>>
 
 export interface EmployeesProps {
-  readonly employeeData: Readonly<Employees>
+  readonly locations: ReadonlyArray<Location>
+  readonly employeeData: Employees
 }
 
-function EmployeesPage({ employeeData }: EmployeesProps) {
+function EmployeesPage({ locations, employeeData }: EmployeesProps) {
   return (
     <DashboardView pageTitle={'Employees'}>
-      <EmployeesTable employees={employeeData} />
+      <EmployeesTable locations={locations} initialData={employeeData} />
     </DashboardView>
   )
 }
@@ -23,10 +26,13 @@ export const getServerSideProps: GetServerSideProps<EmployeesProps> = async () =
   const employees = await prismaClient.employee.findMany({
     include: { locationId: true },
   })
+  const locations = await prismaClient.location.findMany()
+
   const employeeData = employees.map((emp) => ({ ...getEmpData(emp) }))
   return {
     props: {
       employeeData,
+      locations,
     },
   }
 }

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
-import Backdrop from '@material-ui/core/Backdrop'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 
 import mutator from '@Lib/server/mutator'
@@ -10,17 +8,14 @@ import { MaterialNextBtn } from '@Components/Elements/Button'
 
 import styles from './views.module.scss'
 import { useSnackbarContext } from '@Utils/reducers'
+import { Loading } from '@Components/Elements/Loading'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: '#fff',
-    },
     button: {
       margin: theme.spacing(1),
     },
-  })
+  }),
 )
 
 /**
@@ -79,7 +74,7 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
               {!state.error && state.userId && (
                 <>
                   <Typography variant={'h4'}>Reset your password</Typography>
-                  <ResetPasswordForm userId={state.userId} />
+                  <ResetPasswordForm userId={state.userId}/>
                 </>
               )}
             </div>
@@ -94,9 +89,7 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
           </div>
         </section>
       ) : (
-        <Backdrop className={classes.backdrop} open={true}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <Loading/>
       )}
     </>
   )
