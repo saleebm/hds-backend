@@ -254,3 +254,5 @@ keys/*
 !keys/.gitkeep
 
 .dist/*
+error.log
+access.log
