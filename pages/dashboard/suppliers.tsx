@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { Supplier } from '@prisma/client'
 
 import { DashboardView } from '@Components/Views/dashboard'
@@ -16,7 +16,7 @@ function SuppliersPage({ suppliers }: Suppliers) {
   )
 }
 
-export const getStaticProps: GetStaticProps<Suppliers> = async () => {
+export const getServerSideProps: GetServerSideProps<Suppliers> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
   const supplierData = await prismaClient.supplier.findMany()

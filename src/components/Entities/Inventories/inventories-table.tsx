@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { useEffect } from 'react'
 import { Location } from '@prisma/client'
 import { Column } from 'material-table'
-import { Typography, TableCell } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 
 import { Inventories, InventoriesData } from '@Pages/dashboard/inventories'
 import { useSnackbarContext } from '@Utils/reducers'

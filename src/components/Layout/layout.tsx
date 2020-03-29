@@ -24,10 +24,12 @@ const mapStateToProps: (
   }
 }
 
-export const Layout = connect(mapStateToProps)((props: Props) => (
-  <div className={styles.layout}>
-    {props.isAuthenticated && <Header />}
-    <div className={styles.mainContent}>{props.children}</div>
-    <Snackbar />
-  </div>
-))
+export const Layout = connect(mapStateToProps)(
+  ({ isAuthenticated, children }: Props) => (
+    <div className={styles.layout}>
+      {isAuthenticated && <Header />}
+      <div className={styles.mainContent}>{children}</div>
+      <Snackbar />
+    </div>
+  )
+)
