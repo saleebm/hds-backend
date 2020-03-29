@@ -32,9 +32,9 @@ async function main() {
       locationId: {
         create: {
           address: '101 bush blvd.',
-          city: 'Washington',
-          state: 'DC',
-          zip: 11123,
+          city: 'Phoenix',
+          state: 'AZ',
+          zip: 85854,
           phone: '(111) 222-3333',
         },
       },
@@ -59,6 +59,7 @@ async function main() {
   // inventory
   const mainInventory = await prisma.inventory.create({
     data: {
+      name: 'zone 6 - westside',
       aisle: 1,
       bin: '#37ew9983',
       locationId: {
@@ -73,7 +74,7 @@ async function main() {
       city: 'jax',
       state: 'FL',
       email: 'indiesupplier@yahoo.org',
-      name: 'The Indie Supplier',
+      name: 'The Plug aka OG B',
       phone: '301-123-9876',
       zip: 32388,
     },

@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next'
+import { GetStaticProps } from 'next'
 import { Supplier } from '@prisma/client'
 
 import { DashboardView } from '@Components/Views/dashboard'
@@ -8,7 +8,7 @@ export interface Suppliers {
   suppliers: ReadonlyArray<Supplier> | string
 }
 
-function SuppliersPage({suppliers}: Suppliers) {
+function SuppliersPage({ suppliers }: Suppliers) {
   return (
     <DashboardView pageTitle={'Suppliers'}>
       <SuppliersTable suppliers={JSON.parse(suppliers.toString())} />
@@ -16,7 +16,7 @@ function SuppliersPage({suppliers}: Suppliers) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Suppliers> = async () => {
+export const getStaticProps: GetStaticProps<Suppliers> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
   const supplierData = await prismaClient.supplier.findMany()

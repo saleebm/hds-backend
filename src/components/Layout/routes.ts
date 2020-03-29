@@ -35,9 +35,9 @@ export default Object.freeze([
     icon: BusinessSharp,
   },
   {
-    pathname: '/dashboard/inventory',
-    slug: 'inventory',
-    prettyName: 'Inventory',
+    pathname: '/dashboard/inventories',
+    slug: 'inventories',
+    prettyName: 'Inventories',
     includeInNav: true,
     icon: LoyaltyTwoTone,
   },

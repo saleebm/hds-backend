@@ -80,8 +80,9 @@ model Inventory {
   id         Int        @id @default(autoincrement())
   productId  Product[]
   locationId Location[]
+  name       String
   aisle      Int
-  bin        String
+  bin        String     @unique
 }
 
 model Location {

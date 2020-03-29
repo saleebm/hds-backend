@@ -10,8 +10,8 @@ const prisma = new PrismaClient()
 
 /**
  * get
- * Returns many suppliers
- * @return res.data.suppliers: suppliers[] | undefined if not found
+ * Returns many inventories
+ * @param res.data.inventories: inventories[] | undefined if not found
  */
 export default handler(async (req) => {
   // bail if not getting
@@ -26,9 +26,13 @@ export default handler(async (req) => {
     throw new UnauthenticatedError()
   }
 
-  const suppliers = await prisma.supplier.findMany()
+  //todo
+  // pass in options
+  const inventories = await prisma.inventory.findMany({
+    include: { locationId: true },
+  })
 
   return {
-    suppliers: suppliers.map((supp) => ({ ...supp })),
+    inventories: inventories.map((inventory) => ({ ...inventory })),
   }
 })

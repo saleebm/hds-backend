@@ -6,7 +6,7 @@ export const sendEmail = async (
   code: string,
   hostname: string
 ): Promise<void> => {
-    console.log(`code for ${email}: ${code}`)
+  console.log(`code for ${email}: ${code}`)
 
   // todo use actual hostname!!!
   const magicLink = `${hostname}/auth/${code}`
@@ -26,7 +26,7 @@ ${magicLink}
 ---
     `,
     html: `
-    <html>
+    <html lang="en">
     <head>
       <title></title>
     </head>
@@ -44,7 +44,7 @@ ${magicLink}
 
     <p>Please note that this code will expire in exactly 24 hours...</p>
     
-    <div style="color:#aaaaaa;margin-top:12px"><img style="display:none;width:0;height:0;color:transparent;background:transparent">If you didn't expect this email, you can safely ignore it.</div>
+    <div style="color:#aaaaaa;margin-top:12px"><img style="display:none;width:0;height:0;color:transparent;background:transparent"/>If you didn't expect this email, you can safely ignore it.</img>
     </div>
     </body>
   </html>

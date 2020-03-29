@@ -40,7 +40,7 @@ export function DashboardView({
           value={{
             /** makes sure we have authToken in there */
             refreshInterval: 300000 /* every 5min */,
-            fetcher: async (...args) => await fetcher(authToken, args),
+            fetcher: async (...args) => await fetcher(authToken, ...args),
             onError: async (err, key, config) => {
               console.error(err, key, config)
             },

@@ -815,6 +815,13 @@
     {
       "tag": "CreateField",
       "model": "Inventory",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Inventory",
       "field": "aisle",
       "type": "Int",
       "arity": "Required"
@@ -825,6 +832,17 @@
       "field": "bin",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Inventory",
+          "field": "bin"
+        },
+        "directive": "unique"
+      }
     },
     {
       "tag": "CreateModel",

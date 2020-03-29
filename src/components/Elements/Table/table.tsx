@@ -79,7 +79,7 @@ const mapStateToProps: (
     currentUser: state.authReducer.currentUser,
   }
 }
-function Table<P extends object>({
+export default connect(mapStateToProps)(function Table<P extends object>({
   columns,
   data,
   editable,
@@ -112,6 +112,4 @@ function Table<P extends object>({
       editable={role === 'ADMIN' ? editable : undefined}
     />
   )
-}
-
-export default connect(mapStateToProps)(Table)
+})

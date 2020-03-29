@@ -46,6 +46,7 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
   )
 
   const { data, error, isValidating, revalidate } = useSWR<EmployeesData>(
+    /** the array forces the post op */
     ['/api/v1/employees/all', operationVariables],
     async () =>
       await mutator<EmployeesData, EmployeesBodyArgs>(
@@ -54,7 +55,7 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
       ),
     {
       onError: async (err, key, config) => {
-        console.log(err, key, config)
+        console.error(err, key, config)
       },
       initialData: { employees: initialData },
     }
