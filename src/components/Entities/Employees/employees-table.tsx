@@ -31,11 +31,6 @@ function EmployeesTable({ employees, currentUser }: EmployeesTable) {
   const { toggleSnackbar } = useSnackbarContext()
   const { role } = currentUser || {}
 
-  useEffect(() => {
-    console.error(employees)
-    console.error(currentUser)
-  }, [currentUser, employees])
-
   const columnData: Array<Column<any>> = Array.from(Object.keys(employees[0]))
     .filter((key) => key !== 'tableData')
     .map((value) => {

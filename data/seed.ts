@@ -46,7 +46,7 @@ async function main() {
       state: 'WA',
       zip: 99999,
       phone: '(333) 111-2222',
-      email: 'monkeys1@banana.waffle',
+      email: 'saleebmina@aol.com',
       jwtUserSecret,
       password: passwordHash,
     },
