@@ -15,7 +15,7 @@ export interface InventoriesData {
 
 function InventoryPage({ inventories, locations }: InventoriesData) {
   return (
-    <DashboardView pageTitle={'Suppliers'}>
+    <DashboardView pageTitle={'Inventories'}>
       <InventoriesTable locations={locations} inventories={inventories} />
     </DashboardView>
   )

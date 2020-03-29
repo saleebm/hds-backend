@@ -33,6 +33,6 @@ export default handler(async (req) => {
   })
 
   return {
-    inventories: inventories.map((inventory) => ({ ...inventory })),
+    inventories,
   }
 })

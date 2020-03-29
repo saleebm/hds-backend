@@ -1,27 +1,24 @@
-import { Supplier } from '@prisma/client'
+import { useEffect } from 'react'
 import useSWR from 'swr'
+import { Location } from '@prisma/client'
 import { Column } from 'material-table'
 
+import { Table } from '@Components/Elements/Table'
 import { useSnackbarContext } from '@Utils/reducers'
 import { Loading } from '@Components/Elements/Loading'
-import Table from '@Components/Elements/Table/table'
-import { useEffect } from 'react'
 import { camelCaseToFormal } from '@Utils/common'
-import { Suppliers } from '@Pages/dashboard/suppliers'
 
-type SupplierData = {
-  suppliers: ReadonlyArray<Supplier>
+interface LocationsTable {
+  locations: ReadonlyArray<Location>
 }
 
-export function SuppliersTable({ suppliers }: Suppliers) {
+type LocationsKey = keyof Location | 'tableData'
+
+export function LocationsTable({ locations }: LocationsTable) {
   const { toggleSnackbar } = useSnackbarContext()
   const { data, error /* todo: isValidating, revalidate */ } = useSWR<
-    SupplierData
-  >('/api/v1/suppliers/all', undefined, {
-    initialData: {
-      suppliers: (Array.isArray(suppliers) && suppliers) || [],
-    },
-  })
+    LocationsTable
+  >('/api/v1/locations/all', { initialData: { locations } })
 
   useEffect(() => {
     if (error) {
@@ -33,15 +30,15 @@ export function SuppliersTable({ suppliers }: Suppliers) {
     }
   }, [error, toggleSnackbar])
 
-  if (!data || (data && data.suppliers && !Array.isArray(data.suppliers))) {
+  if (!data || (data && data.locations && !Array.isArray(data.locations))) {
     return <Loading />
   }
 
-  const columnData: Array<Column<{}>> | undefined = Array.from(
-    Object.keys(data.suppliers[0])
-  )
+  const columnData: Array<Column<
+    Partial<{ [key in keyof Location]: any }>
+  >> = Array.from(Object.keys(data.locations[0] as Location) as LocationsKey[])
     .filter((key) => key !== 'tableData')
-    .map((value) => {
+    .map((value: LocationsKey) => {
       switch (value) {
         case 'id':
           return {
@@ -51,15 +48,6 @@ export function SuppliersTable({ suppliers }: Suppliers) {
             disableClick: true,
             editable: 'never',
             readonly: true,
-          }
-        case 'createdAt':
-        case 'updatedAt':
-          return {
-            title: camelCaseToFormal(value).toUpperCase(),
-            field: value,
-            editable: 'never',
-            readonly: true,
-            type: 'datetime',
           }
         default:
           return {
@@ -78,7 +66,6 @@ export function SuppliersTable({ suppliers }: Suppliers) {
   /**
    * todo editable functions
    */
-
   return (
     <Table
       editable={{
@@ -86,9 +73,9 @@ export function SuppliersTable({ suppliers }: Suppliers) {
         onRowUpdate: undefined,
         onRowDelete: undefined,
       }}
-      title={'Suppliers'}
+      title={'Locations'}
       columns={columnData}
-      data={data.suppliers as Supplier[]}
+      data={data.locations as Location[]}
     />
   )
 }

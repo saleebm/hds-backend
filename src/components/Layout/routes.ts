@@ -10,6 +10,7 @@ import {
   MonetizationOnTwoTone,
   MoneySharp,
   ReceiptTwoTone,
+  PersonOutlineOutlined,
 } from '@material-ui/icons'
 
 export default Object.freeze([
@@ -35,6 +36,13 @@ export default Object.freeze([
     icon: BusinessSharp,
   },
   {
+    pathname: '/dashboard/locations',
+    slug: 'locations',
+    prettyName: 'Locations',
+    includeInNav: true,
+    icon: GpsFixedTwoTone,
+  },
+  {
     pathname: '/dashboard/inventories',
     slug: 'inventories',
     prettyName: 'Inventories',
@@ -49,32 +57,18 @@ export default Object.freeze([
     icon: DeckTwoTone,
   },
   {
+    pathname: '/dashboard/customers',
+    slug: 'customers',
+    prettyName: 'Customers',
+    includeInNav: true,
+    icon: PersonOutlineOutlined,
+  },
+  {
     pathname: '/dashboard/product-order',
     slug: 'product-order',
     prettyName: 'Product Order',
     includeInNav: true,
     icon: ReceiptTwoTone,
-  },
-  {
-    pathname: '/dashboard/locations',
-    slug: 'locations',
-    prettyName: 'Locations',
-    includeInNav: true,
-    icon: GpsFixedTwoTone,
-  },
-  {
-    pathname: '/dashboard/jobs',
-    slug: 'jobs',
-    prettyName: 'Jobs',
-    includeInNav: true,
-    icon: CallToActionTwoTone,
-  },
-  {
-    pathname: '/dashboard/bids',
-    slug: 'bids',
-    prettyName: 'Bids',
-    includeInNav: true,
-    icon: AttachMoneyTwoTone,
   },
   {
     pathname: '/dashboard/customer-sales',
@@ -89,5 +83,19 @@ export default Object.freeze([
     prettyName: 'Customer Orders',
     includeInNav: true,
     icon: MonetizationOnTwoTone,
+  },
+  {
+    pathname: '/dashboard/jobs',
+    slug: 'jobs',
+    prettyName: 'Jobs',
+    includeInNav: true,
+    icon: CallToActionTwoTone,
+  },
+  {
+    pathname: '/dashboard/bids',
+    slug: 'bids',
+    prettyName: 'Bids',
+    includeInNav: true,
+    icon: AttachMoneyTwoTone,
   },
 ])

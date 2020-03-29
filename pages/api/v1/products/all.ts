@@ -11,7 +11,7 @@ const prisma = new PrismaClient()
 /**
  * get
  * Returns many suppliers
- * @return res.data.suppliers: suppliers[] | undefined if not found
+ * @return res.data.products: products[] | undefined if not found
  */
 export default handler(async (req) => {
   // bail if not getting
@@ -26,9 +26,9 @@ export default handler(async (req) => {
     throw new UnauthenticatedError()
   }
 
-  const suppliers = await prisma.supplier.findMany()
+  const products = await prisma.product.findMany()
 
   return {
-    suppliers,
+    products,
   }
 })

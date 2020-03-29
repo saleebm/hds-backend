@@ -23,6 +23,7 @@ export const getServerSideProps: GetServerSideProps<Suppliers> = async () => {
 
   return {
     props: {
+      /** anything with dates needs to be stringified */
       suppliers: JSON.stringify(supplierData),
     },
   }

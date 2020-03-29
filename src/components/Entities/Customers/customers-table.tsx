@@ -1,27 +1,23 @@
-import { Supplier } from '@prisma/client'
-import useSWR from 'swr'
-import { Column } from 'material-table'
-
+import { Customer } from '@prisma/client'
+import { Table } from '@Components/Elements/Table'
 import { useSnackbarContext } from '@Utils/reducers'
-import { Loading } from '@Components/Elements/Loading'
-import Table from '@Components/Elements/Table/table'
+import useSWR from 'swr'
 import { useEffect } from 'react'
+import { Loading } from '@Components/Elements/Loading'
+import { Column } from 'material-table'
 import { camelCaseToFormal } from '@Utils/common'
-import { Suppliers } from '@Pages/dashboard/suppliers'
 
-type SupplierData = {
-  suppliers: ReadonlyArray<Supplier>
+interface CustomersTable {
+  customers: ReadonlyArray<Customer>
 }
 
-export function SuppliersTable({ suppliers }: Suppliers) {
+type CustomersKey = keyof Customer | 'tableData'
+
+export function CustomersTable({ customers }: CustomersTable) {
   const { toggleSnackbar } = useSnackbarContext()
   const { data, error /* todo: isValidating, revalidate */ } = useSWR<
-    SupplierData
-  >('/api/v1/suppliers/all', undefined, {
-    initialData: {
-      suppliers: (Array.isArray(suppliers) && suppliers) || [],
-    },
-  })
+    CustomersTable
+  >('/api/v1/customers/all', { initialData: { customers } })
 
   useEffect(() => {
     if (error) {
@@ -33,15 +29,15 @@ export function SuppliersTable({ suppliers }: Suppliers) {
     }
   }, [error, toggleSnackbar])
 
-  if (!data || (data && data.suppliers && !Array.isArray(data.suppliers))) {
+  if (!data || (data && data.customers && !Array.isArray(data.customers))) {
     return <Loading />
   }
 
-  const columnData: Array<Column<{}>> | undefined = Array.from(
-    Object.keys(data.suppliers[0])
-  )
+  const columnData: Array<Column<
+    Partial<{ [key in keyof Customer]: any }>
+  >> = Array.from(Object.keys(data.customers[0] as Customer) as CustomersKey[])
     .filter((key) => key !== 'tableData')
-    .map((value) => {
+    .map((value: CustomersKey) => {
       switch (value) {
         case 'id':
           return {
@@ -78,7 +74,6 @@ export function SuppliersTable({ suppliers }: Suppliers) {
   /**
    * todo editable functions
    */
-
   return (
     <Table
       editable={{
@@ -86,9 +81,13 @@ export function SuppliersTable({ suppliers }: Suppliers) {
         onRowUpdate: undefined,
         onRowDelete: undefined,
       }}
-      title={'Suppliers'}
+      optionsToMerge={{
+        doubleHorizontalScroll: true,
+        pageSize: 10,
+      }}
+      title={'Customers'}
       columns={columnData}
-      data={data.suppliers as Supplier[]}
+      data={data.customers as Customer[]}
     />
   )
 }

@@ -1,27 +1,24 @@
-import { Supplier } from '@prisma/client'
-import useSWR from 'swr'
-import { Column } from 'material-table'
-
+import { Product } from '@prisma/client'
+import { Table } from '@Components/Elements/Table'
 import { useSnackbarContext } from '@Utils/reducers'
-import { Loading } from '@Components/Elements/Loading'
-import Table from '@Components/Elements/Table/table'
+import useSWR from 'swr'
 import { useEffect } from 'react'
+import { Loading } from '@Components/Elements/Loading'
+import { Column } from 'material-table'
 import { camelCaseToFormal } from '@Utils/common'
-import { Suppliers } from '@Pages/dashboard/suppliers'
 
-type SupplierData = {
-  suppliers: ReadonlyArray<Supplier>
+interface ProductsTable {
+  products: ReadonlyArray<Product>
 }
 
-export function SuppliersTable({ suppliers }: Suppliers) {
+// i have no clue where this 'tableData' is coming from still...
+type ProductKeys = keyof Product | 'tableData'
+
+export function ProductsTable({ products }: ProductsTable) {
   const { toggleSnackbar } = useSnackbarContext()
   const { data, error /* todo: isValidating, revalidate */ } = useSWR<
-    SupplierData
-  >('/api/v1/suppliers/all', undefined, {
-    initialData: {
-      suppliers: (Array.isArray(suppliers) && suppliers) || [],
-    },
-  })
+    ProductsTable
+  >('/api/v1/products/all', { initialData: { products } })
 
   useEffect(() => {
     if (error) {
@@ -33,15 +30,15 @@ export function SuppliersTable({ suppliers }: Suppliers) {
     }
   }, [error, toggleSnackbar])
 
-  if (!data || (data && data.suppliers && !Array.isArray(data.suppliers))) {
+  if (!data || (data && data.products && !Array.isArray(data.products))) {
     return <Loading />
   }
 
-  const columnData: Array<Column<{}>> | undefined = Array.from(
-    Object.keys(data.suppliers[0])
-  )
+  const columnData: Array<Column<
+    Partial<{ [key in ProductKeys]: any }>
+  >> = Array.from(Object.keys(data.products[0] as Product) as ProductKeys[])
     .filter((key) => key !== 'tableData')
-    .map((value) => {
+    .map((value: ProductKeys) => {
       switch (value) {
         case 'id':
           return {
@@ -51,6 +48,14 @@ export function SuppliersTable({ suppliers }: Suppliers) {
             disableClick: true,
             editable: 'never',
             readonly: true,
+          }
+        case 'unitCost':
+        case 'listPrice':
+          return {
+            title: camelCaseToFormal(value).toUpperCase(),
+            field: value,
+            editable: 'always',
+            type: 'currency',
           }
         case 'createdAt':
         case 'updatedAt':
@@ -78,7 +83,6 @@ export function SuppliersTable({ suppliers }: Suppliers) {
   /**
    * todo editable functions
    */
-
   return (
     <Table
       editable={{
@@ -86,9 +90,9 @@ export function SuppliersTable({ suppliers }: Suppliers) {
         onRowUpdate: undefined,
         onRowDelete: undefined,
       }}
-      title={'Suppliers'}
+      title={'Products'}
       columns={columnData}
-      data={data.suppliers as Supplier[]}
+      data={data.products as Product[]}
     />
   )
 }
