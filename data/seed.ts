@@ -128,6 +128,7 @@ async function setUpInventory() {
   if (!currentInventoryID) throw new Error('Inventory must be created first.')
 
   const productsCreated = []
+  const MAX_QOH = 33
   for (const appliance of applianceData) {
     const { Brand, Cost, Description, ListPrice, Model, Serial } = appliance
     productsCreated.push(
@@ -141,6 +142,7 @@ async function setUpInventory() {
           inventory: {
             connect: { id: currentInventoryID },
           },
+          quantityOnHand: Math.floor(Math.random() * Math.floor(MAX_QOH)),
           description: Description,
           serialNumber: `${Serial}`,
         },

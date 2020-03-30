@@ -1,6 +1,6 @@
 datasource mysql {
   provider = "mysql"
-  url      = env("MYSQL_URL")
+  url = "***"
 }
 
 generator client {
@@ -30,8 +30,8 @@ model Product {
   modelNumber     String
   productCategory String
   description     String
-  unitCost        String
-  listPrice       String
+  unitCost        Int
+  listPrice       Int
   serialNumber    String
   brand           String
   salesOrders     SalesOrder[]
@@ -46,8 +46,8 @@ model SalesOrder {
   productId         Product
   supplierId        Supplier
   quantityPurchased Int
-  costEach          String
-  extendedCost      String
+  costEach          Int
+  extendedCost      Int
   dueDate           DateTime
   orderDate         DateTime  @default(now())
 }
@@ -126,9 +126,9 @@ model CustomerOrder {
   customerId        Customer
   jobId             Job
   orderDate         DateTime  @default(now())
-  deliveryCost      String
-  totalCost         String
-  remainderDue      String
+  deliveryCost      Int
+  totalCost         Int
+  remainderDue      Int
   totalCostDueDate  DateTime
 }
 
@@ -141,14 +141,14 @@ model CustomerSale {
   customerId      Customer
   customerOrderId CustomerOrder[]
   saleDate        DateTime
-  saleAmount      String
+  saleAmount      Int
   createdAt       DateTime        @default(now())
   dueDate         DateTime
 }
 
 model CustomerOrderProduct {
   quantityPurchased Int
-  extendedCost      String
+  extendedCost      Int
   productId         Product
   customerSale      CustomerSale
   @@id([productId, customerSale])

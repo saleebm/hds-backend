@@ -260,14 +260,14 @@
       "tag": "CreateField",
       "model": "Product",
       "field": "unitCost",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Product",
       "field": "listPrice",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
@@ -282,6 +282,20 @@
       "model": "Product",
       "field": "brand",
       "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Product",
+      "field": "salesOrders",
+      "type": "SalesOrder",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Product",
+      "field": "quantityOnHand",
+      "type": "Int",
       "arity": "Required"
     },
     {
@@ -336,11 +350,11 @@
     },
     {
       "tag": "CreateModel",
-      "model": "ProductOrder"
+      "model": "SalesOrder"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "id",
       "type": "Int",
       "arity": "Required"
@@ -350,7 +364,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "ProductOrder",
+          "model": "SalesOrder",
           "field": "id"
         },
         "directive": "id"
@@ -361,7 +375,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "ProductOrder",
+          "model": "SalesOrder",
           "field": "id"
         },
         "directive": "default"
@@ -373,7 +387,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "ProductOrder",
+          "model": "SalesOrder",
           "field": "id"
         },
         "directive": "default"
@@ -383,49 +397,49 @@
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "productId",
       "type": "Product",
-      "arity": "List"
+      "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "supplierId",
       "type": "Supplier",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "quantityPurchased",
       "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "costEach",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "extendedCost",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "dueDate",
       "type": "DateTime",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "ProductOrder",
+      "model": "SalesOrder",
       "field": "orderDate",
       "type": "DateTime",
       "arity": "Required"
@@ -435,7 +449,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "ProductOrder",
+          "model": "SalesOrder",
           "field": "orderDate"
         },
         "directive": "default"
@@ -447,7 +461,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "ProductOrder",
+          "model": "SalesOrder",
           "field": "orderDate"
         },
         "directive": "default"
@@ -1176,14 +1190,14 @@
       "tag": "CreateField",
       "model": "Job",
       "field": "scheduledHours",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Job",
       "field": "actualHours",
-      "type": "String",
+      "type": "Int",
       "arity": "Optional"
     },
     {
@@ -1257,13 +1271,6 @@
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "productId",
-      "type": "Product",
-      "arity": "List"
-    },
-    {
-      "tag": "CreateField",
-      "model": "CustomerOrder",
       "field": "orderDate",
       "type": "DateTime",
       "arity": "Required"
@@ -1296,35 +1303,28 @@
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "requestedDate",
-      "type": "DateTime",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "CustomerOrder",
-      "field": "quantityPurchased",
+      "field": "deliveryCost",
       "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "unitCost",
-      "type": "String",
+      "field": "totalCost",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "extendedCost",
-      "type": "String",
+      "field": "remainderDue",
+      "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "dueDate",
+      "field": "totalCostDueDate",
       "type": "DateTime",
       "arity": "Required"
     },
@@ -1399,47 +1399,15 @@
     {
       "tag": "CreateField",
       "model": "CustomerSale",
-      "field": "productId",
-      "type": "Product",
-      "arity": "List"
-    },
-    {
-      "tag": "CreateField",
-      "model": "CustomerSale",
       "field": "saleDate",
       "type": "DateTime",
       "arity": "Required"
     },
     {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "CustomerSale",
-          "field": "saleDate"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "CustomerSale",
-          "field": "saleDate"
-        },
-        "directive": "default"
-      },
-      "argument": "",
-      "value": "now()"
-    },
-    {
       "tag": "CreateField",
       "model": "CustomerSale",
       "field": "saleAmount",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
@@ -1480,6 +1448,61 @@
       "field": "dueDate",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "CustomerOrders_Products"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrders_Products",
+      "field": "quantityPurchased",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrders_Products",
+      "field": "extendedCost",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrders_Products",
+      "field": "productId",
+      "type": "Product",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrders_Products",
+      "field": "customerSale",
+      "type": "CustomerSale",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrders_Products"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrders_Products"
+        },
+        "directive": "id"
+      },
+      "argument": "",
+      "value": "[productId, customerSale]"
     },
     {
       "tag": "CreateModel",
@@ -1557,7 +1580,7 @@
       "tag": "CreateField",
       "model": "BidProduct",
       "field": "id",
-      "type": "String",
+      "type": "Int",
       "arity": "Required"
     },
     {
@@ -1594,7 +1617,7 @@
         "directive": "default"
       },
       "argument": "",
-      "value": "uuid()"
+      "value": "autoincrement()"
     },
     {
       "tag": "CreateField",

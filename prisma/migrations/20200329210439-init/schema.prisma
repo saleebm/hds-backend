@@ -26,7 +26,7 @@ model Supplier {
 }
 
 model Product {
-  id              Int      @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   modelNumber     String
   productCategory String
   description     String
@@ -34,15 +34,16 @@ model Product {
   listPrice       String
   serialNumber    String
   brand           String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  salesOrders     SalesOrder[]
+  quantityOnHand  Int
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
-// for relation def, removed though for simplicity's sake
-// @see https://github.com/prisma/prisma2/blob/master/docs/relations.md/#the-relation-attribute
-model ProductOrder {
+// the orders for the company, ie fill on hand stock
+model SalesOrder {
   id                Int       @id @default(autoincrement())
-  productId         Product[]
+  productId         Product
   supplierId        Supplier
   quantityPurchased Int
   costEach          String
@@ -113,8 +114,8 @@ model Job {
   customerId     Customer
   startDate      DateTime  @default(now())
   scheduledEnd   DateTime
-  scheduledHours String
-  actualHours    String?
+  scheduledHours Int
+  actualHours    Int?
   actualEnd      DateTime?
 }
 
@@ -124,13 +125,11 @@ model CustomerOrder {
   id                Int       @id @default(autoincrement())
   customerId        Customer
   jobId             Job
-  productId         Product[]
   orderDate         DateTime  @default(now())
-  requestedDate     DateTime
-  quantityPurchased Int
-  unitCost          String
-  extendedCost      String
-  dueDate           DateTime
+  deliveryCost      String
+  totalCost         String
+  remainderDue      String
+  totalCostDueDate  DateTime
 }
 
 // the bill send to the customer monthly
@@ -141,11 +140,18 @@ model CustomerSale {
   billNumber      Int
   customerId      Customer
   customerOrderId CustomerOrder[]
-  productId       Product[]
-  saleDate        DateTime        @default(now())
+  saleDate        DateTime
   saleAmount      String
   createdAt       DateTime        @default(now())
   dueDate         DateTime
+}
+
+model CustomerOrderProduct {
+  quantityPurchased Int
+  extendedCost      String
+  productId         Product
+  customerSale      CustomerSale
+  @@id([productId, customerSale])
 }
 
 model Bid {
@@ -156,7 +162,7 @@ model Bid {
 }
 
 model BidProduct {
-  id         String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   bidId      Bid
   productId  Product
   saleDate   DateTime @default(now())

@@ -1,0 +1,64 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateModel",
+      "model": "CustomerOrderProduct"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrderProduct",
+      "field": "quantityPurchased",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrderProduct",
+      "field": "extendedCost",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrderProduct",
+      "field": "productId",
+      "type": "Product",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrderProduct",
+      "field": "customerSale",
+      "type": "CustomerSale",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrderProduct"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrderProduct"
+        },
+        "directive": "id"
+      },
+      "argument": "",
+      "value": "[productId, customerSale]"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "CustomerOrders_Products"
+    }
+  ]
+}
