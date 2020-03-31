@@ -54,9 +54,10 @@ export function LocationsTable({ locations }: LocationsTable) {
             title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(Array.isArray(data) &&
-            value in data[0] &&
-            typeof data[0] === 'number'
+            ...(value !== 'tableData' &&
+            value in data.locations[0] &&
+            data.locations[0][value] &&
+            typeof data.locations[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }

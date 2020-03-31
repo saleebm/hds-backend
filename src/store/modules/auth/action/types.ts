@@ -1,4 +1,5 @@
 import { Action } from 'redux'
+import { Role } from '@prisma/client'
 
 export enum AuthActionTypes {
   LoginSuccess = '@auth/USER_AUTHENTICATE_SUCCESS',
@@ -28,7 +29,7 @@ export type CurrentUserType = {
   /**
    * the role
    */
-  readonly role: 'ADMIN' | 'MODERATOR' | string
+  readonly role: Role
 }
 
 export interface ILoginUserAction extends Action<AuthActionTypes.LoginSuccess> {

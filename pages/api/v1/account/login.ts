@@ -38,7 +38,7 @@ export default handler(
       cookies: { [p: string]: string }
       body: any
     }
-  ): Promise<LoginRequestSuccess> => {
+  ) => {
     // bail
     if (req.method?.toLowerCase() !== 'post') throw new NotImplementedError()
 
@@ -49,6 +49,7 @@ export default handler(
     // console.log(req.body)
     const employee = await prisma.employee.findOne({
       where: { email: req.body.email },
+      include: { employeePosition: true, locationId: true },
     })
     // if no employee found by email, should not happen because client login verifies this
     if (!employee) {

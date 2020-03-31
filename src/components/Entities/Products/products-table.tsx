@@ -71,9 +71,10 @@ export function ProductsTable({ products }: ProductsTable) {
             title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(Array.isArray(data) &&
-            value in data[0] &&
-            typeof data[0] === 'number'
+            ...(value !== 'tableData' &&
+            value in data.products[0] &&
+            data.products[0][value] &&
+            typeof data.products[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }
@@ -89,6 +90,9 @@ export function ProductsTable({ products }: ProductsTable) {
         onRowAdd: undefined,
         onRowUpdate: undefined,
         onRowDelete: undefined,
+      }}
+      optionsToMerge={{
+        pageSize: 10,
       }}
       title={'Products'}
       columns={columnData}

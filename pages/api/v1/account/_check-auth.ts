@@ -39,6 +39,7 @@ export const checkAuth = async (headers: IncomingHttpHeaders) => {
       // prisma lookup for the employee by id
       const emp = await prisma.employee.findOne({
         where: { id: userDataDecoded.userId },
+        include: {employeePosition: true}
       })
       if (!!emp) {
         // now we verify the jwt using the signature and jwt token which is set as the jwtid

@@ -1,4 +1,5 @@
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
+import { EmployeePosition } from '@prisma/client'
 
 export interface EmployeeRes {
   employee: {
@@ -9,7 +10,7 @@ export interface EmployeeRes {
     city: string
     state: string
     zip: number
-    role: string
+    employeePosition: EmployeePosition
     email: string
     phone: string
   }

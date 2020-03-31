@@ -9,7 +9,32 @@ generator client {
 }
 
 enum Role {
-  MODERATOR ADMIN
+  READ_WRITE
+  READ
+  WRITE
+  NONE
+}
+
+enum EmployeePositions {
+  PRESIDENT_CEO
+  VP_CEO
+  STORE_MANAGER
+  OFFICE_MANAGER
+  SALES_DESIGN_MANAGER
+  SALES_DESIGN_ASSOCIATE
+  SCHEDULING
+  TECHNICIAN
+  DELIVERY
+  WAREHOUSE
+  INSTALLATIONS
+}
+
+model EmployeePosition {
+  id        Int      @id @default(autoincrement())
+  positionName        EmployeePositions
+  roleCapability      Role
+  employeeId          Employee
+  salary              Float
 }
 
 model Supplier {
@@ -21,6 +46,7 @@ model Supplier {
   zip       Int
   phone     String
   email     String   @unique
+  salesOrders SalesOrder[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -30,8 +56,8 @@ model Product {
   modelNumber     String
   productCategory String
   description     String
-  unitCost        Int
-  listPrice       Int
+  unitCost        Float
+  listPrice       Float
   serialNumber    String
   brand           String
   salesOrders     SalesOrder[]
@@ -46,8 +72,8 @@ model SalesOrder {
   productId         Product
   supplierId        Supplier
   quantityPurchased Int
-  costEach          Int
-  extendedCost      Int
+  costEach          Float
+  extendedCost      Float
   dueDate           DateTime
   orderDate         DateTime  @default(now())
 }
@@ -61,7 +87,7 @@ model MagicCode {
 model Employee {
   id            Int        @id @default(autoincrement())
   locationId    Location   @relation(references: [id])
-  role          Role       @default(value: MODERATOR)
+  employeePosition   EmployeePosition
   firstName     String
   lastName      String
   address       String
@@ -109,14 +135,31 @@ model Customer {
   updatedAt     DateTime @updatedAt
 }
 
+
+enum Operations {
+  DESIGN
+  INSTALLATION_CABINETS
+  RE_FACING_CABINETS
+  PLUMBING
+  ELECTRICAL
+  PAINTING_WALLPAPER
+  GENERAL_CONSTRUCTION
+  DELIVERY
+}
+
+model Fees {
+  operationName Operations @unique
+  charge        Int
+}
+
 model Job {
   id             Int       @id @default(autoincrement())
   customerId     Customer
   startDate      DateTime  @default(now())
   scheduledEnd   DateTime
-  scheduledHours Int
-  actualHours    Int?
+  scheduledHours Float
   actualEnd      DateTime?
+  actualHours    Float?
 }
 
 // the single order for a customer comes first
@@ -126,9 +169,10 @@ model CustomerOrder {
   customerId        Customer
   jobId             Job
   orderDate         DateTime  @default(now())
-  deliveryCost      Int
-  totalCost         Int
-  remainderDue      Int
+  operationFees     Fees[]
+  deliveryCost      Float
+  totalCost         Float
+  remainderDue      Float
   totalCostDueDate  DateTime
 }
 
@@ -140,15 +184,16 @@ model CustomerSale {
   billNumber      Int
   customerId      Customer
   customerOrderId CustomerOrder[]
+  productsOrdered CustomerOrderProduct[]
   saleDate        DateTime
-  saleAmount      Int
+  saleAmount      Float
   createdAt       DateTime        @default(now())
   dueDate         DateTime
 }
 
-model CustomerOrders_Products {
+model CustomerOrderProduct {
   quantityPurchased Int
-  extendedCost      Int
+  extendedCost      Float
   productId         Product
   customerSale      CustomerSale
   @@id([productId, customerSale])
@@ -157,8 +202,8 @@ model CustomerOrders_Products {
 model Bid {
   id            Int      @id @default(autoincrement())
   customerId    Customer
-  requiredHours String
-  bidAmount     String
+  requiredHours Float
+  bidAmount     Float
 }
 
 model BidProduct {
@@ -166,5 +211,5 @@ model BidProduct {
   bidId      Bid
   productId  Product
   saleDate   DateTime @default(now())
-  saleAmount String
+  saleAmount Float
 }

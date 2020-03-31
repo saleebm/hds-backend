@@ -1,4 +1,4 @@
-import { EmployeeCreateInput, Location, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { handler } from '@Lib/server'
 import {
   DatabaseNotEquippedError,
@@ -12,22 +12,13 @@ import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { generateCode } from '@Pages/api/v1/account/_generate-code'
 import { sendEmail } from '@Lib/server/send-email'
 import getApiHostUrl from '@Lib/server/get-api-host'
+import { CreateEmployeeBodyArgs } from '@Types/employees'
 
 const prisma = new PrismaClient()
 
-export type CreateEmployee = {
-  password?: string
-  jwtUserSecret?: string
-  locationId: string | Location
-  zip: string | number
-} & Omit<
-  EmployeeCreateInput,
-  'password' | 'jwtUserSecret' | 'locationId' | 'zip'
->
-
 /**
  * post
- * Must be admin
+ * Must have read_write to create employee
  * @param CreateEmployee input ^
  * @return { userId: number } ID of employee created
  */
@@ -36,7 +27,7 @@ export default handler(async (req) => {
 
   const { userId, employee } = await checkAuth(req.headers)
   // throw if unauthenticated
-  if (!userId || employee.role !== 'ADMIN') {
+  if (!userId || employee.employeePosition.roleCapability !== 'READ_WRITE') {
     // unauthorized
     // no userId from auth headers or not admin
     throw new UnauthenticatedError()
@@ -52,13 +43,9 @@ export default handler(async (req) => {
       throw new InvalidArgumentError('Password must be 8 characters or greater')
   }
 
-  // invalid role supplied??
-  if (typeof req.body.role !== 'undefined') {
-    if (
-      req.body.role.toString() !== 'ADMIN' &&
-      req.body.role.toString() !== 'MODERATOR'
-    )
-      throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
+  // invalid employeePosition supplied??
+  if (typeof req.body.employeePosition !== 'undefined') {
+    throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
   }
 
   // use a location as default
@@ -91,11 +78,13 @@ export default handler(async (req) => {
     firstName,
     lastName,
     phone,
-    role = 'MODERATOR',
+    roleCapability,
+    positionName,
+    salary,
     state,
     locationId = defaultLocation?.id,
     zip,
-  } = req.body as CreateEmployee
+  } = req.body as CreateEmployeeBodyArgs
 
   // encrypt pw
   const { passwordHash } = await generateDefaultPasswordOrReturn()
@@ -114,7 +103,14 @@ export default handler(async (req) => {
         firstName,
         lastName,
         phone,
-        role,
+        employeePosition: {
+          create: {
+            roleCapability,
+            positionName,
+            salary:
+              typeof salary === 'string' ? Number(salary) : salary ?? 32000.0,
+          },
+        },
         state,
         /** makes sure if location supplied is a number, then just connects it to that number */
         locationId:
@@ -130,6 +126,7 @@ export default handler(async (req) => {
       include: {
         /** if location created anew, then include it in create op response */
         locationId: typeof locationId === 'object',
+        employeePosition: true,
       },
     })
 

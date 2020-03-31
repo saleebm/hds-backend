@@ -3,6 +3,10 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200329205438-init
-20200329210236-init
-20200329210439-init
+20200330161221-init
+20200330181114-salary
+20200330184604-coarse
+20200330194654-role
+20200330200115-init
+20200330201149-employee-position
+20200330222259-remove-write-only

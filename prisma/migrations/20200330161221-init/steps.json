@@ -5,8 +5,41 @@
       "tag": "CreateEnum",
       "enum": "Role",
       "values": [
-        "MODERATOR",
-        "ADMIN"
+        "READ_WRITE",
+        "READ",
+        "WRITE",
+        "NONE"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "EmployeePositions",
+      "values": [
+        "PRESIDENT_CEO",
+        "VP_CEO",
+        "STORE_MANAGER",
+        "OFFICE_MANAGER",
+        "SALES_DESIGN_MANAGER",
+        "SALES_DESIGN_ASSOCIATE",
+        "SCHEDULING",
+        "TECHNICIAN",
+        "DELIVERY",
+        "WAREHOUSE",
+        "INSTALLATIONS"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "Operations",
+      "values": [
+        "DESIGN",
+        "INSTALLATION_CABINETS",
+        "RE_FACING_CABINETS",
+        "PLUMBING",
+        "ELECTRICAL",
+        "PAINTING_WALLPAPER",
+        "GENERAL_CONSTRUCTION",
+        "DELIVERY"
       ]
     },
     {
@@ -30,6 +63,81 @@
       },
       "argument": "url",
       "value": "env(\"MYSQL_URL\")"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "EmployeePosition"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "id",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "EmployeePosition",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "EmployeePosition",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "EmployeePosition",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "autoincrement()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "positionName",
+      "type": "EmployeePositions",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "roleCapability",
+      "type": "Role",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "employeeId",
+      "type": "Employee",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "payRate",
+      "type": "Float",
+      "arity": "Required"
     },
     {
       "tag": "CreateModel",
@@ -137,6 +245,13 @@
         },
         "directive": "unique"
       }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Supplier",
+      "field": "salesOrders",
+      "type": "SalesOrder",
+      "arity": "List"
     },
     {
       "tag": "CreateField",
@@ -260,14 +375,14 @@
       "tag": "CreateField",
       "model": "Product",
       "field": "unitCost",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Product",
       "field": "listPrice",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -420,14 +535,14 @@
       "tag": "CreateField",
       "model": "SalesOrder",
       "field": "costEach",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "SalesOrder",
       "field": "extendedCost",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -598,34 +713,9 @@
     {
       "tag": "CreateField",
       "model": "Employee",
-      "field": "role",
-      "type": "Role",
+      "field": "employeePosition",
+      "type": "EmployeePosition",
       "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "Employee",
-          "field": "role"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "Employee",
-          "field": "role"
-        },
-        "directive": "default"
-      },
-      "argument": "value",
-      "value": "MODERATOR"
     },
     {
       "tag": "CreateField",
@@ -1095,6 +1185,35 @@
     },
     {
       "tag": "CreateModel",
+      "model": "Fees"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Fees",
+      "field": "operationName",
+      "type": "Operations",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Fees",
+          "field": "operationName"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Fees",
+      "field": "charge",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
       "model": "Job"
     },
     {
@@ -1190,21 +1309,21 @@
       "tag": "CreateField",
       "model": "Job",
       "field": "scheduledHours",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Job",
-      "field": "actualHours",
-      "type": "Int",
-      "arity": "Optional"
     },
     {
       "tag": "CreateField",
       "model": "Job",
       "field": "actualEnd",
       "type": "DateTime",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Job",
+      "field": "actualHours",
+      "type": "Float",
       "arity": "Optional"
     },
     {
@@ -1303,22 +1422,29 @@
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
+      "field": "operationFees",
+      "type": "Fees",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrder",
       "field": "deliveryCost",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
       "field": "totalCost",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
       "field": "remainderDue",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -1399,6 +1525,13 @@
     {
       "tag": "CreateField",
       "model": "CustomerSale",
+      "field": "productsOrdered",
+      "type": "CustomerOrderProduct",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerSale",
       "field": "saleDate",
       "type": "DateTime",
       "arity": "Required"
@@ -1407,7 +1540,7 @@
       "tag": "CreateField",
       "model": "CustomerSale",
       "field": "saleAmount",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -1451,32 +1584,32 @@
     },
     {
       "tag": "CreateModel",
-      "model": "CustomerOrders_Products"
+      "model": "CustomerOrderProduct"
     },
     {
       "tag": "CreateField",
-      "model": "CustomerOrders_Products",
+      "model": "CustomerOrderProduct",
       "field": "quantityPurchased",
       "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "CustomerOrders_Products",
+      "model": "CustomerOrderProduct",
       "field": "extendedCost",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "CustomerOrders_Products",
+      "model": "CustomerOrderProduct",
       "field": "productId",
       "type": "Product",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "CustomerOrders_Products",
+      "model": "CustomerOrderProduct",
       "field": "customerSale",
       "type": "CustomerSale",
       "arity": "Required"
@@ -1486,7 +1619,7 @@
       "location": {
         "path": {
           "tag": "Model",
-          "model": "CustomerOrders_Products"
+          "model": "CustomerOrderProduct"
         },
         "directive": "id"
       }
@@ -1497,7 +1630,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Model",
-          "model": "CustomerOrders_Products"
+          "model": "CustomerOrderProduct"
         },
         "directive": "id"
       },
@@ -1562,14 +1695,14 @@
       "tag": "CreateField",
       "model": "Bid",
       "field": "requiredHours",
-      "type": "String",
+      "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Bid",
       "field": "bidAmount",
-      "type": "String",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -1669,7 +1802,7 @@
       "tag": "CreateField",
       "model": "BidProduct",
       "field": "saleAmount",
-      "type": "String",
+      "type": "Float",
       "arity": "Required"
     }
   ]

@@ -7,7 +7,7 @@ require('dotenv').config({
 const fontsPattern = /\.(woff|woff2|eot|ttf|otf|svg)$/
 module.exports = {
   experimental: {
-    // modern: true,
+    modern: true,
   },
   env: {
     TOKEN_STORAGE_KEY: process.env.TOKEN_STORAGE_KEY,

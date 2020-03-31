@@ -21,7 +21,7 @@ export const loginUserAction = ({
     email,
     firstName,
     userId,
-    role,
+    employeePosition,
   } = loginSuccessResponse.employee
   // save tokens in cookie jar
   await authService
@@ -36,7 +36,13 @@ export const loginUserAction = ({
       // put user in store
       dispatch({
         type: AuthActionTypes.LoginSuccess,
-        payload: { lastName, firstName, userId, email, role },
+        payload: {
+          lastName,
+          firstName,
+          userId,
+          email,
+          role: employeePosition.roleCapability,
+        },
       })
     })
     .then(() => {
@@ -129,11 +135,17 @@ export const checkAuthStatusAction = (): UserResult<Promise<any>> => async (
       )
       if (authCodeResponse.data && authCodeResponse.data.userId) {
         const {
-          employee: { lastName, firstName, email, userId, role },
+          employee: { lastName, firstName, email, userId, employeePosition },
         } = authCodeResponse.data
         return dispatch({
           type: AuthActionTypes.CheckAuthStatusSuccess,
-          payload: { lastName, firstName, email, userId, role },
+          payload: {
+            lastName,
+            firstName,
+            email,
+            userId,
+            role: employeePosition.roleCapability,
+          },
         })
       } else {
         return await errorResolver(dispatch, authCodeResponse)

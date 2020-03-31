@@ -13,6 +13,8 @@ type SupplierData = {
   suppliers: ReadonlyArray<Supplier>
 }
 
+type SuppliersTableKey = keyof Supplier | 'tableData'
+
 export function SuppliersTable({ suppliers }: Suppliers) {
   const { toggleSnackbar } = useSnackbarContext()
   const { data, error /* todo: isValidating, revalidate */ } = useSWR<
@@ -37,8 +39,10 @@ export function SuppliersTable({ suppliers }: Suppliers) {
     return <Loading />
   }
 
-  const columnData: Array<Column<{}>> | undefined = Array.from(
-    Object.keys(data.suppliers[0])
+  const columnData: Array<Column<
+    Partial<{ [key in keyof SuppliersTableKey]: any }>
+  >> = Array.from(
+    Object.keys(data.suppliers[0] as Supplier) as SuppliersTableKey[]
   )
     .filter((key) => key !== 'tableData')
     .map((value) => {
@@ -66,9 +70,10 @@ export function SuppliersTable({ suppliers }: Suppliers) {
             title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(Array.isArray(data) &&
-            value in data[0] &&
-            typeof data[0] === 'number'
+            ...(value !== 'tableData' &&
+            value in data.suppliers[0] &&
+            data.suppliers[0][value] &&
+            typeof data.suppliers[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }

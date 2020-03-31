@@ -109,7 +109,7 @@ export default connect(mapStateToProps)(function Table<P extends object>({
       data={data}
       options={opts}
       isLoading={!data}
-      editable={role === 'ADMIN' ? editable : undefined}
+      editable={role === 'READ_WRITE' ? editable : undefined}
     />
   )
 })

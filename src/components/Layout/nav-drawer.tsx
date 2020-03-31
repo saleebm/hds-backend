@@ -126,10 +126,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: '100vh',
   },
   logoutButton: {
-    bottom: 0,
-    left: 0,
-    alignSelf: 'flex-end',
-    position: 'absolute',
+    [`@media (min-height: 1000px)`]: {
+      bottom: 0,
+      left: 0,
+      alignSelf: 'flex-end',
+      position: theme.breakpoints.up('md') ? 'absolute' : 'relative',
+    },
   },
 }))
 
@@ -232,6 +234,9 @@ function SwipeableTemporaryDrawer({
         onOpen={toggleDrawer(true)}
         disableBackdropTransition={!iOS}
         disableDiscovery={iOS}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
       >
         {renderList()}
       </SwipeableDrawer>

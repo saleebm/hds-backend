@@ -1,6 +1,6 @@
 datasource mysql {
   provider = "mysql"
-  url      = env("MYSQL_URL")
+  url = "***"
 }
 
 generator client {
@@ -9,13 +9,14 @@ generator client {
 }
 
 enum Role {
-  READ_WRITE
+  READ_WRITE 
   READ
+  WRITE
   NONE
 }
 
-enum PositionNames {
-  PRESIDENT_CEO
+enum EmployeePositions {
+  PRESIDENT_CEO 
   VP_CEO
   STORE_MANAGER
   OFFICE_MANAGER
@@ -28,27 +29,26 @@ enum PositionNames {
   INSTALLATIONS
 }
 
-// 1:1 with Employee
 model EmployeePosition {
-  id                  Int            @id @default(autoincrement())
-  positionName        PositionNames
-  roleCapability      Role
-  employeeId          Employee
-  salary              Float
+  id        Int      @id @default(autoincrement())
+  positionName        EmployeePositions
+  roleCapability      Role    
+  employeeId          Employee       
+  payRate             Float
 }
 
 model Supplier {
-  id          Int         @id @default(autoincrement())
-  name        String
-  address     String
-  city        String
-  state       String
-  zip         Int
-  phone       String
-  email       String      @unique
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  city      String
+  state     String
+  zip       Int
+  phone     String
+  email     String   @unique
   salesOrders SalesOrder[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
@@ -85,22 +85,22 @@ model MagicCode {
 }
 
 model Employee {
-  id                 Int           @id @default(autoincrement())
-  locationId         Location      @relation(references: [id])
+  id            Int        @id @default(autoincrement())
+  locationId    Location   @relation(references: [id])
   employeePosition   EmployeePosition
-  firstName          String
-  lastName           String
-  address            String
-  city               String
-  state              String
-  zip                Int
-  phone              String
-  email              String         @unique
-  password           String
-  jwtUserSecret      String
-  magicCode          MagicCode?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  firstName     String
+  lastName      String
+  address       String
+  city          String
+  state         String
+  zip           Int
+  phone         String
+  email         String     @unique
+  password      String
+  jwtUserSecret String
+  magicCode     MagicCode?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model Inventory {
@@ -169,7 +169,7 @@ model CustomerOrder {
   customerId        Customer
   jobId             Job
   orderDate         DateTime  @default(now())
-  operationFees     Fees[]
+  operationFees     Fees[]  
   deliveryCost      Float
   totalCost         Float
   remainderDue      Float

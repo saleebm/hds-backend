@@ -1,0 +1,17 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "EmployeePosition",
+      "field": "salary",
+      "type": "Float",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "EmployeePosition",
+      "field": "payRate"
+    }
+  ]
+}

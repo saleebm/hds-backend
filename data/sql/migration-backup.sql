@@ -1,4 +1,4 @@
-create table if not exists Customer
+create table Customer
 (
     address       varchar(191) default ''                        not null,
     city          varchar(191) default ''                        not null,
@@ -14,7 +14,7 @@ create table if not exists Customer
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists Bid
+create table Bid
 (
     bidAmount     decimal(65, 30) default 0.000000000000000000000000000000 not null,
     customerId    int                                                      not null,
@@ -30,7 +30,7 @@ create table if not exists Bid
 create index customerId
     on Bid (customerId);
 
-create table if not exists CustomerSale
+create table CustomerSale
 (
     billNumber int             default 0                                not null,
     createdAt  datetime(3)     default '1970-01-01 00:00:00.000'        not null,
@@ -49,7 +49,7 @@ create table if not exists CustomerSale
 create index customerId
     on CustomerSale (customerId);
 
-create table if not exists EmployeeModel
+create table EmployeeModel
 (
     id             int auto_increment
         primary key,
@@ -59,7 +59,7 @@ create table if not exists EmployeeModel
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists Inventory
+create table Inventory
 (
     aisle int          default 0  not null,
     bin   varchar(191) default '' not null,
@@ -71,7 +71,7 @@ create table if not exists Inventory
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists Job
+create table Job
 (
     actualEnd      datetime(3)                                              null,
     actualHours    decimal(65, 30)                                          null,
@@ -87,7 +87,7 @@ create table if not exists Job
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists CustomerOrder
+create table CustomerOrder
 (
     customerId       int                                                      not null,
     customerSale     int                                                      null,
@@ -120,7 +120,7 @@ create index customerSale
 create index jobId
     on CustomerOrder (jobId);
 
-create table if not exists Fees
+create table Fees
 (
     charge        int                                                                                                                                                default 0        not null,
     customerOrder int                                                                                                                                                                 null,
@@ -139,7 +139,7 @@ create index customerOrder
 create index customerId
     on Job (customerId);
 
-create table if not exists Location
+create table Location
 (
     address   varchar(191) default '' not null,
     city      varchar(191) default '' not null,
@@ -158,7 +158,7 @@ create table if not exists Location
 create index inventory
     on Location (inventory);
 
-create table if not exists MagicCode
+create table MagicCode
 (
     code      varchar(191)                                  not null,
     updatedAt datetime(3) default '1970-01-01 00:00:00.000' not null,
@@ -166,7 +166,7 @@ create table if not exists MagicCode
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists Employee
+create table Employee
 (
     address          varchar(191) default ''                        not null,
     city             varchar(191) default ''                        not null,
@@ -206,7 +206,7 @@ create table if not exists Employee
 create index locationId
     on Employee (locationId);
 
-create table if not exists Product
+create table Product
 (
     brand           varchar(191)    default ''                               not null,
     createdAt       datetime(3)     default '1970-01-01 00:00:00.000'        not null,
@@ -227,7 +227,7 @@ create table if not exists Product
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists BidProduct
+create table BidProduct
 (
     bidId      int                                                      not null,
     id         int auto_increment
@@ -250,7 +250,7 @@ create index bidId
 create index productId
     on BidProduct (productId);
 
-create table if not exists CustomerOrderProduct
+create table CustomerOrderProduct
 (
     customerSale      int                                                      not null,
     extendedCost      decimal(65, 30) default 0.000000000000000000000000000000 not null,
@@ -272,7 +272,7 @@ create index customerSale
 create index inventory
     on Product (inventory);
 
-create table if not exists Supplier
+create table Supplier
 (
     address   varchar(191) default ''                        not null,
     city      varchar(191) default ''                        not null,
@@ -290,7 +290,7 @@ create table if not exists Supplier
 )
     collate = utf8mb4_unicode_ci;
 
-create table if not exists SalesOrder
+create table SalesOrder
 (
     costEach          decimal(65, 30) default 0.000000000000000000000000000000 not null,
     dueDate           datetime(3)     default '1970-01-01 00:00:00.000'        not null,
@@ -315,20 +315,3 @@ create index productId
 
 create index supplierId
     on SalesOrder (supplierId);
-
-create table if not exists _Migration
-(
-    revision           int auto_increment
-        primary key,
-    name               text        not null,
-    datamodel          longtext    not null,
-    status             text        not null,
-    applied            int         not null,
-    rolled_back        int         not null,
-    datamodel_steps    longtext    not null,
-    database_migration longtext    not null,
-    errors             longtext    not null,
-    started_at         datetime(3) not null,
-    finished_at        datetime(3) null
-);
-

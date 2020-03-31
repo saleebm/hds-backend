@@ -4,13 +4,15 @@ import { InventoryGetPayload, Location } from '@prisma/client'
 import { DashboardView } from '@Components/Views/dashboard'
 import { InventoriesTable } from '@Components/Entities/Inventories'
 
-export type Inventories = ReadonlyArray<
-  InventoryGetPayload<{ include: { locationId: boolean } }>
->
+export type Inventory = InventoryGetPayload<{
+  include: { locationId: boolean }
+}>
+
+export type Inventories = ReadonlyArray<Inventory>
 
 export interface InventoriesData {
   readonly locations: ReadonlyArray<Location>
-  inventories: Inventories
+  readonly inventories: Inventories
 }
 
 function InventoryPage({ inventories, locations }: InventoriesData) {

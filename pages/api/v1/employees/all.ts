@@ -4,7 +4,6 @@ import {
   EmployeeSelect,
   EmployeeWhereInput,
   EmployeeWhereUniqueInput,
-  FindManyEmployeeArgs,
   PrismaClient,
 } from '@prisma/client'
 
@@ -14,11 +13,13 @@ import {
   UnauthenticatedError,
 } from '@Lib/server/known-errors'
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
-import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
+import {
+  getEmpData,
+  getEmpDataForTable,
+} from '@Pages/api/v1/account/_get-emp-data'
+import { GetEmpDataForTableEmployee } from '@Types/employees'
 
 const prisma = new PrismaClient()
-
-export type EmployeesBodyArgs = FindManyEmployeeArgs
 
 /**
  * post
@@ -80,6 +81,9 @@ export default handler(async (req) => {
   const whereArg =
     ('where' in req.body && (req.body.where as EmployeeWhereInput)) || undefined
 
+  const forTableArg =
+    ('forTable' in req.body && (req.body.forTable as boolean)) ?? false
+
   const empData = await prisma.employee.findMany({
     first: firstArg,
     after: afterArg,
@@ -88,11 +92,20 @@ export default handler(async (req) => {
     orderBy: { ...(orderByArg as EmployeeOrderByInput) },
     ...(selectArg ? { select: selectArg } : undefined),
     ...(whereArg ? { where: whereArg } : undefined),
-    ...(includeArg ? { include: includeArg } : undefined),
+    ...(includeArg
+      ? { include: includeArg }
+      : forTableArg
+      ? { include: { locationId: true, employeePosition: true } }
+      : undefined),
   })
 
   if (!!empData) {
-    const employees = empData.map((emp) => ({ ...getEmpData(emp) }))
+    const employees = forTableArg
+      ? empData.map((emp) => ({
+          ...getEmpDataForTable(emp as GetEmpDataForTableEmployee),
+        }))
+      : empData.map((emp) => ({ ...getEmpData(emp) }))
+
     return {
       employees,
     }

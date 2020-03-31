@@ -1,6 +1,6 @@
 datasource mysql {
   provider = "mysql"
-  url      = env("MYSQL_URL")
+  url = "***"
 }
 
 generator client {
@@ -11,6 +11,7 @@ generator client {
 enum Role {
   READ_WRITE
   READ
+  WRITE
   NONE
 }
 
@@ -29,8 +30,8 @@ enum PositionNames {
 }
 
 // 1:1 with Employee
-model EmployeePosition {
-  id                  Int            @id @default(autoincrement())
+model EmployeeModel {
+  id        Int      @id @default(autoincrement())
   positionName        PositionNames
   roleCapability      Role
   employeeId          Employee
@@ -87,7 +88,7 @@ model MagicCode {
 model Employee {
   id                 Int           @id @default(autoincrement())
   locationId         Location      @relation(references: [id])
-  employeePosition   EmployeePosition
+  employeePosition   EmployeeModel
   firstName          String
   lastName           String
   address            String

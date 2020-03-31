@@ -1,27 +1,30 @@
 import { useEffect, useMemo } from 'react'
-import { Column } from 'material-table'
+import { Column, MTableEditField } from 'material-table'
 import { Typography } from '@material-ui/core'
-import { Location } from '@prisma/client'
+import { Employee, Location } from '@prisma/client'
 import useSWR from 'swr'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 
 import { useSnackbarContext } from '@Utils/reducers'
-import { Employees } from '@Pages/dashboard/employees'
 import { Table } from '@Components/Elements/Table'
-import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import mutator from '@Lib/server/mutator'
-import { CreateEmployee } from '@Pages/api/v1/employees/create'
 import { Loading } from '@Components/Elements/Loading'
-import { EmployeesBodyArgs } from '@Pages/api/v1/employees/all'
-import { camelCaseToFormal } from '@Utils/common'
+import { camelCaseToFormal, parseLocaleNumber } from '@Utils/common'
+import {
+  CreateEmployeeBodyArgs,
+  EmpDataForTable,
+  EmployeesAllPayload,
+  EmployeesBodyArgs,
+  EmployeesTableProps,
+  EmployeeTableColumnKeys,
+} from '@Types/employees'
 
-interface EmployeesData {
-  readonly employees: Readonly<Employees>
-}
-
-interface EmployeesTable {
-  readonly locations: ReadonlyArray<Location>
-  readonly initialData: Readonly<Employees>
-}
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    boxShadow: theme.shadows['1'],
+    minWidth: 'max-content',
+  },
+}))
 
 /**
  * every entity is configured to useSWR with swrConfig at the Dashboard element surrounding each.
@@ -30,26 +33,29 @@ interface EmployeesTable {
  * @param initialData initial ssr data
  * @constructor
  */
-function EmployeesTable({ locations, initialData }: EmployeesTable) {
+function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
+  const classes = useStyles()
   const {
     operationVariables,
   }: { operationVariables: EmployeesBodyArgs } = useMemo(
     () => ({
       operationVariables: {
-        first: 30 /*todo use paging*/,
+        first: 10 /*todo use paging*/,
         include: {
           locationId: true,
+          employeePosition: true,
         },
+        forTable: true,
       },
     }),
     []
   )
 
-  const { data, error, isValidating, revalidate } = useSWR<EmployeesData>(
+  const { data, error, isValidating, revalidate } = useSWR<EmployeesAllPayload>(
     /** the array forces the post op */
     ['/api/v1/employees/all', operationVariables],
     async () =>
-      await mutator<EmployeesData, EmployeesBodyArgs>(
+      await mutator<EmployeesAllPayload, EmployeesBodyArgs>(
         '/api/v1/employees/all',
         operationVariables
       ),
@@ -57,7 +63,9 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
       onError: async (err, key, config) => {
         console.error(err, key, config)
       },
-      initialData: { employees: initialData },
+      initialData: {
+        employees: initialData.employees,
+      },
     }
   )
 
@@ -80,8 +88,12 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
   /**
    * Maps out the column value to each data variable
    */
-  const columnData: Array<Column<any>> = Array.from(
-    Object.keys(data.employees[0])
+  const columnData: Array<Column<
+    Partial<{ [key in EmployeeTableColumnKeys]: any }>
+  >> = Array.from(
+    Object.keys(
+      data.employees[0] as Partial<Employee>
+    ) as EmployeeTableColumnKeys[]
   )
     .filter((key) => key !== 'tableData')
     .map((value) => {
@@ -95,13 +107,42 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
             editable: 'never',
             readonly: true,
           }
-        case 'role':
+        case 'positionName':
           return {
-            title: value.toUpperCase(),
+            title: camelCaseToFormal(value).toUpperCase(),
             field: value,
             editable: 'always',
-            lookup: { ADMIN: 'ADMIN', MODERATOR: 'MODERATOR' },
-            initialEditValue: 'MODERATOR',
+            lookup: {
+              PRESIDENT_CEO: 'PRESIDENT_CEO',
+              VP_CEO: 'VP_CEO',
+              STORE_MANAGER: 'STORE_MANAGER',
+              OFFICE_MANAGER: 'OFFICE_MANAGER',
+              SALES_DESIGN_MANAGER: 'SALES_DESIGN_MANAGER',
+              SALES_DESIGN_ASSOCIATE: 'SALES_DESIGN_ASSOCIATE',
+              SCHEDULING: 'SCHEDULING',
+              TECHNICIAN: 'TECHNICIAN',
+              DELIVERY: 'DELIVERY',
+              WAREHOUSE: 'WAREHOUSE',
+              INSTALLATIONS: 'INSTALLATIONS',
+            },
+          }
+        case 'roleCapability':
+          return {
+            title: camelCaseToFormal(value).toUpperCase(),
+            field: value,
+            editable: 'always',
+            lookup: {
+              READ_WRITE: 'READ_WRITE',
+              READ: 'READ',
+              NONE: 'NONE',
+            },
+          }
+        case 'salary':
+          return {
+            title: 'Salary',
+            type: 'currency',
+            field: value,
+            editable: 'always',
           }
         case 'locationId':
           return {
@@ -129,20 +170,28 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
             title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(typeof data.employees[0] === 'number'
+            cellStyle: {
+              whiteSpace: 'pre',
+            },
+            ...(value !== 'tableData' &&
+            value in data.employees[0] &&
+            data.employees[0][value] &&
+            typeof data.employees[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }
       }
     })
 
-  const onRowAdd: (
-    newData: Partial<Omit<ReturnType<typeof getEmpData>, 'userId'>>
-  ) => Promise<void> = async (newData) => {
+  const onRowAdd: (newData: Partial<EmpDataForTable>) => Promise<void> = async (
+    newData
+  ) => {
     const {
       state,
-      role,
       email,
+      positionName,
+      roleCapability,
+      salary,
       firstName,
       address,
       city,
@@ -151,20 +200,22 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
       zip,
       locationId,
     } = newData
-
+    const unformateedSalary = parseLocaleNumber((salary as string) || '')
     try {
       const createdUser = await mutator('/api/v1/employees/create', {
         state,
-        role,
         locationId,
         phone,
         lastName,
         firstName,
+        positionName,
+        roleCapability,
+        salary: unformateedSalary,
         email,
         address,
         city,
         zip,
-      } as CreateEmployee)
+      } as CreateEmployeeBodyArgs)
       // console.log(createdUser)
       if (createdUser?.userId) {
         await revalidate()
@@ -193,9 +244,15 @@ function EmployeesTable({ locations, initialData }: EmployeesTable) {
       }}
       isLoading={isValidating}
       columns={columnData}
-      data={(data.employees as unknown) as Object[]}
+      data={data.employees}
+      components={{
+        EditField: (props) => (
+          <MTableEditField className={classes.root} {...props} />
+        ),
+      }}
       optionsToMerge={{
         toolbar: true,
+        pageSize: 10,
       }}
     />
   )

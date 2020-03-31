@@ -2,10 +2,8 @@ import dotenv from 'dotenv'
 import path from 'path'
 import * as PrismaClient from '@prisma/client'
 import applianceData from './json/appliances.json'
-
 // customers from tab delimited csv
 import customerData from './json/customers.json'
-
 // the only dependency from the main files
 // noinspection TypeScriptPreferShortImport,ES6PreferShortImport
 import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
@@ -38,7 +36,6 @@ async function main() {
           phone: '(111) 222-3333',
         },
       },
-      role: 'ADMIN',
       firstName: 'Monkey',
       lastName: 'Fish',
       address: '102 bush blvd.',
@@ -49,10 +46,18 @@ async function main() {
       email: 'saleebmina@aol.com',
       jwtUserSecret,
       password: passwordHash,
+      employeePosition: {
+        create: {
+          positionName: 'PRESIDENT_CEO',
+          salary: 300000.0,
+          roleCapability: 'READ_WRITE',
+        },
+      },
     },
     include: {
       // this creates the location along with the user
       locationId: true,
+      employeePosition: true,
     },
   })
 
@@ -135,10 +140,10 @@ async function setUpInventory() {
       prisma.product.create({
         data: {
           brand: Brand,
-          listPrice: `${ListPrice}`,
+          listPrice: ListPrice,
           productCategory: 'Appliances',
           modelNumber: Model,
-          unitCost: `${Cost}`,
+          unitCost: Cost,
           inventory: {
             connect: { id: currentInventoryID },
           },

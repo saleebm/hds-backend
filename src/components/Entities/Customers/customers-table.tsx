@@ -62,9 +62,10 @@ export function CustomersTable({ customers }: CustomersTable) {
             title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(Array.isArray(data) &&
-            value in data[0] &&
-            typeof data[0] === 'number'
+            ...(value !== 'tableData' &&
+            value in data.customers[0] &&
+            data.customers[0][value] &&
+            typeof data.customers[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }

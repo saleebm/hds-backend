@@ -4,10 +4,17 @@ import { Location } from '@prisma/client'
 import { Column } from 'material-table'
 import { Typography } from '@material-ui/core'
 
-import { Inventories, InventoriesData } from '@Pages/dashboard/inventories'
+import {
+  Inventories,
+  InventoriesData,
+  Inventory,
+} from '@Pages/dashboard/inventories'
 import { useSnackbarContext } from '@Utils/reducers'
 import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
+import { camelCaseToFormal } from '@Utils/common'
+
+type InventoriesTableKey = keyof Inventory | 'tableData'
 
 export function InventoriesTable({ inventories, locations }: InventoriesData) {
   const { toggleSnackbar } = useSnackbarContext()
@@ -33,8 +40,10 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
     return <Loading />
   }
 
-  const columnData: Array<Column<{}>> | undefined = Array.from(
-    Object.keys(data.inventories[0])
+  const columnData: Array<Column<
+    Partial<{ [key in keyof Inventory]: any }>
+  >> = Array.from(
+    Object.keys(data.inventories[0] as Inventory) as InventoriesTableKey[]
   )
     .filter((key) => key !== 'tableData')
     .map((value) => {
@@ -75,12 +84,13 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
           }
         default:
           return {
-            title: value.toUpperCase(),
+            title: camelCaseToFormal(value).toUpperCase(),
             editable: 'always',
             field: value,
-            ...(Array.isArray(data) &&
-            value in data[0] &&
-            typeof data[0] === 'number'
+            ...(value !== 'tableData' &&
+            value in data.inventories[0] &&
+            data.inventories[0][value] &&
+            typeof data.inventories[0][value] === 'number'
               ? { type: 'numeric' }
               : {}),
           }
