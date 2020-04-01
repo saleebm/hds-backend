@@ -27,12 +27,13 @@ export default handler(async (req) => {
 
   const { userId, employee } = await checkAuth(req.headers)
   // throw if unauthenticated
-  if (!userId || employee.employeePosition.roleCapability !== 'READ_WRITE') {
+  if (!userId || employee.roleCapability !== 'READ_WRITE') {
     // unauthorized
     // no userId from auth headers or not admin
     throw new UnauthenticatedError()
   }
 
+  //todo more stringent checking, since im in control of client, should be done there obv.
   // invalid password supplied? does not care if it is empty, that is handled below by generateDefaultPasswordOrReturn()
   if (req.body.password) {
     if (
@@ -43,13 +44,8 @@ export default handler(async (req) => {
       throw new InvalidArgumentError('Password must be 8 characters or greater')
   }
 
-  // invalid employeePosition supplied??
-  if (typeof req.body.employeePosition !== 'undefined') {
-    throw new InvalidArgumentError('Role can only be MODERATOR or ADMIN')
-  }
-
   // use a location as default
-  const locations = await prisma.location.findMany()
+  const locations = await prisma.storeLocations.findMany()
   const defaultLocation =
     (Array.isArray(locations) && locations[0]) || undefined
   // if no location provided throw
@@ -77,13 +73,13 @@ export default handler(async (req) => {
     email,
     firstName,
     lastName,
-    phone,
     roleCapability,
     positionName,
     salary,
     state,
-    locationId = defaultLocation?.id,
-    zip,
+    zipCode,
+    storeLocations = defaultLocation?.idStoreLocations,
+    /*todo salesOrders and invoices*/
   } = req.body as CreateEmployeeBodyArgs
 
   // encrypt pw
@@ -102,31 +98,30 @@ export default handler(async (req) => {
         email,
         firstName,
         lastName,
-        phone,
-        employeePosition: {
-          create: {
-            roleCapability,
-            positionName,
-            salary:
-              typeof salary === 'string' ? Number(salary) : salary ?? 32000.0,
-          },
-        },
+
+        roleCapability,
+        positionName,
+        salary: typeof salary === 'string' ? Number(salary) : salary ?? 32000.0,
         state,
         /** makes sure if location supplied is a number, then just connects it to that number */
-        locationId:
-          typeof locationId === 'object'
-            ? { connect: { id: locationId.id } }
-            : typeof locationId === 'string'
-            ? { connect: { id: parseInt(locationId) } }
-            : { connect: { id: defaultLocation?.id } },
-        jwtUserSecret,
+        storeLocations:
+          typeof storeLocations === 'object'
+            ? storeLocations
+            : {
+                connect: {
+                  idStoreLocations:
+                    typeof storeLocations === 'string'
+                      ? parseInt(storeLocations)
+                      : defaultLocation?.idStoreLocations,
+                },
+              },
+        userSigningSecret: jwtUserSecret,
         password: passwordHash,
-        zip: typeof zip === 'string' ? parseInt(zip) : zip,
+        zipCode: typeof zipCode === 'string' ? parseInt(zipCode) : zipCode,
       },
       include: {
         /** if location created anew, then include it in create op response */
-        locationId: typeof locationId === 'object',
-        employeePosition: true,
+        storeLocations: true,
       },
     })
 
@@ -135,7 +130,7 @@ export default handler(async (req) => {
     if (!req.body.password && !!userCreated) {
       const hostname = getApiHostUrl(req)
       // first generate magicCode for user to go to reset password
-      const magicCode = await generateCode(userCreated.id, prisma)
+      const magicCode = await generateCode(userCreated.employeeId, prisma)
       await sendEmail(userCreated.email, magicCode, hostname)
     }
 
@@ -143,7 +138,7 @@ export default handler(async (req) => {
      *  getEmpData prevents leaking of secure data to viewer, filtering out the user fields necessary
      */
     return {
-      userId: userCreated.id,
+      userId: userCreated.employeeId,
       employee: getEmpData(userCreated),
     }
   } catch (e) {

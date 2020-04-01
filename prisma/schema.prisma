@@ -1,20 +1,258 @@
-datasource mysql {
-  provider = "mysql"
-  url      = env("MYSQL_URL")
-}
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
 }
 
-enum Role {
-  READ_WRITE
-  READ
-  NONE
+datasource mysql {
+ provider = "mysql"
+ url      = env("MYSQL_URL")
 }
 
-enum PositionNames {
+model Customer {
+  address       String
+  city          String
+  createdAt     DateTime        @default(now())
+  firstName     String
+  idCustomer    Int             @default(autoincrement()) @id
+  lastName      String
+  middleInitial String?
+  state         String?
+  updatedAt     DateTime        @updatedAt
+  zipCode       Int
+  customerOrder CustomerOrder[]
+  invoice       Invoice[]
+  jobs          Jobs[]
+}
+
+model CustomerOrder {
+  actualDeliveryDate    DateTime?
+  customerId            Int
+  dateCancelled         DateTime?
+  expectedDeliveryDate  DateTime
+  idCustomerOrder       Int                     @default(autoincrement()) @id
+  isCanceled            Int?                    @default(0)
+  orderDate             DateTime                @default(now())
+  orderNumber           Int                     @unique
+  orderTotal            Float
+  storeLocationId       Int
+  customer              Customer                @relation(fields: [customerId], references: [idCustomer])
+  storeLocations        StoreLocations          @relation(fields: [storeLocationId], references: [idStoreLocations])
+  customerOrderProducts CustomerOrderProducts[]
+  invoice               Invoice[]
+
+  @@index([customerId], name: "customerId_idx")
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model CustomerOrderProducts {
+  customerOrderId         Int
+  idCustomerOrderProducts Int           @default(autoincrement()) @id
+  perUnitCost             Float
+  productId               Int
+  quantity                Int
+  customerOrder           CustomerOrder @relation(fields: [customerOrderId], references: [idCustomerOrder])
+  product                 Product       @relation(fields: [productId], references: [idProduct])
+
+  @@index([customerOrderId], name: "customerOrderId_idx")
+  @@index([productId], name: "productId_idx")
+}
+
+model MagicCode {
+  code      String   @id
+  user      Employee              @relation(fields: [userId],references: [employeeId])
+  userId    Int
+  updatedAt DateTime @updatedAt
+}
+
+model Employee {
+  address           String
+  city              String
+  createdAt         DateTime               @default(now())
+  email             String                 @unique
+  employeeId        Int                    @default(autoincrement()) @id
+  firstName         String
+  lastName          String
+  password          String
+  positionName      EmployeePositionName
+  magicCode         MagicCode?
+  roleCapability    EmployeeRoleCapability @default(NONE)
+  salary            Float
+  state             String
+  storeLocationId   Int
+  updatedAt         DateTime               @updatedAt
+  userSigningSecret String
+  zipCode           Int
+  storeLocations    StoreLocations         @relation(fields: [storeLocationId], references: [idStoreLocations])
+  invoice           Invoice[]
+  salesOrders       SalesOrders[]
+
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model Inventory {
+  aisle              Int
+  bin                String         @unique
+  idInventory        Int            @default(autoincrement()) @id
+  product            Int
+  quantityOnHand     Int
+  storeLocation      Int
+  productOfInventory Product        @relation(fields: [product], references: [idProduct])
+  storeLocations     StoreLocations @relation(fields: [storeLocation], references: [idStoreLocations])
+
+  @@index([product], name: "productId_idx")
+  @@index([storeLocation], name: "storeLocationId_idx")
+}
+
+model Invoice {
+  createdAt        DateTime           @default(now())
+  customerId       Int
+  customerOrderId  Int
+  dueDate          DateTime
+  employeeId       Int
+  idInvoice        Int                @default(autoincrement()) @id
+  invoiceNumber    String             @unique
+  invoiceTotal     Float
+  paidDate         DateTime
+  storeLocationId  Int
+  updatedAt        DateTime           @updatedAt
+  customer         Customer           @relation(fields: [customerId], references: [idCustomer])
+  customerOrder    CustomerOrder      @relation(fields: [customerOrderId], references: [idCustomerOrder])
+  employee         Employee           @relation(fields: [employeeId], references: [employeeId])
+  storeLocations   StoreLocations     @relation(fields: [storeLocationId], references: [idStoreLocations])
+  invoiceLineItems InvoiceLineItems[]
+
+  @@index([customerId], name: "customerId_idx")
+  @@index([customerOrderId], name: "customerOrderId_idx")
+  @@index([employeeId], name: "employeeId_idx")
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model InvoiceLineItems {
+  idinvoiceLineItem   Int         @default(autoincrement()) @id
+  invoiceId           Int
+  isInstallationCosts Int?        @default(0)
+  jobId               Int?
+  lineItemTotal       Float
+  operationId         Int?
+  productId           Int?
+  quantity            Int
+  taskName            String?
+  invoice             Invoice     @relation(fields: [invoiceId], references: [idInvoice])
+  jobs                Jobs?       @relation(fields: [jobId], references: [idJobs])
+  operations          Operations? @relation(fields: [operationId], references: [idOperations])
+  product             Product?    @relation(fields: [productId], references: [idProduct])
+
+  @@index([invoiceId], name: "invoiceId_idx")
+  @@index([jobId], name: "jobId_idx")
+  @@index([operationId], name: "operationId_idx")
+  @@index([productId], name: "productId_idx")
+}
+
+model Jobs {
+  customerId       Int
+  dateCompleted    DateTime
+  dateScheduled    DateTime
+  details          String?
+  hoursActual      Float?
+  hoursScheduled   Float
+  idJobs           Int                @default(autoincrement()) @id
+  customer         Customer           @relation(fields: [customerId], references: [idCustomer])
+  invoiceLineItems InvoiceLineItems[]
+  operations       Operations[]
+
+  @@index([customerId], name: "customerId_idx")
+}
+
+model Operations {
+  chargePerHour    Float
+  hoursCharged     Float
+  idOperations     Int                @default(autoincrement()) @id
+  jobId            Int
+  operationName    String
+  jobs             Jobs               @relation(fields: [jobId], references: [idJobs])
+  invoiceLineItems InvoiceLineItems[]
+
+  @@index([jobId], name: "jobId_idx")
+}
+
+model Product {
+  brand                 String
+  createdAt             DateTime                @default(now())
+  description           String?
+  idProduct             Int                     @default(autoincrement()) @id
+  listPrice             Float
+  unitPrice             Float
+  modelNumber           String
+  productCategory       String
+  salePrice             Float?
+  serialNumber          String                  @unique
+  updatedAt             DateTime                @updatedAt
+  customerOrderProducts CustomerOrderProducts[]
+  inventory             Inventory[]
+  invoiceLineItems      InvoiceLineItems[]
+  salesOrderItem        SalesOrderItem[]
+}
+
+model SalesOrderItem {
+  idSalesOrderItem  Int         @default(autoincrement()) @id
+  productId         Int
+  quantityPurchased Int
+  salesOrderId      Int
+  unitPrice         Float
+  product           Product     @relation(fields: [productId], references: [idProduct])
+  salesOrders       SalesOrders @relation(fields: [salesOrderId], references: [idSalesOrders])
+
+  @@index([productId], name: "productId_idx")
+  @@index([salesOrderId], name: "salesOrderId_idx")
+}
+
+model SalesOrders {
+  deliverDate     DateTime
+  employeeId      Int
+  idSalesOrders   Int              @default(autoincrement()) @id
+  orderDate       DateTime         @default(now())
+  orderNumber     String           @unique
+  orderPrice      Float
+  storeLocationId Int
+  supplierId      Int
+  employee        Employee         @relation(fields: [employeeId], references: [employeeId])
+  storeLocations  StoreLocations   @relation(fields: [storeLocationId], references: [idStoreLocations])
+  suppliers       Suppliers        @relation(fields: [supplierId], references: [idSupplier])
+  salesOrderItem  SalesOrderItem[]
+
+  @@index([employeeId], name: "id_employeeIdx")
+  @@index([storeLocationId], name: "idStoreLocationIdx")
+  @@index([supplierId], name: "idSupplierIdx")
+}
+
+model StoreLocations {
+  address          String
+  city             String
+  idStoreLocations Int             @default(autoincrement()) @id
+  phone            String
+  state            String
+  zipCode          Int
+  customerOrder    CustomerOrder[]
+  employee         Employee[]
+  inventory        Inventory[]
+  invoice          Invoice[]
+  salesOrders      SalesOrders[]
+}
+
+model Suppliers {
+  city        String
+  createdAt   DateTime      @default(now())
+  email       String        @unique
+  idSupplier  Int           @default(autoincrement()) @id
+  name        String
+  phone       String
+  state       String
+  updatedAt   DateTime      @updatedAt
+  zip         Int
+  salesOrders SalesOrders[]
+}
+
+enum EmployeePositionName {
   PRESIDENT_CEO
   VP_CEO
   STORE_MANAGER
@@ -26,190 +264,14 @@ enum PositionNames {
   DELIVERY
   WAREHOUSE
   INSTALLATIONS
+  INSTALLATIONS_DELIVERIES
+  INSTALLATIONS_DELIVERIES_SALES
+  WAREHOUSE_INSTALLATIONS_DELIVERIES
+  WAREHOUSE_DELIVERIES
 }
 
-// 1:1 with Employee
-model EmployeePosition {
-  id                  Int            @id @default(autoincrement())
-  positionName        PositionNames
-  roleCapability      Role
-  employeeId          Employee
-  salary              Float
-}
-
-model Supplier {
-  id          Int         @id @default(autoincrement())
-  name        String
-  address     String
-  city        String
-  state       String
-  zip         Int
-  phone       String
-  email       String      @unique
-  salesOrders SalesOrder[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-}
-
-model Product {
-  id              Int          @id @default(autoincrement())
-  modelNumber     String
-  productCategory String
-  description     String
-  unitCost        Float
-  listPrice       Float
-  serialNumber    String
-  brand           String
-  salesOrders     SalesOrder[]
-  quantityOnHand  Int
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-}
-
-// the orders for the company, ie fill on hand stock
-model SalesOrder {
-  id                Int       @id @default(autoincrement())
-  productId         Product
-  supplierId        Supplier
-  quantityPurchased Int
-  costEach          Float
-  extendedCost      Float
-  dueDate           DateTime
-  orderDate         DateTime  @default(now())
-}
-
-model MagicCode {
-  code      String   @id
-  user      Employee
-  updatedAt DateTime @updatedAt
-}
-
-model Employee {
-  id                 Int           @id @default(autoincrement())
-  locationId         Location      @relation(references: [id])
-  employeePosition   EmployeePosition
-  firstName          String
-  lastName           String
-  address            String
-  city               String
-  state              String
-  zip                Int
-  phone              String
-  email              String         @unique
-  password           String
-  jwtUserSecret      String
-  magicCode          MagicCode?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-}
-
-model Inventory {
-  id         Int        @id @default(autoincrement())
-  productId  Product[]
-  locationId Location[]
-  name       String
-  aisle      Int
-  bin        String     @unique
-}
-
-model Location {
-  id        Int        @id @default(autoincrement())
-  address   String
-  city      String
-  state     String
-  zip       Int
-  phone     String
-  employees Employee[]
-}
-
-model Customer {
-  id            Int      @id @default(autoincrement())
-  firstName     String
-  middleInitial String
-  lastName      String
-  address       String
-  city          String
-  state         String
-  zip           Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-
-enum Operations {
-  DESIGN
-  INSTALLATION_CABINETS
-  RE_FACING_CABINETS
-  PLUMBING
-  ELECTRICAL
-  PAINTING_WALLPAPER
-  GENERAL_CONSTRUCTION
-  DELIVERY
-}
-
-model Fees {
-  operationName Operations @unique
-  charge        Int
-}
-
-model Job {
-  id             Int       @id @default(autoincrement())
-  customerId     Customer
-  startDate      DateTime  @default(now())
-  scheduledEnd   DateTime
-  scheduledHours Float
-  actualEnd      DateTime?
-  actualHours    Float?
-}
-
-// the single order for a customer comes first
-// dueDate is long term
-model CustomerOrder {
-  id                Int       @id @default(autoincrement())
-  customerId        Customer
-  jobId             Job
-  orderDate         DateTime  @default(now())
-  operationFees     Fees[]
-  deliveryCost      Float
-  totalCost         Float
-  remainderDue      Float
-  totalCostDueDate  DateTime
-}
-
-// the bill send to the customer monthly
-// sales records, may have multiple customer orders
-// dueDate defaults to 15th of coming month
-model CustomerSale {
-  id              Int             @id @default(autoincrement())
-  billNumber      Int
-  customerId      Customer
-  customerOrderId CustomerOrder[]
-  productsOrdered CustomerOrderProduct[]
-  saleDate        DateTime
-  saleAmount      Float
-  createdAt       DateTime        @default(now())
-  dueDate         DateTime
-}
-
-model CustomerOrderProduct {
-  quantityPurchased Int
-  extendedCost      Float
-  productId         Product
-  customerSale      CustomerSale
-  @@id([productId, customerSale])
-}
-
-model Bid {
-  id            Int      @id @default(autoincrement())
-  customerId    Customer
-  requiredHours Float
-  bidAmount     Float
-}
-
-model BidProduct {
-  id         Int      @id @default(autoincrement())
-  bidId      Bid
-  productId  Product
-  saleDate   DateTime @default(now())
-  saleAmount Float
+enum EmployeeRoleCapability {
+  READ_WRITE
+  READ
+  NONE
 }

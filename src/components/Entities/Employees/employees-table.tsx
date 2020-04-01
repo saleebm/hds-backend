@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Column, MTableEditField } from 'material-table'
 import { Typography } from '@material-ui/core'
-import { Employee, Location } from '@prisma/client'
 import useSWR from 'swr'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 
@@ -12,12 +11,13 @@ import { Loading } from '@Components/Elements/Loading'
 import { camelCaseToFormal, parseLocaleNumber } from '@Utils/common'
 import {
   CreateEmployeeBodyArgs,
-  EmpDataForTable,
+  EmpDataFiltered,
   EmployeesAllPayload,
-  EmployeesBodyArgs,
-  EmployeesTableProps,
+  EmployeesPageProps,
   EmployeeTableColumnKeys,
+  SillyMaterialTable,
 } from '@Types/employees'
+import { FindManyEmployeeArgs } from '@prisma/client'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -33,17 +33,15 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @param initialData initial ssr data
  * @constructor
  */
-function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
+function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
   const classes = useStyles()
   const {
     operationVariables,
-  }: { operationVariables: EmployeesBodyArgs } = useMemo(
+  }: { operationVariables: FindManyEmployeeArgs } = useMemo(
     () => ({
       operationVariables: {
-        first: 10 /*todo use paging*/,
         include: {
-          locationId: true,
-          employeePosition: true,
+          storeLocations: true,
         },
         forTable: true,
       },
@@ -55,7 +53,7 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
     /** the array forces the post op */
     ['/api/v1/employees/all', operationVariables],
     async () =>
-      await mutator<EmployeesAllPayload, EmployeesBodyArgs>(
+      await mutator<EmployeesAllPayload, FindManyEmployeeArgs>(
         '/api/v1/employees/all',
         operationVariables
       ),
@@ -64,7 +62,7 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
         console.error(err, key, config)
       },
       initialData: {
-        employees: initialData.employees,
+        employees: employeeData.employees,
       },
     }
   )
@@ -88,17 +86,16 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
   /**
    * Maps out the column value to each data variable
    */
-  const columnData: Array<Column<
-    Partial<{ [key in EmployeeTableColumnKeys]: any }>
-  >> = Array.from(
+  const columnData: Array<Column<Partial<EmpDataFiltered>>> = Array.from(
     Object.keys(
-      data.employees[0] as Partial<Employee>
+      data.employees[0] as EmpDataFiltered
     ) as EmployeeTableColumnKeys[]
   )
     .filter((key) => key !== 'tableData')
+    .filter((key) => key !== 'storeLocationId')
     .map((value) => {
       switch (value) {
-        case 'userId':
+        case 'employeeId':
           // can not let this be editable! obv.
           return {
             title: camelCaseToFormal(value).toUpperCase(),
@@ -113,17 +110,23 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
             field: value,
             editable: 'always',
             lookup: {
-              PRESIDENT_CEO: 'PRESIDENT_CEO',
-              VP_CEO: 'VP_CEO',
-              STORE_MANAGER: 'STORE_MANAGER',
-              OFFICE_MANAGER: 'OFFICE_MANAGER',
-              SALES_DESIGN_MANAGER: 'SALES_DESIGN_MANAGER',
-              SALES_DESIGN_ASSOCIATE: 'SALES_DESIGN_ASSOCIATE',
-              SCHEDULING: 'SCHEDULING',
-              TECHNICIAN: 'TECHNICIAN',
-              DELIVERY: 'DELIVERY',
-              WAREHOUSE: 'WAREHOUSE',
-              INSTALLATIONS: 'INSTALLATIONS',
+              PRESIDENT_CEO: 'President, CEO',
+              VP_CEO: 'VP, CEO',
+              STORE_MANAGER: 'Store Manager',
+              OFFICE_MANAGER: 'Office Manager',
+              SALES_DESIGN_MANAGER: 'Sales Design Manager',
+              SALES_DESIGN_ASSOCIATE: 'Sales Design Associate',
+              SCHEDULING: 'Scheduling',
+              TECHNICIAN: 'Technician',
+              DELIVERY: 'Delivery',
+              WAREHOUSE: 'Warehouse',
+              INSTALLATIONS: 'Installations',
+              INSTALLATIONS_DELIVERIES: 'Installations and Deliveries',
+              INSTALLATIONS_DELIVERIES_SALES:
+                'Installations, Deliveries, and Sales',
+              WAREHOUSE_INSTALLATIONS_DELIVERIES:
+                'Installations, Deliveries, and Warehouse',
+              WAREHOUSE_DELIVERIES: 'Warehouse and Deliveries',
             },
           }
         case 'roleCapability':
@@ -144,24 +147,24 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
             field: value,
             editable: 'always',
           }
-        case 'locationId':
+        case 'storeLocations':
           return {
             title: 'LOCATION',
             field: value,
             editable: 'always',
-            render: (rowData: Partial<{ locationId: Location }>) => (
+            render: (rowData: Partial<EmpDataFiltered>) => (
               <Typography variant={'body2'}>
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: `${rowData.locationId?.city}, ${rowData.locationId?.state} - ID #${rowData.locationId?.id}`,
+                    __html: `${rowData.storeLocations?.city}, ${rowData.storeLocations?.state} - ID #${rowData.storeLocations?.idStoreLocations}`,
                   }}
                 />
               </Typography>
             ),
             lookup: locations.reduce((acc, curr) => {
               ;(acc as { [key: number]: string })[
-                curr.id
-              ] = `${curr.city}, ${curr.state} - ID#${curr.id}`
+                curr.idStoreLocations
+              ] = `${curr.city}, ${curr.state} - ID#${curr.idStoreLocations}`
               return acc
             }, {}),
           }
@@ -183,9 +186,9 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
       }
     })
 
-  const onRowAdd: (newData: Partial<EmpDataForTable>) => Promise<void> = async (
-    newData
-  ) => {
+  const onRowAdd: (
+    newData: Partial<SillyMaterialTable>
+  ) => Promise<void> = async (newData) => {
     const {
       state,
       email,
@@ -196,16 +199,16 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
       address,
       city,
       lastName,
-      phone,
-      zip,
-      locationId,
+      zipCode,
+      storeLocationId,
     } = newData
-    const unformateedSalary = parseLocaleNumber((salary as string) || '')
+
+    const unformateedSalary =
+      typeof salary === 'string' ? parseLocaleNumber(salary) : salary
+
     try {
       const createdUser = await mutator('/api/v1/employees/create', {
         state,
-        locationId,
-        phone,
         lastName,
         firstName,
         positionName,
@@ -214,7 +217,8 @@ function EmployeesTable({ locations, initialData }: EmployeesTableProps) {
         email,
         address,
         city,
-        zip,
+        zipCode,
+        storeLocations: { connect: { idStoreLocations: storeLocationId } },
       } as CreateEmployeeBodyArgs)
       // console.log(createdUser)
       if (createdUser?.userId) {

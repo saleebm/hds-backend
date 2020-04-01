@@ -11,8 +11,8 @@ import { AuthTokenSecurity } from '@Lib/server/auth-token-security'
 import { IncomingMessage } from 'http'
 import { getEnv } from '@Pages/api/v1/account/_get-env'
 import { getAccessToken } from '@Pages/api/v1/account/_get-access-token'
-import { EmployeeRes } from '@Types/api-res'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
+import { EmpDataFiltered } from '@Types/employees'
 
 const prisma = new PrismaClient()
 
@@ -24,7 +24,7 @@ export type LoginRequestBody = {
 export type LoginRequestSuccess = {
   accessToken: string
   refreshToken: string
-} & EmployeeRes
+} & EmpDataFiltered
 
 /**
  * POST
@@ -38,7 +38,7 @@ export default handler(
       cookies: { [p: string]: string }
       body: any
     }
-  ) => {
+  ): Promise<LoginRequestSuccess> => {
     // bail
     if (req.method?.toLowerCase() !== 'post') throw new NotImplementedError()
 
@@ -49,7 +49,7 @@ export default handler(
     // console.log(req.body)
     const employee = await prisma.employee.findOne({
       where: { email: req.body.email },
-      include: { employeePosition: true, locationId: true },
+      include: { storeLocations: true },
     })
     // if no employee found by email, should not happen because client login verifies this
     if (!employee) {
@@ -70,23 +70,23 @@ export default handler(
       // generate access token and refresh token
       // sign them both with env secret and ship
       const accessToken = await getAccessToken({
-        jwtid: employee.jwtUserSecret,
-        userId: employee.id,
+        jwtid: employee.userSigningSecret,
+        userId: employee.employeeId,
         signingSecret: signingSignature,
       })
       const refreshToken = await AuthTokenSecurity.sign({
-        payload: { userId: employee.id },
+        payload: { userId: employee.employeeId },
         isRefreshToken: true,
         signingSecret: signingSignature,
         jwtOptions: {
-          subject: `${employee.id}`,
-          jwtid: employee.jwtUserSecret,
+          subject: `${employee.employeeId}`,
+          jwtid: employee.userSigningSecret,
         },
       })
       return {
         accessToken,
         refreshToken,
-        employee: getEmpData(employee),
+        ...getEmpData(employee),
       }
     }
   }

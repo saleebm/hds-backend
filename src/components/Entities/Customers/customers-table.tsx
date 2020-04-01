@@ -39,7 +39,7 @@ export function CustomersTable({ customers }: CustomersTable) {
     .filter((key) => key !== 'tableData')
     .map((value: CustomersKey) => {
       switch (value) {
-        case 'id':
+        case 'idCustomer':
           return {
             title: value.toUpperCase(),
             field: value,
@@ -83,8 +83,7 @@ export function CustomersTable({ customers }: CustomersTable) {
         onRowDelete: undefined,
       }}
       optionsToMerge={{
-        doubleHorizontalScroll: true,
-        pageSize: 10,
+        pageSize: 20,
       }}
       title={'Customers'}
       columns={columnData}

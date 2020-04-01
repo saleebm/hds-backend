@@ -1,0 +1,42 @@
+[
+  {
+    "loc_id": 1,
+    "LOCATION": "Phoenix",
+    "STATE": "AZ",
+    "LOC_ADDR": "101 Sedalia Drive",
+    "loc_zip": 85001,
+    "loc_phone": "(111)-222-3333"
+  },
+  {
+    "loc_id": 2,
+    "LOCATION": "Scottsdale",
+    "STATE": "AZ",
+    "LOC_ADDR": "901 S. Sedona Way",
+    "loc_zip": 85260,
+    "loc_phone": "(111)-222-3333"
+  },
+  {
+    "loc_id": 3,
+    "LOCATION": "Tuscon",
+    "STATE": "AZ",
+    "LOC_ADDR": "201 N Bonita Ave Ste. 105",
+    "loc_zip": 85745,
+    "loc_phone": "(111)-222-3333"
+  },
+  {
+    "loc_id": 4,
+    "LOCATION": "Las Vegas",
+    "STATE": "NV",
+    "LOC_ADDR": "1980 Festival Plaza Dr Ste. 400",
+    "loc_zip": 89135,
+    "loc_phone": "(111)-222-3333"
+  },
+  {
+    "loc_id": 5,
+    "LOCATION": "Albuquerque",
+    "STATE": "NM",
+    "LOC_ADDR": "8023 Sedalia Dr.",
+    "loc_zip": 87104,
+    "loc_phone": "(111)-222-3333"
+  }
+]

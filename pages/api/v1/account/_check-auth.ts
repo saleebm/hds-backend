@@ -38,20 +38,20 @@ export const checkAuth = async (headers: IncomingHttpHeaders) => {
     ) {
       // prisma lookup for the employee by id
       const emp = await prisma.employee.findOne({
-        where: { id: userDataDecoded.userId },
-        include: {employeePosition: true}
+        where: { employeeId: userDataDecoded.userId },
+        include: { storeLocations: true },
       })
       if (!!emp) {
         // now we verify the jwt using the signature and jwt token which is set as the jwtid
         const userIdVerified = await AuthTokenSecurity.verify({
           token,
           envSigningSecret: signingSignature,
-          userJwtSecret: emp.jwtUserSecret,
+          userJwtSecret: emp.userSigningSecret,
         })
 
         return {
           userId: userIdVerified.userId,
-          jwtUserSecret: emp.jwtUserSecret,
+          jwtUserSecret: emp.userSigningSecret,
           // return it diligently since fields unchecked in db for auth access rights
           employee: emp,
         }

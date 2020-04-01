@@ -1,4 +1,4 @@
-import { Supplier } from '@prisma/client'
+import { Suppliers } from '@prisma/client'
 import useSWR from 'swr'
 import { Column } from 'material-table'
 
@@ -7,15 +7,15 @@ import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
 import { useEffect } from 'react'
 import { camelCaseToFormal } from '@Utils/common'
-import { Suppliers } from '@Pages/dashboard/suppliers'
+import { SuppliersProps } from '@Pages/dashboard/suppliers'
 
 type SupplierData = {
-  suppliers: ReadonlyArray<Supplier>
+  suppliers: ReadonlyArray<Suppliers>
 }
 
-type SuppliersTableKey = keyof Supplier | 'tableData'
+type SuppliersTableKey = keyof Suppliers | 'tableData'
 
-export function SuppliersTable({ suppliers }: Suppliers) {
+export function SuppliersTable({ suppliers }: SuppliersProps) {
   const { toggleSnackbar } = useSnackbarContext()
   const { data, error /* todo: isValidating, revalidate */ } = useSWR<
     SupplierData
@@ -42,12 +42,12 @@ export function SuppliersTable({ suppliers }: Suppliers) {
   const columnData: Array<Column<
     Partial<{ [key in keyof SuppliersTableKey]: any }>
   >> = Array.from(
-    Object.keys(data.suppliers[0] as Supplier) as SuppliersTableKey[]
+    Object.keys(data.suppliers[0] as Suppliers) as SuppliersTableKey[]
   )
     .filter((key) => key !== 'tableData')
     .map((value) => {
       switch (value) {
-        case 'id':
+        case 'idSupplier':
           return {
             title: value.toUpperCase(),
             field: value,
@@ -93,7 +93,7 @@ export function SuppliersTable({ suppliers }: Suppliers) {
       }}
       title={'Suppliers'}
       columns={columnData}
-      data={data.suppliers as Supplier[]}
+      data={data.suppliers as Suppliers[]}
     />
   )
 }

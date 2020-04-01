@@ -29,7 +29,7 @@ export default handler(async (req) => {
   }
   const hostname = getApiHostUrl(req)
 
-  const magicCode = await generateCode(employee.id, prisma)
+  const magicCode = await generateCode(employee.employeeId, prisma)
   await sendEmail(employee.email, magicCode, hostname)
 
   return {

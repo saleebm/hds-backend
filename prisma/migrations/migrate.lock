@@ -1,12 +1,9 @@
 # IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
-# INSTEAD EXECUTE `prisma2 migrate fix`
+# INSTEAD EXECUTE `prisma migrate fix`
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200330161221-init
-20200330181114-salary
-20200330184604-coarse
-20200330194654-role
-20200330200115-init
-20200330201149-employee-position
-20200330222259-remove-write-only
+20200401115309-init
+20200401123545-init
+20200401133858-init
+20200401134515-init

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import useSWR from 'swr'
-import { Location } from '@prisma/client'
+import { StoreLocations } from '@prisma/client'
 import { Column } from 'material-table'
 
 import { Table } from '@Components/Elements/Table'
@@ -9,10 +9,10 @@ import { Loading } from '@Components/Elements/Loading'
 import { camelCaseToFormal } from '@Utils/common'
 
 interface LocationsTable {
-  locations: ReadonlyArray<Location>
+  locations: ReadonlyArray<StoreLocations>
 }
 
-type LocationsKey = keyof Location | 'tableData'
+type LocationsKey = keyof StoreLocations | 'tableData'
 
 export function LocationsTable({ locations }: LocationsTable) {
   const { toggleSnackbar } = useSnackbarContext()
@@ -35,12 +35,14 @@ export function LocationsTable({ locations }: LocationsTable) {
   }
 
   const columnData: Array<Column<
-    Partial<{ [key in keyof Location]: any }>
-  >> = Array.from(Object.keys(data.locations[0] as Location) as LocationsKey[])
+    Partial<{ [key in keyof StoreLocations]: any }>
+  >> = Array.from(
+    Object.keys(data.locations[0] as StoreLocations) as LocationsKey[]
+  )
     .filter((key) => key !== 'tableData')
     .map((value: LocationsKey) => {
       switch (value) {
-        case 'id':
+        case 'idStoreLocations':
           return {
             title: value.toUpperCase(),
             field: value,
@@ -76,7 +78,7 @@ export function LocationsTable({ locations }: LocationsTable) {
       }}
       title={'Locations'}
       columns={columnData}
-      data={data.locations as Location[]}
+      data={data.locations as StoreLocations[]}
     />
   )
 }

@@ -7,6 +7,7 @@ import {
 } from '@Lib/server/known-errors'
 import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { cryptoFactory } from '@Utils/crypto'
+import { EmpDataFiltered } from '@Types/employees'
 
 const prisma = new PrismaClient()
 
@@ -16,7 +17,7 @@ export interface ResetPassword {
 }
 export interface ResetPasswordRes {
   success: boolean
-  employee: Partial<Employee>
+  employee: EmpDataFiltered
 }
 /**
  * sends email to reset password
@@ -30,7 +31,7 @@ export default handler(async (req) => {
   }
 
   const employee = await prisma.employee.findOne({
-    where: { id: req.body.userId },
+    where: { employeeId: req.body.userId },
   })
 
   if (!employee) {
@@ -45,9 +46,12 @@ export default handler(async (req) => {
 
   try {
     const userWithNewPassword = await prisma.employee.update({
-      where: { id: employee.id },
+      where: { employeeId: employee.employeeId },
       data: {
         password: passwordHash,
+      },
+      include: {
+        storeLocations: true,
       },
     })
     return {

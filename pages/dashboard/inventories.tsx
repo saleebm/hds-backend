@@ -1,39 +1,49 @@
 import { GetServerSideProps } from 'next'
-import { InventoryGetPayload, Location } from '@prisma/client'
+import { InventoryGetPayload, StoreLocations } from '@prisma/client'
 
 import { DashboardView } from '@Components/Views/dashboard'
 import { InventoriesTable } from '@Components/Entities/Inventories'
 
 export type Inventory = InventoryGetPayload<{
-  include: { locationId: boolean }
+  include: { storeLocations: boolean; productOfInventory: boolean }
 }>
 
 export type Inventories = ReadonlyArray<Inventory>
 
 export interface InventoriesData {
-  readonly locations: ReadonlyArray<Location>
+  readonly locations: ReadonlyArray<StoreLocations>
   readonly inventories: Inventories
 }
 
-function InventoryPage({ inventories, locations }: InventoriesData) {
+export interface InventoriesServerProps {
+  readonly locations: ReadonlyArray<StoreLocations>
+  readonly inventories: string
+}
+
+function InventoryPage({ inventories, locations }: InventoriesServerProps) {
+  const unparsedInventories = JSON.parse(inventories)
+
   return (
     <DashboardView pageTitle={'Inventories'}>
-      <InventoriesTable locations={locations} inventories={inventories} />
+      <InventoriesTable
+        locations={locations}
+        inventories={unparsedInventories}
+      />
     </DashboardView>
   )
 }
 
-export const getServerSideProps: GetServerSideProps<InventoriesData> = async () => {
+export const getServerSideProps: GetServerSideProps<InventoriesServerProps> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
   const inventoryData = await prismaClient.inventory.findMany({
-    include: { locationId: true },
+    include: { storeLocations: true, productOfInventory: true },
   })
-  const locations = await prismaClient.location.findMany()
+  const locations = await prismaClient.storeLocations.findMany()
 
   return {
     props: {
-      inventories: inventoryData,
+      inventories: JSON.stringify(inventoryData),
       locations,
     },
   }

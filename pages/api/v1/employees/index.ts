@@ -37,7 +37,8 @@ export default handler(async (req) => {
     }
     if (!isNaN(empIdToSearchFor)) {
       const empData = await prisma.employee.findOne({
-        where: { id: empIdToSearchFor },
+        where: { employeeId: empIdToSearchFor },
+        include: { storeLocations: true },
       })
 
       if (!!empData) {

@@ -1,0 +1,269 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource mysql {
+  provider = "mysql"
+  url = "***"
+}
+
+model Customer {
+  address        String
+  city           String
+  createdAt     DateTime         @default(now())
+  firstName     String
+  idCustomer    Int              @default(autoincrement()) @id
+  lastName      String
+  middleInitial String?
+  state          String?
+  updatedAt     DateTime
+  zipCode       Int
+  customerOrder CustomerOrder[]
+  invoice        Invoice[]
+  jobs           Jobs[]
+}
+
+model CustomerOrder {
+  actualDeliveryDate    DateTime?
+  customerId             Int
+  dateCancelled          DateTime?
+  expectedDeliveryDate  DateTime
+  idCustomerOrder       Int                       @default(autoincrement()) @id
+  isCanceled             Int?                      @default(0)
+  orderDate              DateTime                  @default(now())
+  orderNumber            Int                       @unique
+  orderTotal             Float
+  storeLocationId       Int
+  customer                Customer                  @relation(fields: [customerId], references: [idCustomer])
+  storeLocations          StoreLocations           @relation(fields: [storeLocationId], references: [idStoreLocations])
+  customerOrderProducts   CustomerOrderProducts[]
+  invoice                 Invoice[]
+
+  @@index([customerId], name: "customerId_idx")
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model CustomerOrderProducts {
+  customerOrderId          Int
+  idCustomerOrderProducts Int            @default(autoincrement()) @id
+  perUnitCost              Float
+  productId                 Int
+  quantity                   Int
+  customerOrder             CustomerOrder @relation(fields: [customerOrderId], references: [idCustomerOrder])
+  product                    Product        @relation(fields: [productId], references: [idProduct])
+
+  @@index([customerOrderId], name: "customerOrderId_idx")
+  @@index([productId], name: "productId_idx")
+}
+
+model Employee {
+  address             String
+  city                String
+  createdAt          DateTime                 @default(now())
+  email               String                   @unique
+  employeeId         Int                      @default(autoincrement()) @id
+  firstName          String
+  lastName           String
+  password            String
+  position_name       EmployeePositionName
+  roleCapability     EmployeeRoleCapability @default(NONE)
+  salary              Float
+  state               String
+  storeLocationId   Int
+  updatedAt          DateTime
+  userSigningSecret String
+  zipCode            Int
+  storeLocations     StoreLocations          @relation(fields: [storeLocationId], references: [idStoreLocations])
+  invoice             Invoice[]
+  salesOrders        SalesOrders[]
+
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model Inventory {
+  aisle                      Int
+  bin                        String          @unique
+  idInventory               Int             @default(autoincrement()) @id
+  product                    Int
+  quantity_on_hand           Int
+  storeLocation             Int
+  productOfInventory        Product         @relation(fields: [product], references: [idProduct])
+  storeLocations            StoreLocations @relation(fields: [storeLocation], references: [idStoreLocations])
+
+  @@index([product], name: "productId_idx")
+  @@index([storeLocation], name: "storeLocationId_idx")
+}
+
+model Invoice {
+  createdAt         DateTime             @default(now())
+  customerId        Int
+  customerOrderId  Int
+  due_date           DateTime
+  employeeId        Int
+  idInvoice         Int                  @default(autoincrement()) @id
+  invoiceNumber     String               @unique
+  invoiceTotal      Float
+  paidDate          DateTime
+  storeLocationId  Int
+  updatedAt         DateTime
+  customer           Customer             @relation(fields: [customerId], references: [idCustomer])
+  customerOrder     CustomerOrder       @relation(fields: [customerOrderId], references: [idCustomerOrder])
+  employee           Employee             @relation(fields: [employeeId], references: [employeeId])
+  storeLocations    StoreLocations      @relation(fields: [storeLocationId], references: [idStoreLocations])
+  invoiceLineItems InvoiceLineItems[]
+
+  @@index([customerId], name: "customerId_idx")
+  @@index([customerOrderId], name: "customerOrderId_idx")
+  @@index([employeeId], name: "employeeId_idx")
+  @@index([storeLocationId], name: "storeLocationId_idx")
+}
+
+model InvoiceLineItems {
+  idinvoiceLineItem Int         @default(autoincrement()) @id
+  invoiceId           Int
+  isInstallationCosts Int?        @default(0)
+  jobId               Int?
+  lineItemTotal      Float
+  operationId         Int?
+  productId           Int?
+  quantity             Int
+  taskName            String?
+  invoice              Invoice     @relation(fields: [invoiceId], references: [idInvoice])
+  jobs                 Jobs?       @relation(fields: [jobId], references: [idJobs])
+  operations           Operations? @relation(fields: [operationId], references: [idOperations])
+  product              Product?    @relation(fields: [productId], references: [idProduct])
+
+  @@index([invoiceId], name: "invoiceId_idx")
+  @@index([jobId], name: "jobId_idx")
+  @@index([operationId], name: "operationId_idx")
+  @@index([productId], name: "productId_idx")
+}
+
+model Jobs {
+  customerId        Int
+  dateCompleted     DateTime
+  dateScheduled     DateTime
+  details            String?
+  hoursActual       Float?
+  hoursScheduled    Float
+  idJobs            Int                  @default(autoincrement()) @id
+  customer           Customer             @relation(fields: [customerId], references: [idCustomer])
+  invoiceLineItems InvoiceLineItems[]
+  operations         Operations[]
+
+  @@index([customerId], name: "customerId_idx")
+}
+
+model Operations {
+  chargePerHour    Float
+  hoursCharged      Float
+  idOperations      Int                  @default(autoincrement()) @id
+  jobId             Int
+  operationName     String
+  jobs               Jobs                 @relation(fields: [jobId], references: [idJobs])
+  invoiceLineItems InvoiceLineItems[]
+
+  @@index([jobId], name: "jobId_idx")
+}
+
+model Product {
+  brand                   String
+  createdAt              DateTime                  @default(now())
+  description             String?
+  idProduct              Int                       @default(autoincrement()) @id
+  listPrice              Float
+  unitPrice              Float
+  modelNumber            String
+  productCategory        String
+  salePrice              Float?
+  serialNumber           String
+  updatedAt              DateTime
+  customerOrderProducts CustomerOrderProducts[]
+  inventory               Inventory[]
+  invoiceLineItems      InvoiceLineItems[]
+  salesOrderItem        SalesOrderItem[]
+}
+
+model SalesOrderItem {
+  idSalesOrderItem Int          @default(autoincrement()) @id
+  productId          Int
+  quantityPurchased  Int
+  salesOrderId      Int
+  unitPrice          Float
+  product             Product      @relation(fields: [productId], references: [idProduct])
+  salesOrders        SalesOrders @relation(fields: [salesOrderId], references: [idSalesOrders])
+
+  @@index([productId], name: "productId_idx")
+  @@index([salesOrderId], name: "salesOrderId_idx")
+}
+
+model SalesOrders {
+  deliver_date      DateTime
+  employeeId       Int
+  idSalesOrders   Int                @default(autoincrement()) @id
+  orderDate        DateTime           @default(now())
+  orderNumber      String             @unique
+  orderPrice       Float
+  storeLocationId Int
+  supplierId       Int
+  employee          Employee           @relation(fields: [employeeId], references: [employeeId])
+  storeLocations   StoreLocations    @relation(fields: [storeLocationId], references: [idStoreLocations])
+  suppliers         Suppliers          @relation(fields: [supplierId], references: [idSupplier])
+  salesOrderItem  SalesOrderItem[]
+
+  @@index([employeeId], name: "id_employeeIdx")
+  @@index([storeLocationId], name: "idStoreLocationIdx")
+  @@index([supplierId], name: "idSupplierIdx")
+}
+
+model StoreLocations {
+  address            String
+  city               String
+  idStoreLocations Int              @default(autoincrement()) @id
+  phone              String
+  state              String
+  zipCode           Int
+  customerOrder     CustomerOrder[]
+  employee           Employee[]
+  inventory          Inventory[]
+  invoice            Invoice[]
+  salesOrders       SalesOrders[]
+}
+
+model Suppliers {
+  city         String
+  createdAt   DateTime       @default(now())
+  email        String         @unique
+  idSupplier  Int            @default(autoincrement()) @id
+  name         String
+  phone        String
+  state        String
+  updatedAt   DateTime
+  zip          Int
+  salesOrders SalesOrders[]
+}
+
+enum EmployeePositionName {
+  PRESIDENT_CEO
+  VP_CEO
+  STORE_MANAGER
+  OFFICE_MANAGER
+  SALES_DESIGN_MANAGER
+  SALES_DESIGN_ASSOCIATE
+  SCHEDULING
+  TECHNICIAN
+  DELIVERY
+  WAREHOUSE
+  INSTALLATIONS
+  INSTALLATIONS_DELIVERIES
+  INSTALLATIONS_DELIVERIES_SALES
+  WAREHOUSE_INSTALLATIONS_DELIVERIES
+  WAREHOUSE_DELIVERIES
+}
+
+enum EmployeeRoleCapability {
+  READ_WRITE
+  READ
+  NONE
+}

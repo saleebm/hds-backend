@@ -1,79 +1,36 @@
-import {
-  Employee,
-  EmployeeCreateInput,
-  EmployeePosition,
-  FindManyEmployeeArgs,
-  Location as StoreLocation,
-  Location,
-  PositionNames,
-  Role,
-} from '@prisma/client'
+import { Employee, EmployeeCreateInput, StoreLocations } from '@prisma/client'
 
-export type EmployeesBodyArgs = FindManyEmployeeArgs & {
-  forTable?: boolean
+export type EmployeesWithStoreLocations = Employee & {
+  storeLocations: StoreLocations
 }
 
-export interface EmpDataFiltered {
-  userId: number
-  firstName: string
-  lastName: string
-  address: string
-  city: string
-  state: string
-  zip: string | number
-  email: string
-  phone: string
-  locationId?: Location
-  employeePosition?: EmployeePosition
-}
-
-export interface EmpDataForTable
-  extends Omit<EmpDataFiltered, 'employeePosition'> {
-  locationId: Location
-  salary: number | string
-  roleCapability: Role
-  positionName: PositionNames
-}
-
-export type CreateEmployeeBodyArgs = {
-  password?: string
-  jwtUserSecret?: string
-  locationId: string | Location
-  zip: string | number
-  roleCapability: Role
-  positionName: PositionNames
-  salary?: number | string
-} & Omit<
-  EmployeeCreateInput,
-  'password' | 'jwtUserSecret' | 'locationId' | 'zip' | 'employeePosition'
+export type EmpDataFiltered = Omit<
+  EmployeesWithStoreLocations,
+  'userSigningSecret' | 'password'
 >
 
-export type EmployeesTableDataProps = EmpDataForTable
+// it gives salary as a string onRowAdd... so just in case...
+export type SillyMaterialTable = Omit<EmpDataFiltered, 'salary'> & {
+  salary: string | number
+}
+
+export type CreateEmployeeBodyArgs = { password?: string } & Omit<
+  EmployeeCreateInput,
+  'userSigningSecret' | 'password'
+>
 
 export type EmployeesAllPayload = {
-  employees: EmployeesTableDataProps[]
+  employees: EmpDataFiltered[]
 }
 
 export interface EmployeesPageProps {
-  locations: Location[]
+  locations: StoreLocations[]
   employeeData: EmployeesAllPayload
 }
 
-export interface EmployeesTableProps {
-  locations: Location[]
-  initialData: EmployeesAllPayload
+export interface EmployeesServerSideProps {
+  locations: StoreLocations[]
+  employeeData: string
 }
 
-export interface GetEmpDataForTableEmployee extends Employee {
-  locationId: StoreLocation
-  employeePosition: EmployeePosition
-}
-
-export interface GetEmpDataEmployee extends Employee {
-  locationId?: StoreLocation
-  employeePosition?: EmployeePosition
-}
-
-export type EmployeeTableColumnKeys =
-  | keyof EmployeesTableDataProps
-  | 'tableData'
+export type EmployeeTableColumnKeys = keyof EmpDataFiltered | 'tableData'

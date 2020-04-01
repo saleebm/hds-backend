@@ -29,7 +29,7 @@ export default handler(async (req) => {
   //todo
   // pass in options
   const inventories = await prisma.inventory.findMany({
-    include: { locationId: true },
+    include: { storeLocations: true, productOfInventory: true },
   })
 
   return {

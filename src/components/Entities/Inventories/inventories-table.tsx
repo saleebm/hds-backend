@@ -1,6 +1,5 @@
 import useSWR from 'swr'
 import { useEffect } from 'react'
-import { Location } from '@prisma/client'
 import { Column } from 'material-table'
 import { Typography } from '@material-ui/core'
 
@@ -13,6 +12,7 @@ import { useSnackbarContext } from '@Utils/reducers'
 import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
 import { camelCaseToFormal } from '@Utils/common'
+import { Product, StoreLocations } from '@prisma/client'
 
 type InventoriesTableKey = keyof Inventory | 'tableData'
 
@@ -48,37 +48,82 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
     .filter((key) => key !== 'tableData')
     .map((value) => {
       switch (value) {
-        case 'id':
+        case 'idInventory':
           return {
-            title: value.toUpperCase(),
+            title: 'INVENTORY ID',
             field: value,
             type: 'numeric',
             disableClick: true,
             editable: 'never',
             readonly: true,
           }
+        case 'productOfInventory':
+          return {
+            title: 'PRODUCT BRAND AND MODEL',
+            field: value,
+            editable: 'never',
+            render: (rowData) => (
+              <>
+                {Array.isArray(rowData.productOfInventory) ? (
+                  <Typography variant={'body2'}>
+                    <>
+                      {rowData.productOfInventory?.map((product: Product) => (
+                        <span
+                          key={product.idProduct}
+                          dangerouslySetInnerHTML={{
+                            __html: `${product.brand} - $${product.modelNumber}`,
+                          }}
+                        />
+                      ))}
+                    </>
+                  </Typography>
+                ) : (
+                  <Typography variant={'body2'}>
+                    <span
+                      key={rowData.productOfInventory.idProduct}
+                      dangerouslySetInnerHTML={{
+                        __html: `${rowData.productOfInventory.brand} - $${rowData.productOfInventory.modelNumber}`,
+                      }}
+                    />
+                  </Typography>
+                )}
+              </>
+            ),
+          }
         /**todo refactor duplicates */
-        case 'locationId':
+        case 'storeLocations':
           return {
             title: 'LOCATION',
             field: value,
             editable: 'always',
-            render: (rowData: Partial<{ locationId: Location[] }>) => (
-              <Typography variant={'body2'}>
-                {rowData.locationId?.map((loc) => (
+            render: (rowData) =>
+              Array.isArray(rowData.storeLocations) ? (
+                <Typography variant={'body2'}>
+                  <>
+                    {rowData.storeLocations?.map((loc: StoreLocations) => (
+                      <span
+                        key={loc.idStoreLocations}
+                        dangerouslySetInnerHTML={{
+                          __html: `${loc.city}, ${loc.state} - ID #${loc.idStoreLocations}`,
+                        }}
+                      />
+                    ))}
+                  </>
+                </Typography>
+              ) : (
+                <Typography variant={'body2'}>
                   <span
-                    key={loc.id}
+                    key={rowData.storeLocations.idStoreLocations}
                     dangerouslySetInnerHTML={{
-                      __html: `${loc.city}, ${loc.state} - ID #${loc.id}`,
+                      __html: `${rowData.storeLocations.city}, ${rowData.storeLocations.state} - ID #${rowData.storeLocations.idStoreLocations}`,
                     }}
                   />
-                ))}
-              </Typography>
-            ),
+                </Typography>
+              ),
             lookup: locations.reduce((acc, curr) => {
               ;(acc as { [key: number]: string })[
-                curr.id
-              ] = `${curr.city}, ${curr.state} - ID#${curr.id}`
+                curr.idStoreLocations
+              ] = `${curr.city}, ${curr.state} - ID#${curr.idStoreLocations}`
               return acc
             }, {}),
           }
@@ -98,7 +143,7 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
     })
 
   /**
-   * todo editable functions
+   * todo editable functions, at least delete for here
    */
   return (
     <Table
@@ -109,7 +154,7 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
       }}
       title={'Inventories'}
       columns={columnData}
-      data={(data.inventories as unknown) as Object[]}
+      data={(data.inventories as unknown) as Inventory[]}
       optionsToMerge={{ tableLayout: 'auto' }}
     />
   )

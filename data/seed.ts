@@ -1,12 +1,19 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import * as PrismaClient from '@prisma/client'
+// product sample
 import applianceData from './json/appliances.json'
 // customers from tab delimited csv
 import customerData from './json/customers.json'
+// random words for emp addresses...
+import randomWords from './json/dictionary.json'
+// employees
+import employeeData from './json/employees.json'
+// locations
+import locationData from './json/location.json'
+import { cryptoFactory } from '@Utils/crypto'
 // the only dependency from the main files
 // noinspection TypeScriptPreferShortImport,ES6PreferShortImport
-import { cryptoFactory } from '../src/utils/crypto/crypto-factory'
 
 // loading dot env from root for signing key needed in cryptoFactory
 dotenv.config({ path: path.resolve('../', '.env') })
@@ -14,78 +21,213 @@ const prisma = new PrismaClient.PrismaClient()
 
 const ADMIN_PASSWORD = 'byqipyuyxlyteuajjbewsatxldvfbuqs'
 
+const DIC_LENGTH =
+  !!randomWords &&
+  '0' in randomWords &&
+  Array.isArray(randomWords[0]) &&
+  Object.keys(randomWords[0]).length
+
+const getRandomInt = (max: number) =>
+  Math.floor(Math.random() * Math.floor(max))
+
+const getNumString = () =>
+  Math.floor(Math.random() * 8 + 1) + Math.random().toString().slice(3)
+
+// const getRandomPhoneNumberString = (numString: string) =>
+//   `(${numString.slice(0, 3)}) ${numString.slice(3, 6)}-${numString.slice(
+//     6,
+//     10
+//   )}`
+
+function* addressGenerator() {
+  while (true) {
+    // @ts-ignore
+    yield `${getRandomInt(300)} ${
+      randomWords[0][getRandomInt(DIC_LENGTH)]
+    } street`
+  }
+}
+
+// maybe use this if something breaks
+function makeId(length: number) {
+  let result = ''
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
+const getAisle = () => getRandomInt(9)
+
+async function createLocations() {
+  //make the locations
+  const locationCreateInput = []
+
+  // create locations and assign each a default inventory
+  for (const loc of locationData) {
+    locationCreateInput.push(
+      prisma.storeLocations.create({
+        data: {
+          address: loc.LOC_ADDR,
+          city: loc.LOCATION,
+          phone: loc.loc_phone,
+          state: loc.STATE,
+          zipCode: loc.loc_zip,
+        },
+      })
+    )
+  }
+
+  // locations first
+  return await Promise.all(locationCreateInput).catch((e) => {
+    throw new Error(e)
+  })
+}
+
+async function createProducts(locations: PrismaClient.StoreLocations[]) {
+  const productsCreateInput = []
+  const MAX_QOH = 33
+
+  for (const appliance of applianceData) {
+    const { Brand, Cost, Description, ListPrice, Model, Serial } = appliance
+    productsCreateInput.push(
+      prisma.product.create({
+        data: {
+          brand: Brand,
+          listPrice: Number(ListPrice.toFixed(2)),
+          unitPrice: Number(Cost.toFixed(2)),
+          productCategory: 'Appliances',
+          modelNumber: Model,
+          description: Description,
+          serialNumber: `${Serial}`,
+          inventory: {
+            create: locations.map((loc) => ({
+              quantityOnHand: getRandomInt(MAX_QOH),
+              aisle: getAisle(),
+              bin: makeId(12),
+              storeLocations: {
+                connect: {
+                  idStoreLocations: loc.idStoreLocations,
+                },
+              },
+            })),
+          },
+        },
+      })
+    )
+  }
+
+  return await Promise.all(productsCreateInput).catch((e) => {
+    throw new Error(e)
+  })
+}
 // A `main` function so that we can use async/await
 // this initializes the database with one admin employee, main product, inventory, and supplier
 // no need to run this except once
 async function main() {
-  // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
-  const { passwordHash } = await cryptoFactory.encryptUserPassword(
-    ADMIN_PASSWORD
-  )
-  const jwtUserSecret = await cryptoFactory.generateJWTSecret(32)
+  const locations = await createLocations()
 
-  // employee and location
-  const mainUser = await prisma.employee.create({
-    data: {
-      locationId: {
-        create: {
-          address: '101 bush blvd.',
-          city: 'Phoenix',
-          state: 'AZ',
-          zip: 85854,
-          phone: '(111) 222-3333',
-        },
-      },
-      firstName: 'Monkey',
-      lastName: 'Fish',
-      address: '102 bush blvd.',
-      city: 'Seattle',
-      state: 'WA',
-      zip: 99999,
-      phone: '(333) 111-2222',
-      email: 'saleebmina@aol.com',
-      jwtUserSecret,
-      password: passwordHash,
-      employeePosition: {
-        create: {
-          positionName: 'PRESIDENT_CEO',
-          salary: 300000.0,
-          roleCapability: 'READ_WRITE',
-        },
-      },
-    },
-    include: {
-      // this creates the location along with the user
-      locationId: true,
-      employeePosition: true,
-    },
-  })
+  // first the products to put in the inventories
+  const products = await createProducts(locations)
 
-  // inventory
-  const mainInventory = await prisma.inventory.create({
-    data: {
-      name: 'zone 6 - westside',
-      aisle: 1,
-      bin: '#37ew9983',
-      locationId: {
-        connect: { id: mainUser.locationId.id },
-      },
-    },
-  })
-  // supplier
-  const mainSupplier = await prisma.supplier.create({
-    data: {
-      address: '101 sand villa rd',
-      city: 'jax',
-      state: 'FL',
-      email: 'indiesupplier@yahoo.org',
-      name: 'The Plug aka OG B',
-      phone: '301-123-9876',
-      zip: 32388,
-    },
-  })
+  console.log(`Products created: ${products.length}`)
 
+  const employeesCreateInput = []
   const customerCreateInput = []
+
+  // the supplier is the G man
+  const supplierCreateInput = await prisma.suppliers
+    .create({
+      data: {
+        city: 'jax',
+        state: 'FL',
+        email: 'indiesupplier@yahoo.org',
+        name: 'The Plug aka OG B',
+        phone: '301-123-9876',
+        zip: 32388,
+      },
+    })
+    .catch((e) => {
+      throw new Error(e)
+    })
+
+  console.log(`the plug: ${JSON.stringify(supplierCreateInput)}`)
+
+  const addressGen = addressGenerator()
+
+  for (const emp of employeeData) {
+    // employees
+    // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
+
+    //todo dont do this for real!¯\_(ツ)_/¯ ¯\_(ツ)_/¯ ¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯
+    // using the same password and jwt for everyone! secure! ¯\_(ツ)_/¯
+    const { passwordHash } = await cryptoFactory
+      .encryptUserPassword(ADMIN_PASSWORD)
+      .catch((e) => {
+        throw new Error(e)
+      })
+
+    // at least the one way hash will pretty much be different for everyone ¯\_(ツ)_/¯
+    const jwtUserSecret = await cryptoFactory
+      .generateJWTSecret(32)
+      .catch((e) => {
+        throw new Error(e)
+      })
+
+    const { loc_zip, LOCATION, STATE, FIRST, LAST, Salary, JOB } = emp
+
+    const numString = getNumString()
+    // const randomPhoneNumber = getRandomPhoneNumberString(numString)
+
+    const email = `${FIRST}${LAST}${numString.slice(1, 3)}@hds.homes`
+    const address = addressGen.next().value as string
+
+    console.log(numString, /**randomPhoneNumber,*/ email, address)
+
+    const locationIdToConnect =
+      locations.find((curr) => curr.state === STATE)?.idStoreLocations ||
+      locations[0].idStoreLocations
+    console.log(locationIdToConnect)
+
+    employeesCreateInput.push(
+      prisma.employee.create({
+        data: {
+          positionName: JOB as PrismaClient.EmployeePositionName,
+          roleCapability:
+            JOB === 'PRESIDENT_CEO'
+              ? ('READ_WRITE' as PrismaClient.EmployeeRoleCapability)
+              : ('NONE' as PrismaClient.EmployeeRoleCapability),
+          salary: Number(Number(Salary.replace(/,/g, '')).toFixed(2)),
+          zipCode: loc_zip,
+          city: LOCATION,
+          address,
+          email, //replace any white space
+          firstName: FIRST,
+          lastName: LAST,
+          state: STATE,
+          userSigningSecret: jwtUserSecret,
+          storeLocations: {
+            connect: {
+              idStoreLocations: locationIdToConnect,
+            },
+          },
+          password: passwordHash,
+        },
+      })
+    )
+  }
+
+  const emps = await Promise.all(employeesCreateInput).catch((e) => {
+    throw new Error(e)
+  })
+
+  if (emps && Array.isArray(emps)) {
+    console.log(`Emps created: ${emps.length}`)
+  }
+
   for (const customer of customerData) {
     const {
       City,
@@ -105,87 +247,29 @@ async function main() {
           middleInitial: MI,
           lastName: LastName,
           state: State,
-          zip: ZipCode,
+          zipCode: ZipCode,
         },
       })
     )
   }
 
-  await Promise.all(customerCreateInput)
-
-  await setUpInventory()
-
-  console.log(`mainUser: \r\n ${JSON.stringify(mainUser)}`)
-  console.log(`mainProduct: \r\n ${JSON.stringify(mainInventory)}`)
-  console.log(`mainSupplier: \r\n ${JSON.stringify(mainSupplier)}`)
-
-  return {
-    userId: mainUser.id,
-  }
-}
-
-async function setUpInventory() {
-  const currentInventory = await prisma.inventory.findMany()
-  let currentInventoryID = undefined
-  if (currentInventory && currentInventory[0])
-    currentInventoryID = currentInventory[0].id
-
-  if (!currentInventoryID) throw new Error('Inventory must be created first.')
-
-  const productsCreated = []
-  const MAX_QOH = 33
-  for (const appliance of applianceData) {
-    const { Brand, Cost, Description, ListPrice, Model, Serial } = appliance
-    productsCreated.push(
-      prisma.product.create({
-        data: {
-          brand: Brand,
-          listPrice: ListPrice,
-          productCategory: 'Appliances',
-          modelNumber: Model,
-          unitCost: Cost,
-          inventory: {
-            connect: { id: currentInventoryID },
-          },
-          quantityOnHand: Math.floor(Math.random() * Math.floor(MAX_QOH)),
-          description: Description,
-          serialNumber: `${Serial}`,
-        },
-      })
-    )
-  }
-  // one blocking call vs 1300 ^
-  await Promise.all(productsCreated).catch((e) => console.error(e))
-}
-
-// check to make sure that the encrypted db password is verified by bcrypt
-async function testUserPassword(userId: number) {
-  const user = await prisma.employee.findOne({ where: { id: userId } })
-  const loginInputPassword = ADMIN_PASSWORD
-
-  if (!user) {
-    throw new Error('no user found.')
-  }
-
-  const match = await cryptoFactory.verifyUserPassword({
-    storedPasswordHash: user.password,
-    reqBodyPassword: loginInputPassword,
+  const customers = await Promise.all(customerCreateInput).catch((e) => {
+    throw new Error(e)
   })
 
-  console.log(`Does password match: ${match}`)
+  console.log(`customers created: ${customers.length}`)
+
+  return {
+    ok: true,
+  }
 }
 
-try {
-  main()
-    .catch((e) => console.error(e))
-    .then(
-      async (res) =>
-        res && 'userId' in res && (await testUserPassword(res.userId))
-    )
-    .finally(async () => {
-      console.log('disconnecting')
-      await prisma.disconnect()
-    })
-} catch (e) {
-  console.error(e)
-}
+main()
+  .then((value) => {
+    console.log(value)
+  })
+  .catch((e) => console.error(e))
+  .finally(async () => {
+    console.log('disconnecting')
+    await prisma.disconnect()
+  })

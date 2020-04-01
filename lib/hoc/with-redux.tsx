@@ -125,7 +125,11 @@ export function withRedux(WrappedApp: any) {
           )
           if (authCodeResponse.data && authCodeResponse.data.userId) {
             const {
-              employee: { lastName, firstName, email, userId, employeePosition },
+              userId,
+              email,
+              firstName,
+              lastName,
+              roleCapability,
             } = authCodeResponse.data
             // dispatch
             store.dispatch({
@@ -135,7 +139,7 @@ export function withRedux(WrappedApp: any) {
                 firstName,
                 email,
                 userId,
-                role: employeePosition.roleCapability,
+                role: roleCapability,
               },
             })
             // the req url is the login index page... and authenticated ^

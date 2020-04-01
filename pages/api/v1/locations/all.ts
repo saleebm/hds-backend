@@ -26,7 +26,7 @@ export default handler(async (req) => {
     throw new UnauthenticatedError()
   }
 
-  const locations = await prisma.location.findMany()
+  const locations = await prisma.storeLocations.findMany()
 
   return {
     locations,

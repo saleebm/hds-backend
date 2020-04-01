@@ -46,19 +46,21 @@ export default handler(
       // too redundant, could just verify the jwtid right away
       // do it later when mind is running right
       if (!isNaN(empId)) {
-        const emp = await prisma.employee.findOne({ where: { id: empId } })
+        const emp = await prisma.employee.findOne({
+          where: { employeeId: empId },
+        })
         // again the quadruple mega verification, so i can sleep tight
-        if (!!emp && emp.jwtUserSecret === userDataDecoded.jti) {
+        if (!!emp && emp.userSigningSecret === userDataDecoded.jti) {
           // employee is still in system...
           const userMetadataVerified = await AuthTokenSecurity.verify({
             token: refreshToken,
             envSigningSecret: signingSignature,
-            userJwtSecret: emp.jwtUserSecret,
+            userJwtSecret: emp.userSigningSecret,
           })
           if (userMetadataVerified) {
             const accessToken = await getAccessToken({
-              jwtid: emp.jwtUserSecret,
-              userId: emp.id,
+              jwtid: emp.userSigningSecret,
+              userId: emp.employeeId,
               signingSecret: signingSignature,
             })
             return {

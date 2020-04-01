@@ -40,7 +40,7 @@ export function ProductsTable({ products }: ProductsTable) {
     .filter((key) => key !== 'tableData')
     .map((value: ProductKeys) => {
       switch (value) {
-        case 'id':
+        case 'idProduct':
           return {
             title: value.toUpperCase(),
             field: value,
@@ -49,8 +49,9 @@ export function ProductsTable({ products }: ProductsTable) {
             editable: 'never',
             readonly: true,
           }
-        case 'unitCost':
+        case 'unitPrice':
         case 'listPrice':
+        case 'salePrice':
           return {
             title: camelCaseToFormal(value).toUpperCase(),
             field: value,

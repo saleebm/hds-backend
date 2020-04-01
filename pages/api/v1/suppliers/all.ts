@@ -26,7 +26,7 @@ export default handler(async (req) => {
     throw new UnauthenticatedError()
   }
 
-  const suppliers = await prisma.supplier.findMany()
+  const suppliers = await prisma.suppliers.findMany()
 
   return {
     suppliers,

@@ -13,11 +13,8 @@ import {
   UnauthenticatedError,
 } from '@Lib/server/known-errors'
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
-import {
-  getEmpData,
-  getEmpDataForTable,
-} from '@Pages/api/v1/account/_get-emp-data'
-import { GetEmpDataForTableEmployee } from '@Types/employees'
+import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
+import { EmployeesAllPayload } from '@Types/employees'
 
 const prisma = new PrismaClient()
 
@@ -26,92 +23,86 @@ const prisma = new PrismaClient()
  * Returns many employees
  * @return res.data.employees: employeeData[] | undefined if not found
  */
-export default handler(async (req) => {
-  // bail if not getting
-  if (req.method?.toLowerCase() !== 'post') {
-    throw new NotImplementedError()
-  }
-  const { userId } = await checkAuth(req.headers)
+export default handler(
+  async (req): Promise<EmployeesAllPayload | { employees: null }> => {
+    // bail if not getting
+    if (req.method?.toLowerCase() !== 'post') {
+      throw new NotImplementedError()
+    }
+    const { userId } = await checkAuth(req.headers)
 
-  if (!userId || isNaN(userId)) {
-    // unauthorized
-    // no userId from auth headers
-    throw new UnauthenticatedError()
-  }
+    if (!userId || isNaN(userId)) {
+      // unauthorized
+      // no userId from auth headers
+      throw new UnauthenticatedError()
+    }
 
-  const orderByArg: EmployeeOrderByInput = ('orderBy' in req.body &&
-    req.body.orderBy) || { id: 'asc' }
+    const orderByArg: EmployeeOrderByInput = ('orderBy' in req.body &&
+      req.body.orderBy) || { employeeId: 'asc' }
 
-  const includeArg: EmployeeInclude =
-    ('include' in req.body && req.body.include) || undefined
+    const includeArg: EmployeeInclude =
+      ('include' in req.body && req.body.include) || undefined
 
-  const afterArg =
-    ('after' in req.body && (req.body.after as EmployeeWhereUniqueInput)) ||
-    undefined
+    const afterArg =
+      ('after' in req.body && (req.body.after as EmployeeWhereUniqueInput)) ||
+      undefined
 
-  // if last is set, don't pass first arg
-  const lastArg =
-    typeof afterArg !== 'undefined'
-      ? undefined
-      : ('last' in req.body &&
-          req.body.last &&
-          parseInt(
-            Array.isArray(req.body.last) ? req.body.last[0] : req.body.last
-          )) ||
-        undefined
+    // if last is set, don't pass first arg
+    const lastArg =
+      typeof afterArg !== 'undefined'
+        ? undefined
+        : ('last' in req.body &&
+            req.body.last &&
+            parseInt(
+              Array.isArray(req.body.last) ? req.body.last[0] : req.body.last
+            )) ||
+          undefined
 
-  // if last is set, don't pass first arg
-  const firstArg =
-    typeof lastArg !== 'undefined'
-      ? undefined
-      : ('first' in req.body &&
-          req.body.first &&
-          parseInt(
-            Array.isArray(req.body.first) ? req.body.first[0] : req.body.first
-          )) ||
-        10
+    // if last is set, don't pass first arg
+    const firstArg =
+      typeof lastArg !== 'undefined'
+        ? undefined
+        : ('first' in req.body &&
+            req.body.first &&
+            parseInt(
+              Array.isArray(req.body.first) ? req.body.first[0] : req.body.first
+            )) ||
+          100
 
-  const beforeArg =
-    ('before' in req.body && (req.body.before as EmployeeWhereUniqueInput)) ||
-    undefined
+    const beforeArg =
+      ('before' in req.body && (req.body.before as EmployeeWhereUniqueInput)) ||
+      undefined
 
-  const selectArg =
-    ('select' in req.body && (req.body.select as EmployeeSelect)) || undefined
+    const selectArg =
+      ('select' in req.body && (req.body.select as EmployeeSelect)) || undefined
 
-  const whereArg =
-    ('where' in req.body && (req.body.where as EmployeeWhereInput)) || undefined
+    const whereArg =
+      ('where' in req.body && (req.body.where as EmployeeWhereInput)) ||
+      undefined
 
-  const forTableArg =
-    ('forTable' in req.body && (req.body.forTable as boolean)) ?? false
+    const empData = await prisma.employee.findMany({
+      first: firstArg,
+      after: afterArg,
+      last: lastArg,
+      before: beforeArg,
+      orderBy: { ...orderByArg },
+      ...(selectArg ? { select: selectArg } : undefined),
+      ...(whereArg ? { where: whereArg } : undefined),
+      ...(includeArg
+        ? { include: includeArg }
+        : { include: { storeLocations: true } }),
+    })
 
-  const empData = await prisma.employee.findMany({
-    first: firstArg,
-    after: afterArg,
-    last: lastArg,
-    before: beforeArg,
-    orderBy: { ...(orderByArg as EmployeeOrderByInput) },
-    ...(selectArg ? { select: selectArg } : undefined),
-    ...(whereArg ? { where: whereArg } : undefined),
-    ...(includeArg
-      ? { include: includeArg }
-      : forTableArg
-      ? { include: { locationId: true, employeePosition: true } }
-      : undefined),
-  })
+    if (!!empData) {
+      const employees = empData.map((emp) => ({ ...getEmpData(emp) }))
 
-  if (!!empData) {
-    const employees = forTableArg
-      ? empData.map((emp) => ({
-          ...getEmpDataForTable(emp as GetEmpDataForTableEmployee),
-        }))
-      : empData.map((emp) => ({ ...getEmpData(emp) }))
-
+      return {
+        employees,
+      }
+    }
+    // no employee by id found
     return {
-      employees,
+      employees: null,
     }
   }
-  // no employee by id found
-  return {
-    employees: undefined,
-  }
-})
+)

@@ -18,7 +18,7 @@ export const generateCode = async (id: number, prisma: PrismaClient) => {
 
   // store the hex code in the db
   await prisma.employee.update({
-    where: { id: id },
+    where: { employeeId: id },
     data: {
       magicCode: {
         upsert: {
@@ -54,7 +54,11 @@ export const getValidUserIdForCode = async (
 
   const magicCode = await prisma.magicCode.findOne({
     where: { code: hexStringType },
-    select: { updatedAt: true, user: { select: { id: true } } },
+    select: {
+      updatedAt: true,
+      user: { select: { employeeId: true } },
+      userId: true,
+    },
   })
 
   // if code does not exist...
@@ -74,5 +78,5 @@ export const getValidUserIdForCode = async (
   await prisma.magicCode.delete({ where: { code: hexStringType } })
 
   // return user id
-  return magicCode.user.id
+  return magicCode.userId
 }

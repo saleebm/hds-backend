@@ -1,14 +1,14 @@
 import { GetServerSideProps } from 'next'
-import { Location } from '@prisma/client'
+import { StoreLocations } from '@prisma/client'
 
 import { DashboardView } from '@Components/Views/dashboard'
 import { LocationsTable } from '@Components/Entities/Locations'
 
-export interface Locations {
-  locations: ReadonlyArray<Location>
+export interface StoreLocationsProps {
+  locations: ReadonlyArray<StoreLocations>
 }
 
-function LocationsPage({ locations }: Locations) {
+function LocationsPage({ locations }: StoreLocationsProps) {
   return (
     <DashboardView pageTitle={'Locations'}>
       <LocationsTable locations={locations} />
@@ -16,10 +16,10 @@ function LocationsPage({ locations }: Locations) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Locations> = async () => {
+export const getServerSideProps: GetServerSideProps<StoreLocationsProps> = async () => {
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
-  const locationsData = await prismaClient.location.findMany()
+  const locationsData = await prismaClient.storeLocations.findMany()
 
   return {
     props: {
