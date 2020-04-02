@@ -9,13 +9,13 @@ import { checkAuth } from '@Pages/api/v1/account/_check-auth'
 const prisma = new PrismaClient()
 
 /**
- * get
+ * post
  * Returns many suppliers
  * @return res.data.products: products[] | undefined if not found
  */
 export default handler(async (req) => {
   // bail if not getting
-  if (req.method?.toLowerCase() !== 'get') {
+  if (req.method?.toLowerCase() !== 'post') {
     throw new NotImplementedError()
   }
   const { userId } = await checkAuth(req.headers)
@@ -26,7 +26,9 @@ export default handler(async (req) => {
     throw new UnauthenticatedError()
   }
 
-  const products = await prisma.product.findMany()
+  const includeArgs = 'include' in req.body && req.body.include
+
+  const products = await prisma.product.findMany({include: includeArgs})
 
   return {
     products,

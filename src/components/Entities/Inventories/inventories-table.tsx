@@ -155,7 +155,11 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
       title={'Inventories'}
       columns={columnData}
       data={(data.inventories as unknown) as Inventory[]}
-      optionsToMerge={{ tableLayout: 'auto' }}
+      optionsToMerge={{
+        tableLayout: 'auto',
+        showTextRowsSelected: true,
+        pageSize: 10,
+      }}
     />
   )
 }

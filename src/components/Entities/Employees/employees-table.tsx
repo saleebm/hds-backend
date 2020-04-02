@@ -43,7 +43,6 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
         include: {
           storeLocations: true,
         },
-        forTable: true,
       },
     }),
     []
