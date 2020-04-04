@@ -172,7 +172,7 @@
       "model": "Customer",
       "field": "state",
       "type": "String",
-      "arity": "Optional"
+      "arity": "Required"
     },
     {
       "tag": "CreateField",
@@ -180,6 +180,17 @@
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Customer",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
     },
     {
       "tag": "CreateField",
@@ -351,24 +362,6 @@
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
-      "field": "orderNumber",
-      "type": "Int",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "CustomerOrder",
-          "field": "orderNumber"
-        },
-        "directive": "unique"
-      }
-    },
-    {
-      "tag": "CreateField",
-      "model": "CustomerOrder",
       "field": "orderTotal",
       "type": "Float",
       "arity": "Required"
@@ -500,6 +493,46 @@
             {
               "name": "name",
               "value": "\"customerId_idx\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrder",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[customerId]"
+            },
+            {
+              "name": "name",
+              "value": "\"customerorder_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrder",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[storeLocationId]"
+            },
+            {
+              "name": "name",
+              "value": "\"customerorder_ibfk_2\""
             }
           ]
         },
@@ -722,6 +755,46 @@
           "arguments": [
             {
               "name": "",
+              "value": "[customerOrderId]"
+            },
+            {
+              "name": "name",
+              "value": "\"customerorderproducts_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrderProducts",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[productId]"
+            },
+            {
+              "name": "name",
+              "value": "\"customerorderproducts_ibfk_2\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "CustomerOrderProducts",
+          "arguments": [
+            {
+              "name": "",
               "value": "[productId]"
             },
             {
@@ -868,7 +941,7 @@
     {
       "tag": "CreateField",
       "model": "Employee",
-      "field": "position_name",
+      "field": "positionName",
       "type": "EmployeePositionName",
       "arity": "Required"
     },
@@ -931,6 +1004,17 @@
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
     },
     {
       "tag": "CreateField",
@@ -1002,9 +1086,36 @@
     {
       "tag": "CreateField",
       "model": "Employee",
+      "field": "magicCode",
+      "type": "MagicCode",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
       "field": "salesOrders",
       "type": "SalesOrders",
       "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Employee",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[storeLocationId]"
+            },
+            {
+              "name": "name",
+              "value": "\"employee_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
     },
     {
       "tag": "CreateDirective",
@@ -1101,14 +1212,14 @@
     {
       "tag": "CreateField",
       "model": "Inventory",
-      "field": "product",
+      "field": "productId",
       "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Inventory",
-      "field": "quantity_on_hand",
+      "field": "quantityOnHand",
       "type": "Int",
       "arity": "Required"
     },
@@ -1122,7 +1233,7 @@
     {
       "tag": "CreateField",
       "model": "Inventory",
-      "field": "productOfInventory",
+      "field": "product",
       "type": "Product",
       "arity": "Required"
     },
@@ -1132,7 +1243,7 @@
         "path": {
           "tag": "Field",
           "model": "Inventory",
-          "field": "productOfInventory"
+          "field": "product"
         },
         "directive": "relation"
       }
@@ -1144,12 +1255,12 @@
         "path": {
           "tag": "Field",
           "model": "Inventory",
-          "field": "productOfInventory"
+          "field": "product"
         },
         "directive": "relation"
       },
       "argument": "fields",
-      "value": "[product]"
+      "value": "[productId]"
     },
     {
       "tag": "CreateArgument",
@@ -1158,7 +1269,7 @@
         "path": {
           "tag": "Field",
           "model": "Inventory",
-          "field": "productOfInventory"
+          "field": "product"
         },
         "directive": "relation"
       },
@@ -1220,7 +1331,47 @@
           "arguments": [
             {
               "name": "",
-              "value": "[product]"
+              "value": "[productId]"
+            },
+            {
+              "name": "name",
+              "value": "\"inventory_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Inventory",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[storeLocation]"
+            },
+            {
+              "name": "name",
+              "value": "\"inventory_ibfk_2\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Inventory",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[productId]"
             },
             {
               "name": "name",
@@ -1304,7 +1455,7 @@
     {
       "tag": "CreateField",
       "model": "Invoice",
-      "field": "due_date",
+      "field": "dueDate",
       "type": "DateTime",
       "arity": "Required"
     },
@@ -1386,6 +1537,13 @@
     {
       "tag": "CreateField",
       "model": "Invoice",
+      "field": "job",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Invoice",
       "field": "paidDate",
       "type": "DateTime",
       "arity": "Required"
@@ -1403,6 +1561,17 @@
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
     },
     {
       "tag": "CreateField",
@@ -1545,6 +1714,52 @@
     {
       "tag": "CreateField",
       "model": "Invoice",
+      "field": "jobs",
+      "type": "Jobs",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "jobs"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "jobs"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[job]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "jobs"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[idJobs]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Invoice",
       "field": "storeLocations",
       "type": "StoreLocations",
       "arity": "Required"
@@ -1664,6 +1879,106 @@
           "arguments": [
             {
               "name": "",
+              "value": "[customerId]"
+            },
+            {
+              "name": "name",
+              "value": "\"invoice_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Invoice",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[customerOrderId]"
+            },
+            {
+              "name": "name",
+              "value": "\"invoice_ibfk_2\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Invoice",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[employeeId]"
+            },
+            {
+              "name": "name",
+              "value": "\"invoice_ibfk_3\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Invoice",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[storeLocationId]"
+            },
+            {
+              "name": "name",
+              "value": "\"invoice_ibfk_4\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Invoice",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[job]"
+            },
+            {
+              "name": "name",
+              "value": "\"invoice_ibfk_5_idx\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Invoice",
+          "arguments": [
+            {
+              "name": "",
               "value": "[storeLocationId]"
             },
             {
@@ -1732,55 +2047,9 @@
     {
       "tag": "CreateField",
       "model": "InvoiceLineItems",
-      "field": "isInstallationCosts",
-      "type": "Int",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "isInstallationCosts"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "isInstallationCosts"
-        },
-        "directive": "default"
-      },
-      "argument": "",
-      "value": "0"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "jobId",
-      "type": "Int",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
       "field": "lineItemTotal",
       "type": "Float",
       "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "operationId",
-      "type": "Int",
-      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -1795,13 +2064,6 @@
       "field": "quantity",
       "type": "Int",
       "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "taskName",
-      "type": "String",
-      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -1848,98 +2110,6 @@
       },
       "argument": "references",
       "value": "[idInvoice]"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "jobs",
-      "type": "Jobs",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "jobs"
-        },
-        "directive": "relation"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "jobs"
-        },
-        "directive": "relation"
-      },
-      "argument": "fields",
-      "value": "[jobId]"
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "jobs"
-        },
-        "directive": "relation"
-      },
-      "argument": "references",
-      "value": "[idJobs]"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "operations",
-      "type": "Operations",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "operations"
-        },
-        "directive": "relation"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "operations"
-        },
-        "directive": "relation"
-      },
-      "argument": "fields",
-      "value": "[operationId]"
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "operations"
-        },
-        "directive": "relation"
-      },
-      "argument": "references",
-      "value": "[idOperations]"
     },
     {
       "tag": "CreateField",
@@ -2016,11 +2186,11 @@
           "arguments": [
             {
               "name": "",
-              "value": "[jobId]"
+              "value": "[invoiceId]"
             },
             {
               "name": "name",
-              "value": "\"jobId_idx\""
+              "value": "\"invoicelineitems_ibfk_1\""
             }
           ]
         },
@@ -2036,11 +2206,11 @@
           "arguments": [
             {
               "name": "",
-              "value": "[operationId]"
+              "value": "[productId]"
             },
             {
               "name": "name",
-              "value": "\"operationId_idx\""
+              "value": "\"invoicelineitems_ibfk_4\""
             }
           ]
         },
@@ -2205,8 +2375,8 @@
     {
       "tag": "CreateField",
       "model": "Jobs",
-      "field": "invoiceLineItems",
-      "type": "InvoiceLineItems",
+      "field": "invoice",
+      "type": "Invoice",
       "arity": "List"
     },
     {
@@ -2237,6 +2407,130 @@
       }
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Jobs",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[customerId]"
+            },
+            {
+              "name": "name",
+              "value": "\"jobs_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateModel",
+      "model": "MagicCode"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MagicCode",
+      "field": "code",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "code"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "MagicCode",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "MagicCode",
+      "field": "userId",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "userId"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "MagicCode",
+      "field": "employee",
+      "type": "Employee",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "employee"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "employee"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[userId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "MagicCode",
+          "field": "employee"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[employeeId]"
+    },
+    {
       "tag": "CreateModel",
       "model": "Operations"
     },
@@ -2246,6 +2540,13 @@
       "field": "chargePerHour",
       "type": "Float",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Operations",
+      "field": "details",
+      "type": "String",
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -2358,11 +2659,24 @@
       "value": "[idJobs]"
     },
     {
-      "tag": "CreateField",
-      "model": "Operations",
-      "field": "invoiceLineItems",
-      "type": "InvoiceLineItems",
-      "arity": "List"
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Operations",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[jobId]"
+            },
+            {
+              "name": "name",
+              "value": "\"jobId_idx\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
     },
     {
       "tag": "CreateDirective",
@@ -2377,7 +2691,7 @@
             },
             {
               "name": "name",
-              "value": "\"jobId_idx\""
+              "value": "\"operations_ibfk_1\""
             }
           ]
         },
@@ -2426,6 +2740,13 @@
       },
       "argument": "",
       "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Product",
+      "field": "deliveryPrice",
+      "type": "Float",
+      "arity": "Required"
     },
     {
       "tag": "CreateField",
@@ -2487,13 +2808,6 @@
     {
       "tag": "CreateField",
       "model": "Product",
-      "field": "unitPrice",
-      "type": "Float",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Product",
       "field": "modelNumber",
       "type": "String",
       "arity": "Required"
@@ -2520,11 +2834,40 @@
       "arity": "Required"
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Product",
+          "field": "serialNumber"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Product",
+      "field": "unitPrice",
+      "type": "Float",
+      "arity": "Required"
+    },
+    {
       "tag": "CreateField",
       "model": "Product",
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Product",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
     },
     {
       "tag": "CreateField",
@@ -2762,13 +3105,53 @@
       }
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrderItem",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[productId]"
+            },
+            {
+              "name": "name",
+              "value": "\"salesorderitem_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrderItem",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[salesOrderId]"
+            },
+            {
+              "name": "name",
+              "value": "\"salesorderitem_ibfk_2\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
       "tag": "CreateModel",
       "model": "SalesOrders"
     },
     {
       "tag": "CreateField",
       "model": "SalesOrders",
-      "field": "deliver_date",
+      "field": "deliverDate",
       "type": "DateTime",
       "arity": "Required"
     },
@@ -2853,24 +3236,6 @@
       },
       "argument": "",
       "value": "now()"
-    },
-    {
-      "tag": "CreateField",
-      "model": "SalesOrders",
-      "field": "orderNumber",
-      "type": "String",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "SalesOrders",
-          "field": "orderNumber"
-        },
-        "directive": "unique"
-      }
     },
     {
       "tag": "CreateField",
@@ -3047,26 +3412,6 @@
           "arguments": [
             {
               "name": "",
-              "value": "[employeeId]"
-            },
-            {
-              "name": "name",
-              "value": "\"id_employeeIdx\""
-            }
-          ]
-        },
-        "directive": "index"
-      }
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Model",
-          "model": "SalesOrders",
-          "arguments": [
-            {
-              "name": "",
               "value": "[storeLocationId]"
             },
             {
@@ -3092,6 +3437,86 @@
             {
               "name": "name",
               "value": "\"idSupplierIdx\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrders",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[employeeId]"
+            },
+            {
+              "name": "name",
+              "value": "\"id_employeeIdx\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrders",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[employeeId]"
+            },
+            {
+              "name": "name",
+              "value": "\"salesorders_ibfk_1\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrders",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[storeLocationId]"
+            },
+            {
+              "name": "name",
+              "value": "\"salesorders_ibfk_2\""
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "SalesOrders",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[supplierId]"
+            },
+            {
+              "name": "name",
+              "value": "\"salesorders_ibfk_3\""
             }
           ]
         },
@@ -3346,6 +3771,17 @@
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Suppliers",
+          "field": "updatedAt"
+        },
+        "directive": "updatedAt"
+      }
     },
     {
       "tag": "CreateField",

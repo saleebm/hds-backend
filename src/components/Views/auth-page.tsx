@@ -9,13 +9,14 @@ import { MaterialNextBtn } from '@Components/Elements/Button'
 import styles from './views.module.scss'
 import { useSnackbarContext } from '@Utils/reducers'
 import { Loading } from '@Components/Elements/Loading'
+import { VerifyAuthCode } from '@Pages/api/v1/account/verify-auth-code'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
       margin: theme.spacing(1),
     },
-  }),
+  })
 )
 
 /**
@@ -33,16 +34,29 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
   // 1. check if code is valid
   useEffect(() => {
     // get the userID
-    mutator('/api/v1/account/verify-auth-code', {
-      code: initialCode,
-    })
+    if (!initialCode) {
+      setState({ error: true })
+      return
+    }
+    mutator<VerifyAuthCode, { code: string }>(
+      '/api/v1/account/verify-auth-code',
+      {
+        code: initialCode,
+      }
+    )
       .catch((e) => {
         setState({ error: true })
+        throw new Error(e)
       })
-      .then((data: { userId: string | undefined }) => {
+      .then((data) => {
         // console.log(data)
         if (data && data.userId) {
-          setState({ userId: parseInt(data.userId) })
+          setState({
+            userId:
+              typeof data.userId === 'string'
+                ? parseInt(data.userId)
+                : data.userId,
+          })
           return
         }
         setState({
@@ -74,7 +88,7 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
               {!state.error && state.userId && (
                 <>
                   <Typography variant={'h4'}>Reset your password</Typography>
-                  <ResetPasswordForm userId={state.userId}/>
+                  <ResetPasswordForm userId={state.userId} />
                 </>
               )}
             </div>
@@ -89,7 +103,7 @@ export function AuthPage({ initialCode }: { initialCode: string | undefined }) {
           </div>
         </section>
       ) : (
-        <Loading/>
+        <Loading />
       )}
     </>
   )

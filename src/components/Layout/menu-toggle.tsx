@@ -20,6 +20,9 @@ const spanOne: Variants = {
     translateY: 0,
     rotate: 225,
   },
+  initial: {
+    translateY: -300,
+  },
 }
 
 const spanTwo: Variants = {
@@ -32,6 +35,9 @@ const spanTwo: Variants = {
     translateY: 0,
     rotate: 135,
     width: '45px',
+  },
+  initial: {
+    translateY: -300,
   },
 }
 
@@ -46,6 +52,7 @@ export default ({ onToggleClicked, isToggled }: ToggleIcon) => (
     aria-label={isToggled ? 'close menu' : 'open menu'}
   >
     <Button
+      aria-label={'menu button'}
       variant={'text'}
       title={isToggled ? 'close menu' : 'open menu'}
       onClick={onToggleClicked}
@@ -56,14 +63,20 @@ export default ({ onToggleClicked, isToggled }: ToggleIcon) => (
         borderColor={'yellow'}
         variants={spanOne}
         className={styles.span}
+        initial={'initial'}
       />
       <MenuBarMotion
         bgcolor={'white'}
         borderColor={'yellow'}
         variants={spanTwo}
+        initial={'initial'}
         className={styles.span}
       />
-      <Typography className={classNames(styles.span, styles.text)}>
+      <Typography
+        variant={'button'}
+        component={'span'}
+        className={classNames(styles.span, styles.text)}
+      >
         Menu
       </Typography>
     </Button>

@@ -12,6 +12,7 @@ import { camelCaseToFormal, parseLocaleNumber } from '@Utils/common'
 import {
   CreateEmployeeBodyArgs,
   EmpDataFiltered,
+  EmployeeCreated,
   EmployeesAllPayload,
   EmployeesPageProps,
   EmployeeTableColumnKeys,
@@ -202,17 +203,21 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
       storeLocationId,
     } = newData
 
-    const unformateedSalary =
+    // material table returns back salary as a string since its a currency type above, but sometimes a user can enter a number as well and it just returns the number
+    const formattedSalary =
       typeof salary === 'string' ? parseLocaleNumber(salary) : salary
 
     try {
-      const createdUser = await mutator('/api/v1/employees/create', {
+      const createdUser = await mutator<
+        EmployeeCreated,
+        CreateEmployeeBodyArgs
+      >('/api/v1/employees/create', {
         state,
         lastName,
         firstName,
         positionName,
         roleCapability,
-        salary: unformateedSalary,
+        salary: formattedSalary,
         email,
         address,
         city,

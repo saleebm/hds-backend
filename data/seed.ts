@@ -40,10 +40,13 @@ const getNumString = () =>
 //   )}`
 
 function* addressGenerator() {
+  // the strict type checking nature in me makes me do this
   while (true) {
-    // @ts-ignore
     yield `${getRandomInt(300)} ${
-      randomWords[0][getRandomInt(DIC_LENGTH)]
+      !!randomWords &&
+      '0' in randomWords &&
+      Array.isArray(randomWords[0]) &&
+      randomWords[0][getRandomInt(DIC_LENGTH || 200)]
     } street`
   }
 }
@@ -99,6 +102,7 @@ async function createProducts(locations: PrismaClient.StoreLocations[]) {
           brand: Brand,
           listPrice: Number(ListPrice.toFixed(2)),
           unitPrice: Number(Cost.toFixed(2)),
+          deliveryPrice: Number((Cost * 0.25).toFixed(2)),
           productCategory: 'Appliances',
           modelNumber: Model,
           description: Description,
@@ -177,6 +181,7 @@ async function main() {
         throw new Error(e)
       })
 
+    // todo: map these jobs to permissions.
     const { loc_zip, LOCATION, STATE, FIRST, LAST, Salary, JOB } = emp
 
     const numString = getNumString()
@@ -196,6 +201,7 @@ async function main() {
       prisma.employee.create({
         data: {
           positionName: JOB as PrismaClient.EmployeePositionName,
+          /** TODO: only the president gets to do any work? What kind of company is this? */
           roleCapability:
             JOB === 'PRESIDENT_CEO'
               ? ('READ_WRITE' as PrismaClient.EmployeeRoleCapability)

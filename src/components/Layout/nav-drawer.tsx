@@ -1,5 +1,9 @@
 import Link, { LinkProps } from 'next/link'
 import React, { forwardRef, Fragment, useState } from 'react'
+import { bindActionCreators, Dispatch } from 'redux'
+import { useRouter } from 'next/router'
+import { connect } from 'react-redux'
+
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import List from '@material-ui/core/List'
@@ -10,20 +14,18 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText, { ListItemTextProps } from '@material-ui/core/ListItemText'
 import PersonIcon from '@material-ui/icons/Person'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import { bindActionCreators, Dispatch } from 'redux'
+import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 
 import { MenuToggle } from '@Components/Layout'
 import { classNames, isServer } from '@Utils/common'
 import ROUTE_PATHS from './routes'
 
-import styles from '@Components/Layout/layout.module.scss'
 import { RootAction } from '@Store/modules/root-action'
 import { setErrorAction } from '@Store/modules/global/action'
 import { logoutUserAction, refreshJWTAction } from '@Store/modules/auth/action'
 import { RootStateType } from '@Store/modules/types'
-import { useRouter } from 'next/router'
-import { connect } from 'react-redux'
-import { OverridableComponent } from '@material-ui/core/OverridableComponent'
+
+import styles from '@Components/Layout/layout.module.scss'
 
 const iOS = !isServer() && /iPad|iPhone|iPod/.test(navigator.userAgent)
 
@@ -113,9 +115,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       backgroundColor: theme.palette.background.paper,
       color: theme.palette.text.secondary,
     },
-  },
-  list: {
-    width: 250,
+    whiteSpace: 'break-spaces',
   },
   fullList: {
     width: 'auto',
@@ -162,7 +162,6 @@ function SwipeableTemporaryDrawer({
 
   const renderList = () => (
     <div
-      className={classes.list}
       role="presentation"
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}

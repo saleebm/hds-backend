@@ -12,7 +12,7 @@ import { getEmpData } from '@Pages/api/v1/account/_get-emp-data'
 import { generateCode } from '@Pages/api/v1/account/_generate-code'
 import { sendEmail } from '@Lib/server/send-email'
 import getApiHostUrl from '@Lib/server/get-api-host'
-import { CreateEmployeeBodyArgs } from '@Types/employees'
+import { CreateEmployeeBodyArgs, EmployeeCreated } from '@Types/employees'
 
 const prisma = new PrismaClient()
 
@@ -22,7 +22,7 @@ const prisma = new PrismaClient()
  * @param CreateEmployee input ^
  * @return { userId: number } ID of employee created
  */
-export default handler(async (req) => {
+export default handler(async (req): EmployeeCreated => {
   if (req.method?.toLowerCase() !== 'post') throw new NotImplementedError()
 
   const { userId, employee } = await checkAuth(req.headers)

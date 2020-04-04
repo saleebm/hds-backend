@@ -4,10 +4,9 @@ generator client {
 }
 
 datasource mysql {
- provider = "mysql"
- url = "***"
+provider = "mysql"
+url      = env("MYSQL_URL")
 }
-
 model Customer {
   address       String
   city          String
@@ -59,7 +58,7 @@ model CustomerOrderProducts {
 
 model MagicCode {
   code      String   @id
-  user      Employee              @relation(fields: [userId],references: [employeeId])
+  user      Employee @relation(fields: [userId], references: [employeeId])
   userId    Int
   updatedAt DateTime @updatedAt
 }
@@ -185,6 +184,7 @@ model Product {
   modelNumber           String
   productCategory       String
   salePrice             Float?
+  deliveryPrice         Float
   serialNumber          String                  @unique
   updatedAt             DateTime                @updatedAt
   customerOrderProducts CustomerOrderProducts[]

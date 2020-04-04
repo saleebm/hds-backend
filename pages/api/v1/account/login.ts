@@ -48,7 +48,7 @@ export default handler(
     }
     // console.log(req.body)
     const employee = await prisma.employee.findOne({
-      where: { email: req.body.email },
+      where: { email: req.body.email.toLowerCase() },
       include: { storeLocations: true },
     })
     // if no employee found by email, should not happen because client login verifies this

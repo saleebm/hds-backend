@@ -20,13 +20,14 @@ export default handler(async (req) => {
   if (!req.query || !req.query.email) throw new MissingParameterError()
 
   // if not valid email return false immediately
-  if (!isEmail(req.query.email.toString())) return { exists: false }
+  if (!isEmail(req.query.email.toString().toLowerCase()))
+    return { exists: false }
 
   const possibleEmpByEmail = await prisma.employee.findOne({
     where: {
       email: Array.isArray(req.query.email)
-        ? req.query.email[0]
-        : req.query.email,
+        ? req.query.email[0].toLowerCase()
+        : req.query.email.toLowerCase(),
     },
   })
 

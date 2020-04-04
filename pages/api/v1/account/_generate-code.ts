@@ -56,7 +56,6 @@ export const getValidUserIdForCode = async (
     where: { code: hexStringType },
     select: {
       updatedAt: true,
-      user: { select: { employeeId: true } },
       userId: true,
     },
   })
@@ -73,6 +72,7 @@ export const getValidUserIdForCode = async (
     throw new Error('Code is expired')
   }
 
+  // deleted here means that the code will only work once after the user pings the url
   // otherwise it's valid, so delete the HEX CODE STRING, not the code.
   // I would know because I have failed every possible way
   await prisma.magicCode.delete({ where: { code: hexStringType } })

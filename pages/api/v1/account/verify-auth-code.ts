@@ -6,25 +6,30 @@ import { MissingParameterError } from '@Lib/server/known-errors'
 
 const prisma = new PrismaClient()
 
+export type VerifyAuthCode = {
+  userId: number | string
+}
 /**
  * post
  * check code for authenticity and updates user's password
  * @param req.body.code
  * @return { userId } The userId
  */
-export default handler(async (req) => {
-  if (!req.body.code) {
-    throw new MissingParameterError()
-  }
-  // get code from body
-  const { code } = req.body
-  // pull user from magic link
-  try {
-    const userId = await getValidUserIdForCode(code, prisma)
-    return {
-      userId,
+export default handler(
+  async (req): Promise<VerifyAuthCode> => {
+    if (!req.body.code) {
+      throw new MissingParameterError()
     }
-  } catch (e) {
-    throw e
+    // get code from body
+    const { code } = req.body
+    // pull user from magic link
+    try {
+      const userId = await getValidUserIdForCode(code, prisma)
+      return {
+        userId,
+      }
+    } catch (e) {
+      throw e
+    }
   }
-})
+)

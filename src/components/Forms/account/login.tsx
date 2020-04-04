@@ -17,13 +17,13 @@ import { createStyles } from '@material-ui/styles'
 import { emailRegEx } from '@Utils/common'
 import { getAxiosInstance } from '@Lib/axios-instance'
 
+import { useSnackbarContext } from '@Utils/reducers'
 import { RootAction } from '@Store/modules/root-action'
 import { setErrorAction } from '@Store/modules/global/action'
 import { loginUserAction } from '@Store/modules/auth/action'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
-import styles from './form.module.scss'
-import { useSnackbarContext } from '@Utils/reducers'
+import styles from '../form.module.scss'
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({

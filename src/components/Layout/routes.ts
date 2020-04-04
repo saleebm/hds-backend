@@ -1,6 +1,5 @@
 import {
   AccountCircle,
-  AttachMoneyTwoTone,
   BusinessCenterTwoTone,
   BusinessSharp,
   CallToActionTwoTone,
@@ -9,8 +8,8 @@ import {
   LoyaltyTwoTone,
   MonetizationOnTwoTone,
   MoneySharp,
-  ReceiptTwoTone,
   PersonOutlineOutlined,
+  ReceiptTwoTone,
 } from '@material-ui/icons'
 
 export default Object.freeze([
@@ -64,23 +63,23 @@ export default Object.freeze([
     icon: PersonOutlineOutlined,
   },
   {
-    pathname: '/dashboard/product-order',
-    slug: 'product-order',
-    prettyName: 'Product Order',
+    pathname: '/dashboard/sales-order',
+    slug: 'sales-order',
+    prettyName: 'Sales Order',
     includeInNav: true,
     icon: ReceiptTwoTone,
   },
   {
     pathname: '/dashboard/customer-sales',
-    slug: '/customer-sales',
+    slug: 'customer-sales',
     prettyName: 'Customer Sales',
     includeInNav: true,
     icon: MoneySharp,
   },
   {
-    pathname: '/dashboard/customer-orders',
-    slug: '/customer-orders',
-    prettyName: 'Customer Orders',
+    pathname: '/dashboard/point-of-sale',
+    slug: 'customer-orders',
+    prettyName: 'Point of Sale',
     includeInNav: true,
     icon: MonetizationOnTwoTone,
   },
@@ -90,12 +89,5 @@ export default Object.freeze([
     prettyName: 'Jobs',
     includeInNav: true,
     icon: CallToActionTwoTone,
-  },
-  {
-    pathname: '/dashboard/bids',
-    slug: 'bids',
-    prettyName: 'Bids',
-    includeInNav: true,
-    icon: AttachMoneyTwoTone,
   },
 ])

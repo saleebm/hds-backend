@@ -9,10 +9,12 @@ import { RootStateType, ThunkExtraArgs } from './modules/types'
 
 const composeEnhancers = composeWithDevTools({
   trace: true,
-/*todo if using immer -
-    serialize: {
-         map: true,
-    },*/
+  /**
+   * todo if using immer with maps -
+   *  serialize: {
+   *      map: true,
+   *   },
+   */
 })
 
 export function configureStore(

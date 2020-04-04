@@ -57,17 +57,17 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
             editable: 'never',
             readonly: true,
           }
-        case 'productOfInventory':
+        case 'product':
           return {
             title: 'PRODUCT BRAND AND MODEL',
             field: value,
             editable: 'never',
             render: (rowData) => (
               <>
-                {Array.isArray(rowData.productOfInventory) ? (
+                {Array.isArray(rowData.product) ? (
                   <Typography variant={'body2'}>
                     <>
-                      {rowData.productOfInventory?.map((product: Product) => (
+                      {rowData.product?.map((product: Product) => (
                         <span
                           key={product.idProduct}
                           dangerouslySetInnerHTML={{
@@ -80,9 +80,9 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
                 ) : (
                   <Typography variant={'body2'}>
                     <span
-                      key={rowData.productOfInventory.idProduct}
+                      key={rowData.product.idProduct}
                       dangerouslySetInnerHTML={{
-                        __html: `${rowData.productOfInventory.brand} - $${rowData.productOfInventory.modelNumber}`,
+                        __html: `${rowData.product.brand} - $${rowData.product.modelNumber}`,
                       }}
                     />
                   </Typography>

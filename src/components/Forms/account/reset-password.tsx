@@ -7,13 +7,14 @@ import Input from '@material-ui/core/OutlinedInput'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { SecurityRounded, SendTwoTone } from '@material-ui/icons'
 import FormHelperText from '@material-ui/core/FormHelperText'
-import { useStyles } from '@Components/Forms/login'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+
+import { useSnackbarContext } from '@Utils/reducers'
 import { getAxiosInstance } from '@Lib/axios-instance'
+import { useStyles } from './login'
 
 import styles from '@Components/Forms/form.module.scss'
-import { useSnackbarContext } from '@Utils/reducers'
 
 function ResetPasswordRequest({ userId }: { userId: number }) {
   const classes = useStyles()

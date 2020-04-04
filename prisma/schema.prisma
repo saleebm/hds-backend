@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource mysql {
- provider = "mysql"
- url      = env("MYSQL_URL")
+  provider = "mysql"
+  url      = env("MYSQL_URL")
 }
 
 model Customer {
@@ -16,7 +16,7 @@ model Customer {
   idCustomer    Int             @default(autoincrement()) @id
   lastName      String
   middleInitial String?
-  state         String?
+  state         String
   updatedAt     DateTime        @updatedAt
   zipCode       Int
   customerOrder CustomerOrder[]
@@ -32,7 +32,6 @@ model CustomerOrder {
   idCustomerOrder       Int                     @default(autoincrement()) @id
   isCanceled            Int?                    @default(0)
   orderDate             DateTime                @default(now())
-  orderNumber           Int                     @unique
   orderTotal            Float
   storeLocationId       Int
   customer              Customer                @relation(fields: [customerId], references: [idCustomer])
@@ -41,6 +40,8 @@ model CustomerOrder {
   invoice               Invoice[]
 
   @@index([customerId], name: "customerId_idx")
+  @@index([customerId], name: "customerorder_ibfk_1")
+  @@index([storeLocationId], name: "customerorder_ibfk_2")
   @@index([storeLocationId], name: "storeLocationId_idx")
 }
 
@@ -54,52 +55,50 @@ model CustomerOrderProducts {
   product                 Product       @relation(fields: [productId], references: [idProduct])
 
   @@index([customerOrderId], name: "customerOrderId_idx")
+  @@index([customerOrderId], name: "customerorderproducts_ibfk_1")
+  @@index([productId], name: "customerorderproducts_ibfk_2")
   @@index([productId], name: "productId_idx")
-}
-
-model MagicCode {
-  code      String   @id
-  user      Employee              @relation(fields: [userId],references: [employeeId])
-  userId    Int
-  updatedAt DateTime @updatedAt
 }
 
 model Employee {
   address           String
   city              String
-  createdAt         DateTime               @default(now())
-  email             String                 @unique
-  employeeId        Int                    @default(autoincrement()) @id
+  createdAt         DateTime                @default(now())
+  email             String                  @unique
+  employeeId        Int                     @default(autoincrement()) @id
   firstName         String
   lastName          String
   password          String
   positionName      EmployeePositionName
-  magicCode         MagicCode?
-  roleCapability    EmployeeRoleCapability @default(NONE)
+  roleCapability    EmployeeRoleCapability  @default(NONE)
   salary            Float
   state             String
   storeLocationId   Int
-  updatedAt         DateTime               @updatedAt
+  updatedAt         DateTime                @updatedAt
   userSigningSecret String
   zipCode           Int
-  storeLocations    StoreLocations         @relation(fields: [storeLocationId], references: [idStoreLocations])
+  storeLocations    StoreLocations          @relation(fields: [storeLocationId], references: [idStoreLocations])
   invoice           Invoice[]
+  magicCode         MagicCode?
   salesOrders       SalesOrders[]
 
+  @@index([storeLocationId], name: "employee_ibfk_1")
   @@index([storeLocationId], name: "storeLocationId_idx")
 }
 
 model Inventory {
-  aisle              Int
-  bin                String         @unique
-  idInventory        Int            @default(autoincrement()) @id
-  product            Int
-  quantityOnHand     Int
-  storeLocation      Int
-  productOfInventory Product        @relation(fields: [product], references: [idProduct])
-  storeLocations     StoreLocations @relation(fields: [storeLocation], references: [idStoreLocations])
+  aisle          Int
+  bin            String         @unique
+  idInventory    Int            @default(autoincrement()) @id
+  productId      Int
+  quantityOnHand Int
+  storeLocation  Int
+  product        Product        @relation(fields: [productId], references: [idProduct])
+  storeLocations StoreLocations @relation(fields: [storeLocation], references: [idStoreLocations])
 
-  @@index([product], name: "productId_idx")
+  @@index([productId], name: "inventory_ibfk_1")
+  @@index([storeLocation], name: "inventory_ibfk_2")
+  @@index([productId], name: "productId_idx")
   @@index([storeLocation], name: "storeLocationId_idx")
 }
 
@@ -112,80 +111,91 @@ model Invoice {
   idInvoice        Int                @default(autoincrement()) @id
   invoiceNumber    String             @unique
   invoiceTotal     Float
+  job              Int
   paidDate         DateTime
   storeLocationId  Int
   updatedAt        DateTime           @updatedAt
   customer         Customer           @relation(fields: [customerId], references: [idCustomer])
   customerOrder    CustomerOrder      @relation(fields: [customerOrderId], references: [idCustomerOrder])
   employee         Employee           @relation(fields: [employeeId], references: [employeeId])
+  jobs             Jobs               @relation(fields: [job], references: [idJobs])
   storeLocations   StoreLocations     @relation(fields: [storeLocationId], references: [idStoreLocations])
   invoiceLineItems InvoiceLineItems[]
 
   @@index([customerId], name: "customerId_idx")
   @@index([customerOrderId], name: "customerOrderId_idx")
   @@index([employeeId], name: "employeeId_idx")
+  @@index([customerId], name: "invoice_ibfk_1")
+  @@index([customerOrderId], name: "invoice_ibfk_2")
+  @@index([employeeId], name: "invoice_ibfk_3")
+  @@index([storeLocationId], name: "invoice_ibfk_4")
+  @@index([job], name: "invoice_ibfk_5_idx")
   @@index([storeLocationId], name: "storeLocationId_idx")
 }
 
 model InvoiceLineItems {
-  idinvoiceLineItem   Int         @default(autoincrement()) @id
-  invoiceId           Int
-  isInstallationCosts Int?        @default(0)
-  jobId               Int?
-  lineItemTotal       Float
-  operationId         Int?
-  productId           Int?
-  quantity            Int
-  taskName            String?
-  invoice             Invoice     @relation(fields: [invoiceId], references: [idInvoice])
-  jobs                Jobs?       @relation(fields: [jobId], references: [idJobs])
-  operations          Operations? @relation(fields: [operationId], references: [idOperations])
-  product             Product?    @relation(fields: [productId], references: [idProduct])
+  idinvoiceLineItem Int      @default(autoincrement()) @id
+  invoiceId         Int
+  lineItemTotal     Float
+  productId         Int?
+  quantity          Int
+  invoice           Invoice  @relation(fields: [invoiceId], references: [idInvoice])
+  product           Product? @relation(fields: [productId], references: [idProduct])
 
   @@index([invoiceId], name: "invoiceId_idx")
-  @@index([jobId], name: "jobId_idx")
-  @@index([operationId], name: "operationId_idx")
+  @@index([invoiceId], name: "invoicelineitems_ibfk_1")
+  @@index([productId], name: "invoicelineitems_ibfk_4")
   @@index([productId], name: "productId_idx")
 }
 
 model Jobs {
-  customerId       Int
-  dateCompleted    DateTime
-  dateScheduled    DateTime
-  details          String?
-  hoursActual      Float?
-  hoursScheduled   Float
-  idJobs           Int                @default(autoincrement()) @id
-  customer         Customer           @relation(fields: [customerId], references: [idCustomer])
-  invoiceLineItems InvoiceLineItems[]
-  operations       Operations[]
+  customerId     Int
+  dateCompleted  DateTime
+  dateScheduled  DateTime
+  details        String?
+  hoursActual    Float?
+  hoursScheduled Float
+  idJobs         Int          @default(autoincrement()) @id
+  customer       Customer     @relation(fields: [customerId], references: [idCustomer])
+  invoice        Invoice[]
+  operations     Operations[]
 
   @@index([customerId], name: "customerId_idx")
+  @@index([customerId], name: "jobs_ibfk_1")
+}
+
+model MagicCode {
+  code      String   @id
+  updatedAt DateTime @updatedAt
+  userId    Int      @unique
+  employee  Employee @relation(fields: [userId], references: [employeeId])
 }
 
 model Operations {
-  chargePerHour    Float
-  hoursCharged     Float
-  idOperations     Int                @default(autoincrement()) @id
-  jobId            Int
-  operationName    String
-  jobs             Jobs               @relation(fields: [jobId], references: [idJobs])
-  invoiceLineItems InvoiceLineItems[]
+  chargePerHour Float
+  details       String?
+  hoursCharged  Float
+  idOperations  Int     @default(autoincrement()) @id
+  jobId         Int
+  operationName String
+  jobs          Jobs    @relation(fields: [jobId], references: [idJobs])
 
   @@index([jobId], name: "jobId_idx")
+  @@index([jobId], name: "operations_ibfk_1")
 }
 
 model Product {
   brand                 String
   createdAt             DateTime                @default(now())
+  deliveryPrice         Float
   description           String?
   idProduct             Int                     @default(autoincrement()) @id
   listPrice             Float
-  unitPrice             Float
   modelNumber           String
   productCategory       String
   salePrice             Float?
   serialNumber          String                  @unique
+  unitPrice             Float
   updatedAt             DateTime                @updatedAt
   customerOrderProducts CustomerOrderProducts[]
   inventory             Inventory[]
@@ -204,6 +214,8 @@ model SalesOrderItem {
 
   @@index([productId], name: "productId_idx")
   @@index([salesOrderId], name: "salesOrderId_idx")
+  @@index([productId], name: "salesorderitem_ibfk_1")
+  @@index([salesOrderId], name: "salesorderitem_ibfk_2")
 }
 
 model SalesOrders {
@@ -211,7 +223,6 @@ model SalesOrders {
   employeeId      Int
   idSalesOrders   Int              @default(autoincrement()) @id
   orderDate       DateTime         @default(now())
-  orderNumber     String           @unique
   orderPrice      Float
   storeLocationId Int
   supplierId      Int
@@ -220,9 +231,12 @@ model SalesOrders {
   suppliers       Suppliers        @relation(fields: [supplierId], references: [idSupplier])
   salesOrderItem  SalesOrderItem[]
 
-  @@index([employeeId], name: "id_employeeIdx")
   @@index([storeLocationId], name: "idStoreLocationIdx")
   @@index([supplierId], name: "idSupplierIdx")
+  @@index([employeeId], name: "id_employeeIdx")
+  @@index([employeeId], name: "salesorders_ibfk_1")
+  @@index([storeLocationId], name: "salesorders_ibfk_2")
+  @@index([supplierId], name: "salesorders_ibfk_3")
 }
 
 model StoreLocations {
@@ -252,6 +266,7 @@ model Suppliers {
   salesOrders SalesOrders[]
 }
 
+// TODO map these position names to role permissions
 enum EmployeePositionName {
   PRESIDENT_CEO
   VP_CEO

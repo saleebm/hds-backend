@@ -34,3 +34,8 @@ export interface EmployeesServerSideProps {
 }
 
 export type EmployeeTableColumnKeys = keyof EmpDataFiltered | 'tableData'
+
+export type EmployeeCreated = Promise<{
+  userId: number
+  employee: EmpDataFiltered
+}>

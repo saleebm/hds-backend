@@ -5,7 +5,7 @@ import { DashboardView } from '@Components/Views/dashboard'
 import { InventoriesTable } from '@Components/Entities/Inventories'
 
 export type Inventory = InventoryGetPayload<{
-  include: { storeLocations: boolean; productOfInventory: boolean }
+  include: { storeLocations: boolean; product: true }
 }>
 
 export type Inventories = ReadonlyArray<Inventory>
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<InventoriesServerProps> = as
   const { PrismaClient } = await import('@prisma/client')
   const prismaClient = new PrismaClient()
   const inventoryData = await prismaClient.inventory.findMany({
-    include: { storeLocations: true, productOfInventory: true },
+    include: { storeLocations: true, product: true },
   })
   const locations = await prismaClient.storeLocations.findMany()
 

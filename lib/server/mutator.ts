@@ -3,7 +3,7 @@ import { KnownError } from './known-errors'
 import { authService } from '@Services'
 import { ServerCtx } from '@Types'
 
-export default async <EmployeesData, PostBody extends Record<string, any>>(
+export default async <DataType, PostBody extends Record<string, any>>(
   url: string,
   body: PostBody,
   ctx?: ServerCtx
@@ -31,5 +31,5 @@ export default async <EmployeesData, PostBody extends Record<string, any>>(
     throw new KnownError(data.code, data.status)
   }
 
-  return data
+  return data as DataType
 }

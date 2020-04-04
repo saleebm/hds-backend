@@ -57,6 +57,7 @@ export function ProductsTable({ products }: Products) {
           }
         case 'unitPrice':
         case 'listPrice':
+        case 'deliveryPrice':
         case 'salePrice':
           return {
             title: camelCaseToFormal(value).toUpperCase(),
