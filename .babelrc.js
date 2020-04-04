@@ -3,7 +3,6 @@ const prod = process.env.NODE_ENV === 'production'
 module.exports = {
   presets: ['next/babel'],
   plugins: [
-    '@babel/plugin-transform-typescript',
     [
       'module-resolver',
       {
@@ -19,12 +18,6 @@ module.exports = {
           '@Types': './src/models',
           '@Utils': './src/utils',
         },
-      },
-    ],
-    [
-      '@babel/plugin-transform-react-jsx',
-      {
-        pragmaFrag: 'React.Fragment',
       },
     ],
     '@babel/plugin-proposal-optional-chaining',

@@ -104,6 +104,15 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
             editable: 'never',
             readonly: true,
           }
+        case 'createdAt':
+        case 'updatedAt':
+          return {
+            title: camelCaseToFormal(value).toUpperCase(),
+            field: value,
+            editable: 'never',
+            readonly: true,
+            type: 'datetime',
+          }
         case 'positionName':
           return {
             title: camelCaseToFormal(value).toUpperCase(),
