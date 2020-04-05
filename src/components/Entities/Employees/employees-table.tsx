@@ -4,7 +4,7 @@ import { Typography } from '@material-ui/core'
 import useSWR from 'swr'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import { Table } from '@Components/Elements/Table'
 import mutator from '@Lib/server/mutator'
 import { Loading } from '@Components/Elements/Loading'

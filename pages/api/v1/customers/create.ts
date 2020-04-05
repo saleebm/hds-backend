@@ -15,14 +15,19 @@ const prisma = new PrismaClient()
 export interface CreateCustomerArgs {
   createCustomer: CustomerCreateWithoutCustomerOrderInput
 }
+
+export interface CustomerCreatedResponse {
+  customer: Customer
+}
+
 /**
  * post
  * create one customer
  * @param req.body.createCustomer
  */
 export default handler(
-  async (req): Promise<{ customer: Customer }> => {
-    if (req.method?.toLowerCase() !== 'get') {
+  async (req): Promise<CustomerCreatedResponse> => {
+    if (req.method?.toLowerCase() !== 'post') {
       throw new NotImplementedError()
     }
     const { userId } = await checkAuth(req.headers)

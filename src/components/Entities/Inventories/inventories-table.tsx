@@ -8,7 +8,7 @@ import {
   InventoriesData,
   Inventory,
 } from '@Pages/dashboard/inventories'
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
 import { camelCaseToFormal } from '@Utils/common'

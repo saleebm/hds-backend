@@ -1,6 +1,6 @@
 import { Customer } from '@prisma/client'
 import { Table } from '@Components/Elements/Table'
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import useSWR from 'swr'
 import { useEffect } from 'react'
 import { Loading } from '@Components/Elements/Loading'

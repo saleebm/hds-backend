@@ -4,7 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 // todo don't import from dist
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
-import { SnackbarProvider } from '@Utils/reducers'
+import { SnackbarProvider } from '@Utils/context'
 import { withRedux } from '@Lib/hoc'
 import { ErrorBoundary } from '@Components/Elements/ErrorBoundary'
 import { darkTheme } from '@Config'

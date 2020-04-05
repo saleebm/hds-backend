@@ -5,37 +5,37 @@ require('dotenv').config({
 })
 
 const fontsPattern = /\.(woff|woff2|eot|ttf|otf|svg)$/
+
 module.exports = {
-  // experimental: {
-  //   // modern: true,
-  // },
+  experimental: {
+    modern: true,
+  },
+  /**todo use next-js server and static env to confine actual env values to context**/
   env: {
     TOKEN_STORAGE_KEY: process.env.TOKEN_STORAGE_KEY,
   },
   webpack(config, { isServer }) {
-    // Thanks to https://github.com/zeit/next.js/issues/7755#issuecomment-508633125
-    // if (!isServer) {
-    //   config.node = { fs: 'empty' }
-    // }
-
+    // its too late in production...
+    if (process.env.NODE_ENV === 'development') {
+      config.module.rules.push({
+        test: /\.tsx?$/,
+        enforce: 'pre',
+        exclude: [/node_modules/, /\.next/, /out/],
+        use: [
+          {
+            options: {
+              fix: true,
+              cache: true,
+              emitWarning: true,
+              eslintPath: 'eslint',
+            },
+            loader: 'eslint-loader',
+          },
+        ],
+      })
+    }
     // Refer to https://bit.ly/2PYA357 and https://git.io/JebjT
     config.module.rules.push(
-      // {
-      //   test: /\.tsx?$/,
-      //   enforce: 'pre',
-      //   exclude: [/node_modules/, /\.next/, /out/],
-      //   use: [
-      //     {
-      //       options: {
-      //         fix: true,
-      //         cache: true,
-      //         emitWarning: true,
-      //         eslintPath: require.resolve('eslint'),
-      //       },
-      //       loader: require.resolve('eslint-loader'),
-      //     },
-      //   ],
-      // },
       {
         test: /\.svg$/,
         include: [
@@ -75,7 +75,6 @@ module.exports = {
             fallback: require.resolve('file-loader'),
             publicPath: '/_next/static/chunks/fonts/',
             outputPath: `${isServer ? '../' : ''}static/chunks/fonts/`,
-            esModule: true,
           },
         },
       },
@@ -94,7 +93,6 @@ module.exports = {
               limit: 8192,
               fallback: require.resolve('file-loader'),
               publicPath: '/_next/static/chunks/images/',
-              esModule: true,
               outputPath: `${isServer ? '../' : ''}static/chunks/images/`,
             },
           },

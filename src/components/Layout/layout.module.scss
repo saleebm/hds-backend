@@ -70,6 +70,8 @@
   border: none !important;
   outline: none !important;
   transform-style: preserve-3d;
+  background-blend-mode: difference;
+  mix-blend-mode: hard-light;
 
   @media (prefers-reduced-motion: no-preference) {
     .mainMenuTrigger {
@@ -96,6 +98,7 @@
     border: none !important;
     outline: none !important;
     background: unset;
+    mix-blend-mode: inherit;
 
     grid-column: 1;
     grid-row: 1;

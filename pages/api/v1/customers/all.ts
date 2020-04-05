@@ -11,6 +11,7 @@ const prisma = new PrismaClient()
 /**
  * get
  * Returns many customers
+ * todo filters
  * @return res.data.customers: customers[] | undefined if not found
  */
 export default handler(async (req) => {

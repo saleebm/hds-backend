@@ -23,6 +23,17 @@ export const loginUserAction = ({
     employeeId: userId,
     roleCapability,
   } = loginSuccessResponse
+  // put user in store
+  dispatch({
+    type: AuthActionTypes.LoginSuccess,
+    payload: {
+      lastName,
+      firstName,
+      userId,
+      email,
+      role: roleCapability,
+    },
+  })
   // save tokens in cookie jar
   await authService
     .logIn({
@@ -32,39 +43,17 @@ export const loginUserAction = ({
     })
     // catch errors
     .catch((e) => console.warn(e))
-    .then(() => {
-      // put user in store
-      dispatch({
-        type: AuthActionTypes.LoginSuccess,
-        payload: {
-          lastName,
-          firstName,
-          userId,
-          email,
-          role: roleCapability,
-        },
-      })
-    })
-    .then(() => {
-      // put user in place
-      // replace to prevent user from going back to login screen
-      Router.replace('/dashboard')
-    })
+  await Router.replace('/dashboard')
 }
 
 export const logoutUserAction = () => async (
   dispatch: ThunkDispatch<IAuthState, any, any>
 ) => {
-  await authService
-    .logOut()
-    .then(() => {
-      dispatch({ type: AuthActionTypes.Logout })
-    })
-    .then(() => {
-      // put user in place
-      // replace does not leave url history
-      Router.replace('/')
-    })
+  dispatch({ type: AuthActionTypes.Logout })
+  await authService.logOut()
+  // put user in place
+  // replace does not leave url history
+  await Router.replace('/')
 }
 
 export const refreshJWTAction = (): UserResult<Promise<void>> => async (

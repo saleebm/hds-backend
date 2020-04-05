@@ -4,7 +4,7 @@ import { StoreLocations } from '@prisma/client'
 import { Column } from 'material-table'
 
 import { Table } from '@Components/Elements/Table'
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import { Loading } from '@Components/Elements/Loading'
 import { camelCaseToFormal } from '@Utils/common'
 

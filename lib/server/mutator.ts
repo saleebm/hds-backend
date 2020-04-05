@@ -3,6 +3,12 @@ import { KnownError } from './known-errors'
 import { authService } from '@Services'
 import { ServerCtx } from '@Types'
 
+/**
+ * TODO it would be nice to learn about the AbortController, try to integrate that later on
+ * @param url
+ * @param body
+ * @param ctx
+ */
 export default async <DataType, PostBody extends Record<string, any>>(
   url: string,
   body: PostBody,

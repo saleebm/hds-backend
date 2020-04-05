@@ -66,10 +66,16 @@ export function CustomerLookupForm() {
     }
   }, [open])
 
+  const onInputChange: (
+    event: object,
+    value: CustomerSelectType | null
+  ) => void = (event, value) => {
+    console.log(event, value)
+  }
+
   return (
     <Autocomplete
       id="customer-lookup-input"
-      style={{ width: 300 }}
       open={open}
       onOpen={() => {
         setOpen(true)
@@ -77,11 +83,13 @@ export function CustomerLookupForm() {
       onClose={() => {
         setOpen(false)
       }}
+      onChange={onInputChange}
       clearOnEscape
       blurOnSelect
       disablePortal
-      multiple
-      getOptionSelected={(option, value) => option.name === value.name}
+      getOptionSelected={(option, value) =>
+        option.customerId === value.customerId
+      }
       getOptionLabel={(option) => option.name}
       options={options}
       loading={loading}
@@ -90,7 +98,6 @@ export function CustomerLookupForm() {
           {...params}
           label="Select customer"
           variant="outlined"
-          value={params.id}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

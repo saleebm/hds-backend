@@ -2,7 +2,7 @@ import { Suppliers } from '@prisma/client'
 import useSWR from 'swr'
 import { Column } from 'material-table'
 
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
 import { useEffect } from 'react'

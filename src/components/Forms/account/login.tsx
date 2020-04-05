@@ -17,7 +17,7 @@ import { createStyles } from '@material-ui/styles'
 import { emailRegEx } from '@Utils/common'
 import { getAxiosInstance } from '@Lib/axios-instance'
 
-import { useSnackbarContext } from '@Utils/reducers'
+import { useSnackbarContext } from '@Utils/context'
 import { RootAction } from '@Store/modules/root-action'
 import { setErrorAction } from '@Store/modules/global/action'
 import { loginUserAction } from '@Store/modules/auth/action'
