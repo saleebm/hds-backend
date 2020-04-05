@@ -178,6 +178,7 @@ function SwipeableTemporaryDrawer({
         <ListItem
           component={'div'}
           autoFocus
+          style={{ marginBottom: '1rem' }}
           title={`welcome ${user?.first || ''} ${user?.last || ''}! `}
         >
           <ListItemIcon>

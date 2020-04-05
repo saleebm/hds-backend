@@ -357,12 +357,10 @@ function CustomerCreateUpdateForm({
   )
 }
 
-const mapStateToProps = (state: RootStateType) => {
-  return {
-    customerOrderState: state.customerOrderReducer,
-    stateErrors: state.globalReducer.errors,
-  }
-}
+const mapStateToProps = (state: RootStateType) => ({
+  customerOrderState: state.customerOrderReducer,
+  stateErrors: state.globalReducer.errors,
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
   bindActionCreators(

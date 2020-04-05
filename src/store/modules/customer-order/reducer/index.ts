@@ -25,8 +25,8 @@ export const CustomerOrderReducer = (
         draft.customerId = action.payload.customerId
         return
       case CustomerOrderActionTypes.SetDeliveryDate:
+        draft.expectedDeliveryDate = action.payload.expectedDeliveryDate
         return
-
       case CustomerOrderActionTypes.SetOrderTotal:
         return
 

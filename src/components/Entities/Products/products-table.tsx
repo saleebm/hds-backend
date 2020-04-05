@@ -21,13 +21,15 @@ type ProductKeys = keyof ProductWithInventory | 'tableData'
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     boxShadow: theme.shadows['1'],
-    minWidth: 650,
     backgroundColor: theme.palette.background.paper,
-    '&:nth-of-type(odd)': {
+    '&:nth-of-type(even)': {
       backgroundColor: theme.palette.background.default,
     },
-    width: '100%',
   },
+  header: {
+    boxShadow: theme.shadows['1'],
+    backgroundColor: theme.palette.background.default,
+  }
 }))
 
 export function ProductsTable({ products }: Products) {
@@ -104,20 +106,20 @@ export function ProductsTable({ products }: Products) {
       }}
       detailPanel={(rowData) => (
         <TableContainer component={Paper}>
-          <Table size="small">
+          <Table size={'medium'}>
             <TableHead>
-              <TableRow color={'primary'}>
+              <TableRow className={classes.header} color={'primary'}>
                 <TableCell align={'justify'}>
-                  <Typography variant={'h4'}>Location</Typography>
+                  <Typography variant={'h5'}>Location</Typography>
                 </TableCell>
                 <TableCell align={'center'}>
-                  <Typography variant={'h4'}>Aisle</Typography>
+                  <Typography variant={'h5'}>Aisle</Typography>
                 </TableCell>
                 <TableCell align={'center'}>
-                  <Typography variant={'h4'}>Bin #</Typography>
+                  <Typography variant={'h5'}>Bin #</Typography>
                 </TableCell>
                 <TableCell align={'center'}>
-                  <Typography variant={'h4'}>Quantity on Hand</Typography>
+                  <Typography variant={'h5'}>Quantity on Hand</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>

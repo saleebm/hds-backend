@@ -112,3 +112,12 @@ export const updateCustomerAction = (
     )
   }
 }
+
+export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
+  dispatch
+) => {
+  dispatch({
+    type: CustomerOrderActionTypes.SetDeliveryDate,
+    payload: { expectedDeliveryDate: deliveryDate },
+  })
+}
