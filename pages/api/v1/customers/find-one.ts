@@ -1,4 +1,4 @@
-import { Customer, PrismaClient } from '@prisma/client'
+import { Customer, FindOneCustomerArgs, PrismaClient } from '@prisma/client'
 import { handler } from '@Lib/server'
 import {
   NotImplementedError,
@@ -8,13 +8,17 @@ import { checkAuth } from '@Pages/api/v1/account/_check-auth'
 
 const prisma = new PrismaClient()
 
+export interface FindOneCustomerBodyArgs {
+  findOneBy: FindOneCustomerArgs
+}
+
 /**
  * post
  * get one customer
  */
 export default handler(
   async (req): Promise<{ customer: Customer | null }> => {
-    if (req.method?.toLowerCase() !== 'get') {
+    if (req.method?.toLowerCase() !== 'post') {
       throw new NotImplementedError()
     }
     const { userId } = await checkAuth(req.headers)
@@ -25,15 +29,7 @@ export default handler(
       throw new UnauthenticatedError()
     }
     try {
-      const maybeCustomer = await prisma.customer.findOne({
-        where: req.body.where,
-        ...(req.body.select
-          ? {
-              include: req.body.include || null,
-              select: req.body.select || null,
-            }
-          : { include: req.body.select || null }),
-      })
+      const maybeCustomer = await prisma.customer.findOne(req.body.findOneBy)
       if (maybeCustomer) {
         return {
           customer: maybeCustomer,

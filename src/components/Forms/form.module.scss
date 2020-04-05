@@ -1,8 +1,22 @@
 .form {
+  position: relative;
+
   display: flex;
   flex-flow: column;
   justify-content: stretch;
   align-items: stretch;
   height: 100%;
   width: 100%;
+}
+
+.createForm{
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  justify-content: stretch;
+  align-items: stretch;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0.3rem 1.7rem;
 }

@@ -23,16 +23,20 @@ export const CustomerOrderReducer = (
       case CustomerOrderActionTypes.CreatedCustomer:
       case CustomerOrderActionTypes.UpdatedCustomer:
         draft.customerId = action.payload.customerId
-        break
+        return
       case CustomerOrderActionTypes.SetDeliveryDate:
-        break
+        return
+
       case CustomerOrderActionTypes.SetOrderTotal:
-        break
+        return
+
       case CustomerOrderActionTypes.SetStoreLocation:
-        break
+        return
+
       case CustomerOrderActionTypes.AddOrderProduct:
-        break
+        return
+
       case CustomerOrderActionTypes.RemoveOrderProduct:
-        break
+        return
     }
   })

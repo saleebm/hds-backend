@@ -8,6 +8,15 @@ import {
 } from 'react'
 import { produce } from 'immer'
 
+/**
+ *TODO:
+ * if I could go back to when I created this, or have time to refactor,
+ * wrap it so that isOpen does not have to be explicitly stated everytime
+ * I call toggleSnackbar.
+ *
+ *TODO:
+ * Also, when user closes it, there is a flash of the default status. fix this
+ */
 export interface SnackbarState {
   message: string
   isOpen: boolean

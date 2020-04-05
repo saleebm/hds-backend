@@ -1,21 +1,37 @@
-import { useCallback, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { FindManyCustomerArgs } from '@prisma/client'
+
 import TextField from '@material-ui/core/TextField'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { CustomerFindManyReturn } from '@Pages/api/v1/customers/find-many'
 import mutator from '@Lib/server/mutator'
+import { RootAction } from '@Store/modules/root-action'
+import { setCustomerAction } from '@Store/modules/customer-order/action'
+import { useDebouncedCallback } from '@Utils/hooks'
 
 interface CustomerSelectType {
   name: string
   customerId: number
 }
 
+type CustomerLookup = ReturnType<typeof mapDispatchToProps> & {
+  isDisabled: boolean
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
+  bindActionCreators({ setCustomer: setCustomerAction }, dispatch)
+
 /**
  * Looks up the customer
  */
-export function CustomerLookupForm() {
+export default connect(
+  null,
+  mapDispatchToProps
+)(function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
   // options for the select field,
   const [options, setOptions] = useState<CustomerSelectType[]>([])
   const [open, setOpen] = useState(false)
@@ -66,16 +82,23 @@ export function CustomerLookupForm() {
     }
   }, [open])
 
-  const onInputChange: (
-    event: object,
-    value: CustomerSelectType | null
-  ) => void = (event, value) => {
-    console.log(event, value)
-  }
+  const [setInputSelection] = useDebouncedCallback(
+    (inputSelection: CustomerSelectType | null) => {
+      setCustomer({ customerId: inputSelection?.customerId })
+    },
+    500,
+    {
+      maxWait: 2000,
+      leading: false,
+      trailing: true,
+    }
+  )
 
   return (
     <Autocomplete
       id="customer-lookup-input"
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
       open={open}
       onOpen={() => {
         setOpen(true)
@@ -83,7 +106,9 @@ export function CustomerLookupForm() {
       onClose={() => {
         setOpen(false)
       }}
-      onChange={onInputChange}
+      onChange={(event: ChangeEvent<any>, value: CustomerSelectType | null) =>
+        setInputSelection(value)
+      }
       clearOnEscape
       blurOnSelect
       disablePortal
@@ -113,4 +138,4 @@ export function CustomerLookupForm() {
       )}
     />
   )
-}
+})

@@ -23,7 +23,7 @@ import { setErrorAction } from '@Store/modules/global/action'
 import { loginUserAction } from '@Store/modules/auth/action'
 import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
-import styles from '../form.module.scss'
+import styles from '@Components/Forms/form.module.scss'
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,12 +74,13 @@ function LoginForm({
 
   const loginRequest = useCallback(
     async (props) => {
+      // todo use mutator instead of axios
       await axios
         .post<{ data: any }>('account/login', props)
         .catch((e) => {
           console.warn(e)
           // the only error possible at this point, since email has to be in system to even submit
-          setError('password', 'validate', 'Wrong password')
+          setError('password', 'validate', 'Incorrect password or username')
         })
         .then((res) => {
           if (typeof res === 'object' && 'data' in res && !!res.data) {
@@ -108,7 +109,7 @@ function LoginForm({
         .post('account/reset-password-request', body)
         .catch((e) => {
           console.warn(e)
-          setError('email', 'validate', 'Email does not exits')
+          setError('email', 'validate', 'Nonexistent email in sysem')
         })
         .then((res) => {
           if (res && res.data && res.data.success) {

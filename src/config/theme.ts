@@ -6,34 +6,17 @@ export const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
-      main: '#b8bdd7',
+      main: '#bf1650',
     },
     secondary: {
-      main: '#b7d7d3',
+      main: '#ccc',
     },
     error: {
       main: red.A400,
     },
     background: {
-      default: '#000',
-    },
-  },
-})
-
-export const lightTheme = createMuiTheme({
-  palette: {
-    type: 'light',
-    primary: {
-      main: '#16181f',
-    },
-    secondary: {
-      main: '#03211c',
-    },
-    error: {
-      main: red.A700,
-    },
-    background: {
-      default: '#f7f7f7',
+      default: '#0f111b',
+      paper: '#081229',
     },
   },
 })

@@ -1,25 +1,26 @@
 import {
-  CustomerResult,
-  ISetCustomerAction,
-  CustomerOrderActionTypes,
-} from '@Store/modules/customer-order/types'
-import { ActionCreator } from 'redux'
-import { ThunkAction } from 'redux-thunk'
-import { ThunkExtraArgs } from '@Store/modules/types'
-import {
   CustomerCreateWithoutCustomerOrderInput,
   CustomerUpdateArgs,
 } from '@prisma/client'
-import mutator from '@Lib/server/mutator'
+import { ActionCreator } from 'redux'
+import { ThunkAction } from 'redux-thunk'
+
+import {
+  CustomerOrderActionTypes,
+  CustomerResult,
+  ISetCustomerAction,
+} from '@Store/modules/customer-order/types'
+import { ThunkExtraArgs } from '@Store/modules/types'
 import {
   CreateCustomerArgs,
   CustomerCreatedResponse,
-} from '@Pages/api/v1/customers/create'
-import { setErrorAction } from '@Store/modules/global/action'
-import {
   CustomerUpdatedResponse,
   UpdateOneBody,
-} from '@Pages/api/v1/customers/update-one'
+} from '@Types/customer'
+
+import { setErrorAction } from '@Store/modules/global/action'
+
+import mutator from '@Lib/server/mutator'
 
 /**
  * first step of POS form is to select a customer, whether that is a new one, or an existing one
@@ -73,7 +74,7 @@ export const createCustomerAction = (
     return dispatch(
       setErrorAction({
         error: e,
-        reference: 'create customer caught error',
+        reference: `create customer caught error: ${e.toString()}`,
       })
     )
   }
@@ -86,7 +87,7 @@ export const updateCustomerAction = (
     const customerUpdatedResponse = await mutator<
       CustomerUpdatedResponse,
       UpdateOneBody
-    >('/api/v1/customers/update', {
+    >('/api/v1/customers/update-one', {
       updateCustomer: customerUpdateArgs,
     })
     if (customerUpdatedResponse) {
@@ -98,7 +99,7 @@ export const updateCustomerAction = (
       return dispatch(
         setErrorAction({
           error: String(customerUpdatedResponse),
-          reference: 'create customer failed',
+          reference: 'Update customer failed',
         })
       )
     }
@@ -106,7 +107,7 @@ export const updateCustomerAction = (
     return dispatch(
       setErrorAction({
         error: e,
-        reference: 'create customer caught error',
+        reference: `Update customer caught error: ${e.toString()}`,
       })
     )
   }

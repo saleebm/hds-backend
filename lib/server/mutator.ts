@@ -9,7 +9,7 @@ import { ServerCtx } from '@Types'
  * @param body
  * @param ctx
  */
-export default async <DataType, PostBody extends Record<string, any>>(
+export default async <DataTypeResponse, PostBody extends Record<string, any>>(
   url: string,
   body: PostBody,
   ctx?: ServerCtx
@@ -37,5 +37,5 @@ export default async <DataType, PostBody extends Record<string, any>>(
     throw new KnownError(data.code, data.status)
   }
 
-  return data as DataType
+  return data as DataTypeResponse
 }

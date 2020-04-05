@@ -1,5 +1,4 @@
 import {
-  Customer,
   CustomerCreateWithoutCustomerOrderInput,
   PrismaClient,
 } from '@prisma/client'
@@ -9,16 +8,9 @@ import {
   UnauthenticatedError,
 } from '@Lib/server/known-errors'
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
+import { CustomerCreatedResponse } from '@Types/customer'
 
 const prisma = new PrismaClient()
-
-export interface CreateCustomerArgs {
-  createCustomer: CustomerCreateWithoutCustomerOrderInput
-}
-
-export interface CustomerCreatedResponse {
-  customer: Customer
-}
 
 /**
  * post
@@ -58,7 +50,7 @@ export default handler(
           lastName,
           middleInitial,
           state,
-          zipCode,
+          zipCode: typeof zipCode === 'string' ? parseInt(zipCode) : zipCode,
         },
       })
       return {

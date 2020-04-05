@@ -1,4 +1,4 @@
-import { Customer, CustomerUpdateArgs, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { handler } from '@Lib/server'
 import {
   NotImplementedError,
@@ -6,16 +6,9 @@ import {
 } from '@Lib/server/known-errors'
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
 import { NextApiRequest } from 'next'
+import { CustomerUpdatedResponse, UpdateOneBody } from '@Types/customer'
 
 const prisma = new PrismaClient()
-
-export interface UpdateOneBody {
-  updateCustomer: CustomerUpdateArgs
-}
-
-export interface CustomerUpdatedResponse {
-  customer: Customer
-}
 
 /**
  * post
