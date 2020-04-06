@@ -9,9 +9,6 @@ import randomWords from './json/dictionary.json'
 import employeeData from './json/employees.json'
 // locations
 import locationData from './json/location.json'
-
-import dotenv from 'dotenv'
-import path from 'path'
 // the only dependency from the main files
 // IT WOULD BE NICE TO NOT TO THIS, KIND OF SLOPPY, JOE.
 // who is Joe?
@@ -20,13 +17,10 @@ import { cryptoFactory } from '@Utils/crypto'
 
 const prisma = new PrismaClient.PrismaClient()
 
-// loading dot env from root for signing key needed in cryptoFactory
-dotenv.config({ path: path.resolve('../', '.env') })
-
 const ADMIN_PASSWORD = process.env.ADMIN_PASS
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
-if (ADMIN_PASSWORD && ADMIN_EMAIL){
+if (ADMIN_PASSWORD && ADMIN_EMAIL) {
   console.log('using admin email and password:')
   console.log(ADMIN_EMAIL)
   console.log(ADMIN_PASSWORD)
@@ -143,6 +137,7 @@ async function createProducts(locations: PrismaClient.StoreLocations[]) {
     throw new Error(e)
   })
 }
+
 // A `main` function so that we can use async/await
 // this initializes the database with one admin employee, main product, inventory, and supplier
 // no need to run this except once

@@ -26,6 +26,9 @@
     display: none;
   }
   overflow: no-display;
+  height: 100vh;
+  width: 100%;
+  position: relative;
 }
 .nav {
   display: flex;

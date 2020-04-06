@@ -66,6 +66,7 @@ function LoginForm({
   const axios = getAxiosInstance()
   const {
     register,
+    unregister,
     handleSubmit,
     errors,
     setError,
@@ -123,6 +124,11 @@ function LoginForm({
     },
     [toggleSnackbar, setError, axios]
   )
+
+  const switchToResetPasswordRequest = () => {
+    unregister('password')
+    setIsLogin(false)
+  }
 
   return (
     <>
@@ -196,53 +202,50 @@ function LoginForm({
             </FormHelperText>
           )}
         </FormControl>
-        <FormControl
-          style={{
-            ...(isLogin
-              ? {}
-              : { display: 'none !important', visibility: 'hidden' }),
-          }}
-          disabled={!isLogin}
-          aria-hidden={!isLogin}
-          aria-disabled={!isLogin}
-          className={classes.margin}
-        >
-          <InputLabel
-            error={!!errors.password}
-            required
-            htmlFor="password"
-            id={'password-label'}
-            className={classes.label}
+        {isLogin && (
+          <FormControl
+            disabled={!isLogin}
+            aria-hidden={!isLogin}
+            aria-disabled={!isLogin}
+            className={classes.margin}
           >
-            Password
-          </InputLabel>
-          <Input
-            id={'password'}
-            inputMode={'text'}
-            type={'password'}
-            autoComplete={'current-password'}
-            error={!!errors.password}
-            name={'password'}
-            aria-invalid={!!errors.password ? 'true' : 'false'}
-            aria-describedby="error-password-required error-password-validate"
-            inputRef={register({ required: true })}
-            endAdornment={
-              <InputAdornment position="end">
-                <SecurityRounded />
-              </InputAdornment>
-            }
-          />
-          {!!errors.password && errors.password?.type === 'required' && (
-            <FormHelperText id={'error-password-required'}>
-              Required
-            </FormHelperText>
-          )}
-          {!!errors.password && errors.password?.type === 'validate' && (
-            <FormHelperText id={'error-password-validate'}>
-              Wrong password
-            </FormHelperText>
-          )}
-        </FormControl>
+            <InputLabel
+              error={!!errors.password}
+              required
+              htmlFor="password"
+              id={'password-label'}
+              className={classes.label}
+            >
+              Password
+            </InputLabel>
+            <Input
+              id={'password'}
+              inputMode={'text'}
+              type={'password'}
+              autoComplete={'current-password'}
+              error={!!errors.password}
+              name={'password'}
+              aria-invalid={!!errors.password ? 'true' : 'false'}
+              aria-describedby="error-password-required error-password-validate"
+              inputRef={register({ required: true })}
+              endAdornment={
+                <InputAdornment position="end">
+                  <SecurityRounded />
+                </InputAdornment>
+              }
+            />
+            {!!errors.password && errors.password?.type === 'required' && (
+              <FormHelperText id={'error-password-required'}>
+                Required
+              </FormHelperText>
+            )}
+            {!!errors.password && errors.password?.type === 'validate' && (
+              <FormHelperText id={'error-password-validate'}>
+                Wrong password
+              </FormHelperText>
+            )}
+          </FormControl>
+        )}
 
         <Button
           size={'large'}
@@ -260,7 +263,11 @@ function LoginForm({
         variant={'text'}
         size={'small'}
         title={'show reset password form'}
-        onClick={() => setIsLogin((current) => !current)}
+        onClick={
+          isLogin
+            ? () => switchToResetPasswordRequest()
+            : () => setIsLogin(true)
+        }
       >
         {isLogin ? 'Reset password' : 'Login'}
       </Button>

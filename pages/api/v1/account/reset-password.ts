@@ -1,4 +1,4 @@
-import { Employee, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 import { handler } from '@Lib/server'
 import {
@@ -15,10 +15,12 @@ export interface ResetPassword {
   newPassword: string
   userId: number
 }
+
 export interface ResetPasswordRes {
   success: boolean
   employee: EmpDataFiltered
 }
+
 /**
  * sends email to reset password
  * @param req.body.newPassword

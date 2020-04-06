@@ -6,10 +6,11 @@ import mutator from '@Lib/server/mutator'
 import { ResetPasswordForm } from '@Components/Forms'
 import { MaterialNextBtn } from '@Components/Elements/Button'
 
-import styles from './views.module.scss'
 import { useSnackbarContext } from '@Utils/context'
 import { Loading } from '@Components/Elements/Loading'
 import { VerifyAuthCode } from '@Pages/api/v1/account/verify-auth-code'
+
+import styles from './views.module.scss'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

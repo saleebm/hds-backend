@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       backgroundColor: theme.palette.background.paper,
       color: theme.palette.text.secondary,
     },
-    whiteSpace: 'break-spaces',
+    whiteSpace: 'nowrap',
   },
   fullList: {
     width: 'auto',
@@ -155,8 +155,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    whiteSpace: 'break-spaces',
+    whiteSpace: 'nowrap',
     overflowX: 'hidden',
+    willChange: 'width',
   },
   drawerOpen: {
     width: drawerWidth,
@@ -216,31 +217,29 @@ function NavDrawer({
   }, [setIsOpen])
 
   const openOnMouseEnter = useCallback(
-    (e: React.MouseEvent) => {
-      e.persist()
-      const bounceIt = debounce(() => setIsOpen(true), 300)
-      return bounceIt()
-    },
+    (e: React.MouseEvent) =>
+      debounce(() => {
+        setIsOpen(true)
+        e.persist()
+      }, 500)(),
     [setIsOpen]
   )
 
   const closeOnMouseLeave = useCallback(
-    (e: React.MouseEvent) => {
-      e.persist()
-      const bounceIt = debounce(() => setIsOpen(false), 300)
-      return bounceIt()
-    },
+    (e: React.MouseEvent) =>
+      debounce(() => {
+        setIsOpen(false)
+        e.persist()
+      }, 300)(),
     [setIsOpen]
   )
 
   const renderList = () => (
     <div
-      role="presentation"
-      className={styles.navWrap}
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
       onMouseEnter={openOnMouseEnter}
       onMouseLeave={closeOnMouseLeave}
+      role="presentation"
+      className={styles.navWrap}
     >
       <a
         style={{ display: 'none' }}
