@@ -240,6 +240,8 @@ function NavDrawer({
       onMouseLeave={closeOnMouseLeave}
       role="presentation"
       className={styles.navWrap}
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
     >
       <a
         style={{ display: 'none' }}
