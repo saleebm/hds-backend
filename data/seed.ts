@@ -1,5 +1,3 @@
-import dotenv from 'dotenv'
-import path from 'path'
 import * as PrismaClient from '@prisma/client'
 // product sample
 import applianceData from './json/appliances.json'
@@ -11,16 +9,19 @@ import randomWords from './json/dictionary.json'
 import employeeData from './json/employees.json'
 // locations
 import locationData from './json/location.json'
-import { cryptoFactory } from '@Utils/crypto'
-// the only dependency from the main files
-// noinspection TypeScriptPreferShortImport,ES6PreferShortImport
 
-// loading dot env from root for signing key needed in cryptoFactory
-dotenv.config({ path: path.resolve('../', '.env') })
+// the only dependency from the main files
+// IT WOULD BE NICE TO NOT TO THIS, KIND OF SLOPPY, JOE.
+// who is Joe?
+// JOE MAMA. But for real, this is sloppy. This does not confide in the domain of this utility
+import { cryptoFactory } from '@Utils/crypto'
+
 const prisma = new PrismaClient.PrismaClient()
 
-const ADMIN_PASSWORD = 'byqipyuyxlyteuajjbewsatxldvfbuqs'
+const ADMIN_PASSWORD = process.env.ADMIN_PASS
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
+// lol i didn't really think about naming this like that, at it least we know is long ;)
 const DIC_LENGTH =
   !!randomWords &&
   '0' in randomWords &&
@@ -30,6 +31,7 @@ const DIC_LENGTH =
 const getRandomInt = (max: number) =>
   Math.floor(Math.random() * Math.floor(max))
 
+// gives a number string
 const getNumString = () =>
   Math.floor(Math.random() * 8 + 1) + Math.random().toString().slice(3)
 
@@ -39,6 +41,7 @@ const getNumString = () =>
 //     10
 //   )}`
 
+// generates an address randomly from the dictionary
 function* addressGenerator() {
   // the strict type checking nature in me makes me do this
   while (true) {
@@ -46,11 +49,12 @@ function* addressGenerator() {
       !!randomWords &&
       '0' in randomWords &&
       Array.isArray(randomWords[0]) &&
-      randomWords[0][getRandomInt(DIC_LENGTH || 200)]
+      randomWords[0][getRandomInt(DIC_LENGTH || 300)]
     } street`
   }
 }
 
+// found this on stack somewhere. forgot to ref it, sorry dude
 // maybe use this if something breaks
 function makeId(length: number) {
   let result = ''
@@ -158,16 +162,49 @@ async function main() {
       throw new Error(e)
     })
 
+  // show the plug some respect
   console.log(`the plug: ${JSON.stringify(supplierCreateInput)}`)
 
   const addressGen = addressGenerator()
 
+  const {
+    passwordHash: yourEncryptedHash,
+  } = await cryptoFactory.encryptUserPassword(ADMIN_PASSWORD).catch((e) => {
+    throw new Error(e)
+  })
+  if (ADMIN_EMAIL) {
+    employeesCreateInput.push(
+      prisma.employee.create({
+        data: {
+          positionName: 'PRESIDENT_CEO',
+          zipCode: 38939,
+          userSigningSecret: await cryptoFactory
+            .generateJWTSecret(32)
+            .catch((e) => {
+              throw new Error(e)
+            }),
+          lastName: 'Monkey',
+          firstName: 'ball',
+          state: 'FL',
+          password: yourEncryptedHash,
+          roleCapability: 'READ_WRITE',
+          email: ADMIN_EMAIL,
+          address: '101 e wind ct',
+          city: 'longdic',
+          salary: 1_000_000.99 /* every dolla counts g */,
+          storeLocations: {
+            connect: { idStoreLocations: locations[0].idStoreLocations },
+          },
+        },
+      })
+    )
+  }
   for (const emp of employeeData) {
     // employees
     // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
 
-    //todo dont do this for real!¯\_(ツ)_/¯ ¯\_(ツ)_/¯ ¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯¯\_(ツ)_/¯
-    // using the same password and jwt for everyone! secure! ¯\_(ツ)_/¯
+    //todo dont do this for real! its just seed data though
+    // but using the same password and jwt for everyone!?? secure! ¯\_(ツ)_/¯
     const { passwordHash } = await cryptoFactory
       .encryptUserPassword(ADMIN_PASSWORD)
       .catch((e) => {
@@ -265,6 +302,7 @@ async function main() {
 
   console.log(`customers created: ${customers.length}`)
 
+  // lol what was i thinking?
   return {
     ok: true,
   }

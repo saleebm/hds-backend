@@ -1,5 +1,10 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
+const dotenvConfig = require('dotenv')
+
+const envPath = path.resolve(__dirname, '.env')
+
+dotenvConfig.config({ path: envPath })
 
 module.exports = {
   context: __dirname,
@@ -28,7 +33,7 @@ module.exports = {
                 '@babel/preset-env',
                 {
                   useBuiltIns: 'entry',
-                  corejs: 2,
+                  corejs: 3,
                   targets: {
                     esmodules: false,
                     node: true,
@@ -56,7 +61,7 @@ module.exports = {
                 '@babel/preset-env',
                 {
                   useBuiltIns: 'usage',
-                  corejs: 2,
+                  corejs: 3,
                   targets: {
                     esmodules: false,
                     node: true,

@@ -9,6 +9,8 @@ declare global {
       TOKEN_STORAGE_KEY: string
       TOKEN_SIGNING_SECRET: string
       SENDGRID_API_KEY: string
+      ADMIN_PASS: string
+      ADMIN_EMAIL: string
     }
   }
 }

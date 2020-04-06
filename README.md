@@ -2,15 +2,16 @@
 
 ---
 
-- generate keys for encryption as [stated below](keys-for-encryption)
-- make sure .env has correct mysql_url for prisma2 in the prisma folder.
-- also make sure .env in root dir is configured properly
+- generate keys for encryption as [stated below](keys-for-encryption) for the seed data and prisma authentication
+- make sure .env has correct mysql_url for prisma in the prisma folder.
+- also make sure .env in root dir is configured properly, see .env.example
 - create user hds_user and database hds.
   - `create database hds;`
   - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
   - `grant all privileges on hds.* to hds_user@localhost;`
 - finally run `npm run prisma2:init` to have prisma generate database schema
-- to create a test user with a script, run seed:build and seed:run
+- to seed the test data
+  - `run npm run seed`
 
 # TODO
 
@@ -19,28 +20,15 @@
 ## General cool stuff
 
 ~~1. add toast notification system to root~~
-
+1. ~~drawer like zapier~~
+2. stop wasting time with all this extra crap.
 ## data fetching
 
-1. useSWR for lists?
+1. useSWR for REAL TIME DATA...
 
 ## auth service
 
 1.  API docs.
-2.  Employee authentication
-
-    ~~1. fix seed so that I can actually have a password and matches~~
-    ~~2. set up utils for token generation module~~
-    ~~3. set up oauth endpoint and integrate strategy with secrets.~~
-    ~~4. `js const postmanTests = () => Promise.resolve(this.stepThree) return postmanTests.res.success ? 'set up login dashboard' : 'repeat steps 2 - 4'`~~
-
-    ~~5. refresh token endpoint~~
-
-    ~~6. reset password endpoint~~
-
-3.  Check if front facing users need auth (ie customer entity)
-    ~~4. HOC for auth checking in api~~
-    ~~5. Config for auth codes and responses~~
 
 ---
 
@@ -48,7 +36,9 @@
 
 1. ~~Forms: login / register / reset password~~
 
-2. setting up all the tables
+2. ~~setting up all the tables~~
+
+3. POS
 
 # Keys for encryption
 

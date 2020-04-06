@@ -1,3 +1,7 @@
+/*
+ * I totally took this file from next js server utils, and modified it a little bit for my own interests.
+ * Thank you to the NextJS team, and I learned a lot about encryption from implementing this
+ */
 import crypto from 'crypto'
 import { promisify } from 'util'
 import { resolve } from 'path'
