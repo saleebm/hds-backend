@@ -26,6 +26,12 @@ dotenv.config({ path: path.resolve('../', '.env') })
 const ADMIN_PASSWORD = process.env.ADMIN_PASS
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
+if (ADMIN_PASSWORD && ADMIN_EMAIL){
+  console.log('using admin email and password:')
+  console.log(ADMIN_EMAIL)
+  console.log(ADMIN_PASSWORD)
+}
+
 // lol i didn't really think about naming this like that, at it least we know is long ;)
 const DIC_LENGTH =
   !!randomWords &&
