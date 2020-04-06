@@ -136,7 +136,12 @@ function CustomerCreateUpdateForm({
         console.log(res)
         toggleSnackbar({
           isOpen: true,
-          message: `Success. Customer ID: ${currentCustomer?.idCustomer}`,
+          message: `Success. Customer ID: ${
+            // trying to convince typescript.. I wish i used redux toolkit, todo at least learn how to configure redux better with typescript
+            'payload' in res &&
+            (res as any).payload &&
+            (res as any).payload.customerId
+          }`,
           severity: 'success',
         })
       }
@@ -149,7 +154,9 @@ function CustomerCreateUpdateForm({
         console.log(res)
         toggleSnackbar({
           isOpen: true,
-          message: `Success. Customer ID: ${currentCustomer?.idCustomer}`,
+          message: `Success. Customer ID: ${
+            currentCustomer?.idCustomer || customerId
+          }`,
           severity: 'success',
         })
       }

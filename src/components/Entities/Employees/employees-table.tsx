@@ -157,6 +157,7 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
             editable: 'always',
           }
         case 'storeLocations':
+          // this is a number, the store location ID. I screwed up the database. todo fix
           return {
             title: 'LOCATION',
             field: value,
@@ -209,9 +210,10 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
       city,
       lastName,
       zipCode,
-      storeLocationId,
+      storeLocations, // number
     } = newData
 
+    console.log(newData)
     // material table returns back salary as a string since its a currency type above, but sometimes a user can enter a number as well and it just returns the number
     const formattedSalary =
       typeof salary === 'string' ? parseLocaleNumber(salary) : salary
@@ -231,7 +233,14 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
         address,
         city,
         zipCode,
-        storeLocations: { connect: { idStoreLocations: storeLocationId } },
+        storeLocations: {
+          connect: {
+            idStoreLocations:
+              typeof storeLocations === 'string'
+                ? parseInt(storeLocations)
+                : storeLocations,
+          },
+        },
       } as CreateEmployeeBodyArgs)
       // console.log(createdUser)
       if (createdUser?.userId) {

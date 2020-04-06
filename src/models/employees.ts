@@ -10,8 +10,12 @@ export type EmpDataFiltered = Omit<
 >
 
 // it gives salary as a string onRowAdd... so just in case...
-export type SillyMaterialTable = Omit<EmpDataFiltered, 'salary'> & {
+export type SillyMaterialTable = Omit<
+  EmpDataFiltered,
+  'salary' | 'storeLocations'
+> & {
   salary: string | number
+  storeLocations: string | number
 }
 
 export type CreateEmployeeBodyArgs = { password?: string } & Omit<

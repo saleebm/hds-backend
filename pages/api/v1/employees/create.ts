@@ -49,7 +49,7 @@ export default handler(async (req): EmployeeCreated => {
   const defaultLocation =
     (Array.isArray(locations) && locations[0]) || undefined
   // if no location provided throw
-  if (typeof defaultLocation === 'undefined' && !req.body.location) {
+  if (typeof defaultLocation === 'undefined' && !req.body.storeLocations) {
     throw new DatabaseNotEquippedError('Create a location first')
   }
 
@@ -98,7 +98,6 @@ export default handler(async (req): EmployeeCreated => {
         email,
         firstName,
         lastName,
-
         roleCapability,
         positionName,
         salary: typeof salary === 'string' ? Number(salary) : salary ?? 32000.0,
