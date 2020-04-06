@@ -4,6 +4,8 @@ import { bindActionCreators, Dispatch } from 'redux'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
+
+import debounce from 'lodash.debounce'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -213,12 +215,32 @@ function NavDrawer({
     setIsOpen(false)
   }, [setIsOpen])
 
+  const openOnMouseEnter = useCallback(
+    (e: React.MouseEvent) => {
+      e.persist()
+      const bounceIt = debounce(() => setIsOpen(true), 300)
+      return bounceIt()
+    },
+    [setIsOpen]
+  )
+
+  const closeOnMouseLeave = useCallback(
+    (e: React.MouseEvent) => {
+      e.persist()
+      const bounceIt = debounce(() => setIsOpen(false), 300)
+      return bounceIt()
+    },
+    [setIsOpen]
+  )
+
   const renderList = () => (
     <div
       role="presentation"
       className={styles.navWrap}
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
+      onMouseEnter={openOnMouseEnter}
+      onMouseLeave={closeOnMouseLeave}
     >
       <a
         style={{ display: 'none' }}

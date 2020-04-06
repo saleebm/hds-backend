@@ -50,7 +50,6 @@ export default connect(mapStateToProps)(function CustomerSale({
   const [canMoveToTransaction, setCanMoveToTransaction] = useState(false)
 
   useEffect(() => {
-    console.log(canMoveToTransaction)
     //cant be 0.. duh
     if (!!customerId && !isNaN(customerId)) {
       setCanMoveToTransaction(true)

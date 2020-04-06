@@ -155,7 +155,7 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
           <Grid item xs={12}>
             <Typography
               gutterBottom
-              variant={'body1'}
+              variant={'h5'}
               className={classes.formTitle}
             >
               {isCreating
