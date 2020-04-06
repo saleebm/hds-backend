@@ -10,6 +10,8 @@ import employeeData from './json/employees.json'
 // locations
 import locationData from './json/location.json'
 
+import dotenv from 'dotenv'
+import path from 'path'
 // the only dependency from the main files
 // IT WOULD BE NICE TO NOT TO THIS, KIND OF SLOPPY, JOE.
 // who is Joe?
@@ -17,6 +19,9 @@ import locationData from './json/location.json'
 import { cryptoFactory } from '@Utils/crypto'
 
 const prisma = new PrismaClient.PrismaClient()
+
+// loading dot env from root for signing key needed in cryptoFactory
+dotenv.config({ path: path.resolve('../', '.env') })
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASS
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
@@ -167,12 +172,12 @@ async function main() {
 
   const addressGen = addressGenerator()
 
-  const {
-    passwordHash: yourEncryptedHash,
-  } = await cryptoFactory.encryptUserPassword(ADMIN_PASSWORD).catch((e) => {
-    throw new Error(e)
-  })
-  if (ADMIN_EMAIL) {
+  if (ADMIN_PASSWORD && ADMIN_EMAIL) {
+    const {
+      passwordHash: yourEncryptedHash,
+    } = await cryptoFactory.encryptUserPassword(ADMIN_PASSWORD).catch((e) => {
+      throw new Error(e)
+    })
     employeesCreateInput.push(
       prisma.employee.create({
         data: {
@@ -199,6 +204,7 @@ async function main() {
       })
     )
   }
+
   for (const emp of employeeData) {
     // employees
     // the jwt user secret is the signing secret unique to the user for hashing the pw and signing jwt
@@ -206,7 +212,7 @@ async function main() {
     //todo dont do this for real! its just seed data though
     // but using the same password and jwt for everyone!?? secure! ¯\_(ツ)_/¯
     const { passwordHash } = await cryptoFactory
-      .encryptUserPassword(ADMIN_PASSWORD)
+      .encryptUserPassword(ADMIN_PASSWORD || 'byqipyuyxlyteuajjbewsatxldvfbuqs')
       .catch((e) => {
         throw new Error(e)
       })
