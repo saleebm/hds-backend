@@ -2,7 +2,7 @@
 
 ---
 
-- generate keys for encryption as [stated below](keys-for-encryption) for the seed data and prisma authentication
+- generate keys for encryption as stated below for the seed data and prisma authentication
 - make sure .env has correct mysql_url for prisma in the prisma folder.
 - also make sure .env in root dir is configured properly, see .env.example
 - create user hds_user and database hds.
