@@ -1,6 +1,5 @@
 import { motion, useReducedMotion, Variants } from 'framer-motion'
-import { FC, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { FC } from 'react'
 
 const pageVariants: Variants = {
   initial: {
@@ -19,21 +18,20 @@ const pageVariants: Variants = {
     transition: { duration: 0.25, ease: [0.48, 0.15, 0.25, 0.96] },
   },
 }
-type AnimationWrapperProps = Omit<ReturnType<typeof motion.div>, 'key'>
+type AnimationWrapperProps = Omit<ReturnType<typeof motion.div>, 'key'> & {
+  animateOn: string | number
+}
 
 export const AnimationWrapper: FC<AnimationWrapperProps> = ({
   children,
+  animateOn,
   ...rest
 }) => {
-  const router = useRouter()
   const shouldReduceMotion = useReducedMotion()
 
-  useEffect(() => {
-    console.log(router.pathname, router.query)
-  }, [router.pathname, router.query])
   return (
     <motion.div
-      key={`${router.pathname}${router.query}`}
+      key={animateOn}
       initial={shouldReduceMotion ? undefined : 'initial'}
       animate={shouldReduceMotion ? undefined : 'enter'}
       exit="exit"

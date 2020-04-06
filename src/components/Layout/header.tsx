@@ -1,5 +1,4 @@
 import { Router } from 'next/router'
-import dynamic from 'next/dynamic'
 import { connect } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { LinearProgress } from '@material-ui/core'

@@ -76,9 +76,7 @@ export default ({ onToggleClicked, isToggled }: ToggleIcon) => (
         variant={'button'}
         component={'span'}
         className={classNames(styles.span, styles.text)}
-      >
-        Menu
-      </Typography>
+      />
     </Button>
   </motion.div>
 )

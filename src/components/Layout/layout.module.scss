@@ -3,43 +3,39 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 100%;
   height: 100%;
   min-height: 100vh;
 
   .mainContent {
     position: relative;
-    flex-shrink: 1;
+    flex-grow: 1;
+    padding: 5rem 0 0 3.5rem;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     margin: 0;
-    padding: 0;
   }
 
   .header {
-    position: fixed;
-    z-index: 10000;
-    top: 0;
-    right: 0;
-    display: flex;
-    overflow: auto;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-    max-width: 150px;
-    height: 100%;
-    max-height: 150px;
+    position: relative;
     margin: 0 auto;
   }
 }
 
+.navWrap {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  overflow: no-display;
+}
 .nav {
   display: flex;
   align-items: stretch;
   flex: 1;
   flex-flow: column nowrap;
   justify-content: stretch;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .bold {
@@ -58,13 +54,12 @@
     */
 .mainMenuTriggerWrapper {
   position: relative;
-  display: grid;
-  //align-self: stretch;
-  width: 100px;
-  max-width: min-content;
-  height: auto;
+  display: inline-grid;
+  align-self: center;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  padding: 0.33rem 0.72rem;
+  padding: 0;
   transform: matrix(1, 0, 0, 1, 0, 0);
   transform-origin: center;
   border: none !important;
@@ -90,8 +85,8 @@
   .mainMenuTrigger {
     position: relative;
     display: block;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 50px;
     cursor: pointer;
     pointer-events: auto;
     opacity: 0.7;

@@ -79,7 +79,7 @@ export default connect(mapStateToProps)(function CustomerSale({
   return (
     <Container className={classes.root} maxWidth={false}>
       <AnimatePresence exitBeforeEnter>
-        <AnimationWrapper>
+        <AnimationWrapper animateOn={step}>
           {step === 0 && <CustomerInfo />}
           {step === 1 && <Transaction />}
         </AnimationWrapper>
