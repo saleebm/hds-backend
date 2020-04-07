@@ -20,16 +20,4 @@ module.exports = {
       time: true,
     },
   ],
-
-  deploy: {
-    production: {
-      user: 'ubuntu',
-      host: '34.69.241.58',
-      ref: 'origin/master',
-      repo: 'git@github.com:saleebm/hds-backend.git',
-      path: '/var/www/html/branch.codes',
-      'post-deploy':
-        'npm install && pm2 reload ecosystem.config.js --env production',
-    },
-  },
 }
