@@ -66,7 +66,7 @@ export function withRedux(WrappedApp: any) {
 
     // refresh token every 5 min
     useInterval(() => {
-      if (!!currentState && dispatch) {
+      if (!!currentState && !!dispatch) {
         console.log('refreshing jwt')
         dispatch(refreshJWTAction())
       }
@@ -99,19 +99,22 @@ export function withRedux(WrappedApp: any) {
 
     // using GIP instead of GSSP because then I can statically generate those pages
     // routing authenticated/unauthenticated server side
-    // also used in Dashboard to control routing
-    if (req && res) {
+    // make sure that the headers not already sent or this code block would be useless
+    if (req && res && !res.headersSent && typeof res.writeHead === 'function') {
       const authToken = authService.getAccessToken(ctx)
+      /**
+       * Redirects unauthorized requests unless from index, or reset password /auth/[code] page
+       */
       const redirectUnauthenticated = () => {
         if (req.url !== '/' && !req.url?.match(/^\/auth\/.+/)) {
-          if (!res.headersSent) {
-            if (typeof res.writeHead === 'function')
-              res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
-          }
+          res.writeHead(302, 'Unauthenticated', { Location: '/' }).end()
         }
       }
+
       if (!!store && authToken) {
-        // did not work with checkAuthStatusAction thunk for some reason
+        // did not work with checkAuthStatusAction thunk dispatch.
+        // as in doing store.dispatch(checkAuthStatusAction())
+        // probably because I have to bindActionCreators??
         try {
           const authCodeResponse = await getAxiosInstance().post<Viewer>(
             'account/viewer',
@@ -120,7 +123,6 @@ export function withRedux(WrappedApp: any) {
               headers: {
                 authorization: `Bearer ${authToken}`,
               },
-              withCredentials: true,
             }
           )
           if (authCodeResponse.data && authCodeResponse.data.userId) {
@@ -142,17 +144,15 @@ export function withRedux(WrappedApp: any) {
                 role: roleCapability,
               },
             })
-            // the req url is the login index page... and authenticated ^
+            // the req url is the login index page... and authenticated ^ ?
             if (req.url === '/') {
-              if (!res.headersSent) {
-                if (typeof res.writeHead === 'function')
-                  // redirect to dashboard
-                  res
-                    .writeHead(302, 'Authenticated', { Location: '/dashboard' })
-                    .end()
-              }
-            } // if not authorized by server and not going to login page or auth page (reset password), redirect to login
+              // redirect to dashboard
+              res
+                .writeHead(302, 'Authenticated', { Location: '/dashboard' })
+                .end()
+            }
           } else {
+            // if not authorized by server and not going to login page or auth page (reset password), redirect to login
             redirectUnauthenticated()
           }
         } catch (e) {

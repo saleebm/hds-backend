@@ -12,7 +12,7 @@ import { useSnackbarContext } from '@Utils/context'
 import { Loading } from '@Components/Elements/Loading'
 import Table from '@Components/Elements/Table/table'
 import { camelCaseToFormal } from '@Utils/common'
-import { Product, StoreLocations } from '@prisma/client'
+import { StoreLocations } from '@prisma/client'
 
 type InventoriesTableKey = keyof Inventory | 'tableData'
 
@@ -63,31 +63,14 @@ export function InventoriesTable({ inventories, locations }: InventoriesData) {
             field: value,
             editable: 'never',
             render: (rowData) => (
-              <>
-                {Array.isArray(rowData.product) ? (
-                  <Typography variant={'body2'}>
-                    <>
-                      {rowData.product?.map((product: Product) => (
-                        <span
-                          key={product.idProduct}
-                          dangerouslySetInnerHTML={{
-                            __html: `${product.brand} - $${product.modelNumber}`,
-                          }}
-                        />
-                      ))}
-                    </>
-                  </Typography>
-                ) : (
-                  <Typography variant={'body2'}>
-                    <span
-                      key={rowData.product.idProduct}
-                      dangerouslySetInnerHTML={{
-                        __html: `${rowData.product.brand} - $${rowData.product.modelNumber}`,
-                      }}
-                    />
-                  </Typography>
-                )}
-              </>
+              <Typography variant={'body2'}>
+                <span
+                  key={rowData.product.idProduct}
+                  dangerouslySetInnerHTML={{
+                    __html: `${rowData.product.brand} - ${rowData.product.modelNumber}`,
+                  }}
+                />
+              </Typography>
             ),
           }
         /**todo refactor duplicates */

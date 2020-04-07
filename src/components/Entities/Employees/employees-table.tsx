@@ -157,7 +157,7 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
             editable: 'always',
           }
         case 'storeLocations':
-          // this is a number, the store location ID. I screwed up the database. todo fix
+          // this is a number, the store location ID. I screwed up the database. todo fix naming
           return {
             title: 'LOCATION',
             field: value,

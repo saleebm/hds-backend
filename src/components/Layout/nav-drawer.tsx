@@ -230,14 +230,12 @@ function NavDrawer({
       debounce(() => {
         setIsOpen(false)
         e.persist()
-      }, 300)(),
+      }, 700)(),
     [setIsOpen]
   )
 
   const renderList = () => (
     <div
-      onMouseEnter={openOnMouseEnter}
-      onMouseLeave={closeOnMouseLeave}
       role="presentation"
       className={styles.navWrap}
       onClick={toggleDrawer(false)}
@@ -315,6 +313,8 @@ function NavDrawer({
           </Toolbar>
         </AppBar>
         <Drawer
+          onMouseEnter={openOnMouseEnter}
+          onMouseLeave={closeOnMouseLeave}
           variant={'permanent'}
           className={clsx(classes.drawer, {
             [classes.drawerOpen]: isOpen,
