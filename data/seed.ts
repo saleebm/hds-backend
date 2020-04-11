@@ -26,7 +26,7 @@ if (ADMIN_PASSWORD && ADMIN_EMAIL) {
   console.log(ADMIN_PASSWORD)
 }
 
-// lol i didn't really think about naming this like that, at it least we know is long ;)
+// lol i didn't really think about naming this like that, at least we know it is long ;)
 const DIC_LENGTH =
   !!randomWords &&
   '0' in randomWords &&

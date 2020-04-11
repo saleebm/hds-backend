@@ -23,6 +23,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 import IconButton from '@material-ui/core/IconButton'
 
+import {useHoverIntent} from '@Utils/hooks'
 import { MenuToggle } from '@Components/Layout'
 import { classNames } from '@Utils/common'
 import ROUTE_PATHS from './routes'
@@ -234,6 +235,8 @@ function NavDrawer({
     [setIsOpen]
   )
 
+  const intentions = useHoverIntent(openOnMouseEnter, closeOnMouseLeave, !isOpen)
+
   const renderList = () => (
     <div
       role="presentation"
@@ -313,8 +316,8 @@ function NavDrawer({
           </Toolbar>
         </AppBar>
         <Drawer
-          onMouseEnter={openOnMouseEnter}
-          onMouseLeave={closeOnMouseLeave}
+          onMouseEnter={intentions.onMouseEnter}
+          onMouseLeave={intentions.onMouseLeave}
           variant={'permanent'}
           className={clsx(classes.drawer, {
             [classes.drawerOpen]: isOpen,

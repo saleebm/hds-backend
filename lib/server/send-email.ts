@@ -8,7 +8,6 @@ export const sendEmail = async (
 ): Promise<void> => {
   console.log(`code for ${email}: ${code}`)
 
-  // todo use actual hostname!!!
   const magicLink = `${hostname}/auth/${code}`
 
   sgMailer.setApiKey(process.env.SENDGRID_API_KEY)
