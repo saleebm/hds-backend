@@ -15,9 +15,9 @@ export default handler(async (req) => {
     throw new NotImplementedError()
   }
   const args =
-    ('args' in req.body && (req.body.args as FindManyProductArgs)) || {}
+    (!!req.body && 'options' in req.body && (req.body.options as FindManyProductArgs)) || {}
 
-  const products = await prisma.product.findMany(args)
+  const products = await prisma.product.findMany({})
 
   return {
     products,
