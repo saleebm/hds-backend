@@ -10,14 +10,17 @@ const prisma = new PrismaClient()
  * @return res.data.products: products[] | undefined if not found
  */
 export default handler(async (req) => {
-  // bail if not getting
+  // bail if not post
   if (req.method?.toLowerCase() !== 'post') {
     throw new NotImplementedError()
   }
   const args =
-    (!!req.body && 'options' in req.body && (req.body.options as FindManyProductArgs)) || {}
+    (!!req.body &&
+      'options' in req.body &&
+      (req.body.options as FindManyProductArgs)) ||
+    {}
 
-  const products = await prisma.product.findMany({})
+  const products = await prisma.product.findMany(args)
 
   return {
     products,
