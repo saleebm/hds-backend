@@ -28,15 +28,16 @@ export const CustomerOrderReducer = (
         draft.expectedDeliveryDate = action.payload.expectedDeliveryDate
         return
       case CustomerOrderActionTypes.SetOrderTotal:
+        /*todo*/
         return
-
       case CustomerOrderActionTypes.SetStoreLocation:
+        /*todo*/
         return
-
       case CustomerOrderActionTypes.AddOrderProduct:
+        /*todo*/
         return
-
       case CustomerOrderActionTypes.RemoveOrderProduct:
+        /*todo*/
         return
     }
   })

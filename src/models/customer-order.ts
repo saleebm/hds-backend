@@ -6,4 +6,5 @@ import {
 export type CustomerOrderCreateInputBodyArgs = {
   customerOrderProducts: CustomerOrderProductsCreateManyWithoutCustomerOrderInput
   orderTotal: number | string
-} & Omit<CustomerOrderCreateInput, 'invoice' | 'orderTotal'>
+  storeLocationId: number
+} & Omit<CustomerOrderCreateInput, 'invoice' | 'orderTotal' | 'storeLocations'>

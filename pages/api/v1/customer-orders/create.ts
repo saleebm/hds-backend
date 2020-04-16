@@ -1,11 +1,13 @@
 import { handler } from '@Lib/server'
 import { CustomerOrder, PrismaClient } from '@prisma/client'
 import {
+  InvalidArgumentError,
   NotImplementedError,
   UnauthenticatedError,
 } from '@Lib/server/known-errors'
 import { checkAuth } from '@Pages/api/v1/account/_check-auth'
 import { parseLocaleNumber } from '@Utils/common'
+import { CustomerOrderCreateInputBodyArgs } from '@Types/customer-order'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +15,7 @@ const prisma = new PrismaClient()
  * post
  * creates customer order
  *
- * @param req.body.TODO
+ * @param req.body.customerOrderCreate
  */
 export default handler(
   async (req): Promise<{ customerOrder: CustomerOrder }> => {
@@ -28,18 +30,32 @@ export default handler(
       throw new UnauthenticatedError()
     }
 
+    if (!req.body.customerOrderCreate) {
+      throw new InvalidArgumentError('Missing customerOrderCreate body ard')
+    }
+
+    const {
+      customer,
+      expectedDeliveryDate,
+      storeLocationId,
+      orderTotal,
+      customerOrderProducts,
+    } = req.body.customerOrderCreate as CustomerOrderCreateInputBodyArgs
+
     // first create order to map with products...
     try {
       const customerOrder = await prisma.customerOrder.create({
         data: {
-          customer: req.body.customer,
-          expectedDeliveryDate: new Date(req.body.expectedDeliveryDate),
+          customer: customer,
+          expectedDeliveryDate: new Date(expectedDeliveryDate),
           orderTotal:
-            typeof req.body.orderTotal === 'string'
+            typeof orderTotal === 'string'
               ? Number(parseLocaleNumber(req.body.orderTotal))
-              : req.body.orderTotal,
-          storeLocations: req.body.storeLocations,
-          customerOrderProducts: req.body.customerOrderProducts
+              : orderTotal,
+          storeLocations: {
+            connect: { idStoreLocations: storeLocationId },
+          },
+          customerOrderProducts: customerOrderProducts,
         },
       })
 

@@ -21,6 +21,7 @@ import {
 import { setErrorAction } from '@Store/modules/global/action'
 
 import mutator from '@Lib/server/mutator'
+import { ProductWithInventory } from '@Pages/dashboard/products'
 
 /**
  * first step of POS form is to select a customer, whether that is a new one, or an existing one
@@ -121,3 +122,7 @@ export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
     payload: { expectedDeliveryDate: deliveryDate },
   })
 }
+
+export const addProductToCustomerSaleAction = (
+  product: ProductWithInventory
+): CustomerResult<void> => (dispatch) => {}

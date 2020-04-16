@@ -1,13 +1,23 @@
 import { ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 
+import MuiPickersUtilsProvider from '@material-ui/pickers/MuiPickersUtilsProvider'
+import DateFnsUtils from '@date-io/date-fns'
 import Typography from '@material-ui/core/Typography'
 import { Container } from '@material-ui/core'
 
-import styles from './views.module.scss'
 import fetcher from '@Lib/server/fetcher'
 import { authService } from '@Services'
 
+import styles from './views.module.scss'
+
+/**
+ * Page wrap for the dashboard/* views
+ * provides swr config for fetching with auth token included
+ * @param children
+ * @param pageTitle The title for the page
+ * @constructor
+ */
 export function DashboardView({
   children,
   pageTitle,
@@ -35,7 +45,9 @@ export function DashboardView({
             },
           }}
         >
-          {children}
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            {children}
+          </MuiPickersUtilsProvider>
         </SWRConfig>
       </Container>
     </Container>

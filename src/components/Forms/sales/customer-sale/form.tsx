@@ -9,12 +9,16 @@ import Container from '@material-ui/core/Container'
 import { ArrowBack, ArrowForward } from '@material-ui/icons'
 import { Button } from '@material-ui/core'
 
-import { RootStateType } from '@Store/modules/types'
 import Transaction from '@Components/Forms/sales/customer-sale/transaction'
 import CustomerInfo from '@Components/Forms/sales/customer-sale/customer-info'
-import { AnimationWrapper } from '@Components/Elements/AnimateWrapper'
 
-type CustomerSaleProps = ReturnType<typeof mapStateToProps>
+import { RootStateType } from '@Store/modules/types'
+import { AnimationWrapper } from '@Components/Elements/AnimateWrapper'
+import { ProductWithInventory } from '@Pages/dashboard/products'
+
+type CustomerSaleProps = ReturnType<typeof mapStateToProps> & {
+  products: ReadonlyArray<ProductWithInventory>
+}
 
 const mapStateToProps = (state: RootStateType) => {
   return {
@@ -27,11 +31,14 @@ export const useStyles = makeStyles((theme: Theme) =>
     root: {
       margin: theme.spacing(1),
       height: '100%',
-      minHeight: '900px',
       display: 'flex',
       flexFlow: 'column',
       justifyContent: 'space-between',
       alignItems: 'stretch',
+    },
+    moveButtons: {
+      maxWidth: '350px',
+      marginTop: theme.spacing(3),
     },
   })
 )
@@ -41,6 +48,7 @@ export const useStyles = makeStyles((theme: Theme) =>
  */
 export default connect(mapStateToProps)(function CustomerSale({
   customerOrderState,
+  products,
 }: CustomerSaleProps) {
   const classes = useStyles()
 
@@ -75,20 +83,26 @@ export default connect(mapStateToProps)(function CustomerSale({
     )
     setStep(0)
   }, [setStep])
+
+  /*
+   *todo
+   * the submit button here
+   * - canSubmit
+   * - onSubmit
+   */
+
   return (
     <Container className={classes.root} maxWidth={false}>
       <AnimatePresence exitBeforeEnter>
         <AnimationWrapper animateOn={step}>
           {step === 0 && <CustomerInfo />}
-          {step === 1 && <Transaction />}
+          {step === 1 && <Transaction products={products} />}
         </AnimationWrapper>
       </AnimatePresence>
       {step === 1 && (
         <Button
-          style={{
-            maxWidth: '350px',
-          }}
           variant={'contained'}
+          className={classes.moveButtons}
           title={'Back to choose or create customer'}
           endIcon={<ArrowBack />}
           onClick={moveBack}
@@ -98,9 +112,7 @@ export default connect(mapStateToProps)(function CustomerSale({
       )}
       {step === 0 && (
         <Button
-          style={{
-            maxWidth: '350px',
-          }}
+          className={classes.moveButtons}
           variant={'contained'}
           disabled={!canMoveToTransaction}
           aria-disabled={!canMoveToTransaction}

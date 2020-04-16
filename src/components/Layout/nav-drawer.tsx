@@ -23,7 +23,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 import IconButton from '@material-ui/core/IconButton'
 
-import {useHoverIntent} from '@Utils/hooks'
+import { useHoverIntent } from '@Utils/hooks'
 import { MenuToggle } from '@Components/Layout'
 import { classNames } from '@Utils/common'
 import ROUTE_PATHS from './routes'
@@ -227,15 +227,15 @@ function NavDrawer({
   )
 
   const closeOnMouseLeave = useCallback(
-    (e: React.MouseEvent) =>
-      debounce(() => {
-        setIsOpen(false)
-        e.persist()
-      }, 700)(),
+    (e: React.MouseEvent) => setIsOpen(false),
     [setIsOpen]
   )
 
-  const intentions = useHoverIntent(openOnMouseEnter, closeOnMouseLeave, !isOpen)
+  const intentions = useHoverIntent(
+    openOnMouseEnter,
+    closeOnMouseLeave,
+    !isOpen
+  )
 
   const renderList = () => (
     <div
