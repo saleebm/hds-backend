@@ -123,6 +123,29 @@ export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
   })
 }
 
-export const addProductToCustomerSaleAction = (
-  product: ProductWithInventory
-): CustomerResult<void> => (dispatch) => {}
+export const addOrUpdateProductOrderInCustomerSaleAction = (
+  product: ProductWithInventory,
+  quantity: number,
+  actionType:
+    | typeof CustomerOrderActionTypes.SetOrderProduct
+    | typeof CustomerOrderActionTypes.AddOrderProduct
+): CustomerResult<void> => (dispatch) => {
+  const { idProduct, listPrice } = product
+  dispatch({
+    type: actionType,
+    payload: {
+      orderProduct: { perUnitCost: listPrice, productId: idProduct, quantity },
+    },
+  })
+}
+
+export const removeProductOrderInCustomerSaleAction = (
+  idProduct: number
+): CustomerResult<void> => (dispatch) => {
+  dispatch({
+    type: CustomerOrderActionTypes.RemoveOrderProduct,
+    payload: {
+      productIdToRemove: idProduct,
+    },
+  })
+}

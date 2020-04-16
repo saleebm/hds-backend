@@ -9,7 +9,7 @@ export const customerOrderState: ICustomerOrderState = {
   customerId: undefined,
   expectedDeliveryDate: undefined,
   orderTotal: 0,
-  orderProducts: undefined,
+  orderProducts: new Map(),
   storeLocationId: undefined,
 }
 
@@ -28,16 +28,24 @@ export const CustomerOrderReducer = (
         draft.expectedDeliveryDate = action.payload.expectedDeliveryDate
         return
       case CustomerOrderActionTypes.SetOrderTotal:
-        /*todo*/
+        draft.orderTotal = action.payload.orderTotal
         return
       case CustomerOrderActionTypes.SetStoreLocation:
-        /*todo*/
+        draft.storeLocationId = action.payload.storeLocationId
         return
+      case CustomerOrderActionTypes.SetOrderProduct:
       case CustomerOrderActionTypes.AddOrderProduct:
-        /*todo*/
+        const { productId, perUnitCost, quantity } = action.payload.orderProduct
+        draft.orderProducts.set(productId, {
+          quantity,
+          unitCost: perUnitCost,
+        })
         return
       case CustomerOrderActionTypes.RemoveOrderProduct:
-        /*todo*/
+        const { productIdToRemove } = action.payload
+        if (draft.orderProducts.has(productIdToRemove)) {
+          draft.orderProducts.delete(productIdToRemove)
+        }
         return
     }
   })

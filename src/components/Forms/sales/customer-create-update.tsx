@@ -131,26 +131,32 @@ function CustomerCreateUpdateForm({
 
   const onSubmit = async (editableFields: CustomerEditableFields) => {
     if (isCreating) {
-      const res = await createCustomer(editableFields)
-      if (res) {
+      const { zipCode, ...customerInfo } = editableFields
+      const res = await createCustomer({
+        ...customerInfo,
+        zipCode: typeof zipCode === 'string' ? parseInt(zipCode) : zipCode,
+      })
+      if (res && 'payload' in res) {
         console.log(res)
         toggleSnackbar({
           isOpen: true,
           message: `Success. Customer ID: ${
             // trying to convince typescript.. I wish i used redux toolkit, todo at least learn how to configure redux better with typescript
-            'payload' in res &&
-            (res as any).payload &&
-            (res as any).payload.customerId
+            (res as any).payload && (res as any).payload.customerId
           }`,
           severity: 'success',
         })
       }
     } else if (isUpdating && customerId) {
-      const res = updateCustomer({
+      const { zipCode, ...customerInfo } = editableFields
+      const res = await updateCustomer({
         where: { idCustomer: customerId },
-        data: editableFields,
+        data: {
+          ...customerInfo,
+          zipCode: typeof zipCode === 'string' ? parseInt(zipCode) : zipCode,
+        },
       })
-      if (res) {
+      if (res && 'payload' in res) {
         console.log(res)
         toggleSnackbar({
           isOpen: true,

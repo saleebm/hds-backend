@@ -3,17 +3,10 @@
  * will manage the process to create the customerOrder, compute the total, finalize it,
  * and then it will also allow for invoices to be created with a report for jobs to do, etc.
  */
-import { CustomerOrderProducts } from '@prisma/client'
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { ThunkExtraArgs } from '@Store/modules/types'
-
-export type OrderProducts = Omit<
-  CustomerOrderProducts,
-  'customerOrderId' | 'idCustomerOrderProducts'
->
-
-export type OrderProductsStore = ReadonlyArray<OrderProducts>
+import { OrderProduct, OrderProductsInStore } from '@Types/customer-order'
 
 export interface ICustomerOrderState {
   /**
@@ -23,7 +16,7 @@ export interface ICustomerOrderState {
   /**
    * Delivery date as Date object
    */
-  readonly expectedDeliveryDate: Date| undefined
+  readonly expectedDeliveryDate: Date | undefined
   /**
    * The total computed by the store from the products added
    */
@@ -31,11 +24,11 @@ export interface ICustomerOrderState {
   /**
    * the array of OrderProducts (product id number, quantity desired number, perUnitCost float)
    */
-  readonly orderProducts: OrderProductsStore| undefined
+  readonly orderProducts: OrderProductsInStore
   /**
    * Store location id number
    */
-  readonly storeLocationId: number| undefined
+  readonly storeLocationId: number | undefined
 }
 
 export enum CustomerOrderActionTypes {
@@ -45,6 +38,7 @@ export enum CustomerOrderActionTypes {
   SetDeliveryDate = '@pos/SET_DELIVERY_DATE',
   SetOrderTotal = '@pos/SET_ORDER_TOTAL',
   AddOrderProduct = '@pos/ADD_ORDER_PRODUCT',
+  SetOrderProduct = '@pos/SET_ORDER_PRODUCT', // i.e. To change the quantity
   RemoveOrderProduct = '@pos/REMOVE_ORDER_PRODUCT',
   SetStoreLocation = '@pos/SET_STORE_LOCATION',
 }
@@ -83,12 +77,18 @@ export interface ISetStoreLocationAction
 export interface IUpdateOrderProductAction
   extends Action<
     | CustomerOrderActionTypes.AddOrderProduct
-    | CustomerOrderActionTypes.RemoveOrderProduct
+    | CustomerOrderActionTypes.SetOrderProduct
   > {
   type:
     | typeof CustomerOrderActionTypes.AddOrderProduct
-    | CustomerOrderActionTypes.RemoveOrderProduct
-  payload: { orderProducts: OrderProductsStore }
+    | typeof CustomerOrderActionTypes.SetOrderProduct
+  payload: { orderProduct: OrderProduct }
+}
+
+export interface IRemoveOrderProductAction
+  extends Action<CustomerOrderActionTypes.RemoveOrderProduct> {
+  type: typeof CustomerOrderActionTypes.RemoveOrderProduct
+  payload: { productIdToRemove: number }
 }
 
 export type CustomerResult<TResult> = ThunkAction<
@@ -104,3 +104,4 @@ export type CustomerOrderActions =
   | ISetOrderTotalAction
   | ISetStoreLocationAction
   | IUpdateOrderProductAction
+  | IRemoveOrderProductAction

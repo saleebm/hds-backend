@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { enableMapSet } from 'immer'
 // todo don't import from dist
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
@@ -11,6 +12,8 @@ import { darkTheme } from '@Config'
 import { Layout } from '@Components/Layout'
 
 import '@Static/styles/index.global.scss'
+
+enableMapSet()
 
 function App({ pageProps, Component }: AppPropsType) {
   useEffect(() => {

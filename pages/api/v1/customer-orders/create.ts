@@ -31,7 +31,7 @@ export default handler(
     }
 
     if (!req.body.customerOrderCreate) {
-      throw new InvalidArgumentError('Missing customerOrderCreate body ard')
+      throw new InvalidArgumentError('Missing customerOrderCreate body arg')
     }
 
     const {

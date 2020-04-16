@@ -22,5 +22,7 @@ export interface CustomerUpdatedResponse {
 
 export type CustomerEditableFields = Omit<
   Customer,
-  'idCustomer' | 'createdAt' | 'updatedAt'
->
+  'idCustomer' | 'createdAt' | 'updatedAt' | 'zipCode'
+> & {
+  zipCode: number | string
+}
