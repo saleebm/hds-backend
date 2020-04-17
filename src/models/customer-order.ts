@@ -7,11 +7,21 @@ import {
 export type OrderProduct = Omit<
   CustomerOrderProducts,
   'customerOrderId' | 'idCustomerOrderProducts'
->
+> & {
+  name: string
+  storeLocationId: number
+  category: string
+}
 
 export type OrderProductsInStore = ReadonlyMap<
   number,
-  { quantity: number; unitCost: number }
+  {
+    quantity: number
+    unitCost: number
+    name: string
+    storeLocationId: number
+    category: string
+  }
 >
 
 export type CustomerOrderCreateInputBodyArgs = {

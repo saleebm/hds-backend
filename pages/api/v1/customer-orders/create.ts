@@ -42,7 +42,6 @@ export default handler(
       customerOrderProducts,
     } = req.body.customerOrderCreate as CustomerOrderCreateInputBodyArgs
 
-    // first create order to map with products...
     try {
       const customerOrder = await prisma.customerOrder.create({
         data: {

@@ -24,13 +24,19 @@ type CustomerSaleProps = ReturnType<typeof mapStateToProps> & {
   storeLocationIdOptions: StoreLocationsIdOptions
 }
 
+// the slugs used in the query
+enum CustomerSaleSteps {
+  CUSTOMER_INFO = 'customer-info',
+  TRANSACTION = 'TRANSACTION',
+}
+
 const mapStateToProps = (state: RootStateType) => {
   return {
     customerOrderState: state.customerOrderReducer,
   }
 }
 
-export const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       margin: theme.spacing(1),
@@ -46,11 +52,6 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
-
-enum CustomerSaleSteps {
-  customerInfo = 'customer-info',
-  transaction = 'transaction',
-}
 
 /**
  * wizard step form containing the following two steps:
@@ -86,11 +87,11 @@ function CustomerSale({
       step === 0 &&
       query &&
       'step' in query &&
-      query.step.toString() === CustomerSaleSteps.transaction
+      query.step.toString() === CustomerSaleSteps.TRANSACTION
     ) {
       if (!customerId) {
         // no customerId, you need to have a customer to sell to brah
-        setQuery({ step: CustomerSaleSteps.customerInfo })
+        setQuery({ step: CustomerSaleSteps.CUSTOMER_INFO })
       } else {
         // if customerId then move forward
         setStep(1)
@@ -99,12 +100,12 @@ function CustomerSale({
   }, [query, setQuery, customerId, step])
 
   const moveForward = useCallback(async () => {
-    await setQuery({ step: CustomerSaleSteps.transaction })
+    await setQuery({ step: CustomerSaleSteps.TRANSACTION })
     setStep(1)
   }, [setStep, setQuery])
 
   const moveBack = useCallback(async () => {
-    await setQuery({ step: CustomerSaleSteps.customerInfo })
+    await setQuery({ step: CustomerSaleSteps.CUSTOMER_INFO })
     setStep(0)
   }, [setStep, setQuery])
 

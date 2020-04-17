@@ -106,6 +106,7 @@ function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
       onChange={(event: ChangeEvent<any>, value: CustomerSelectType | null) =>
         setInputSelection(value)
       }
+      openOnFocus
       clearOnEscape
       blurOnSelect
       disablePortal

@@ -3,6 +3,10 @@
 ---
 
 - generate keys for encryption as stated below for the seed data and prisma authentication
+  - `cd keys`
+  - `openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem`
+  - `openssl rsa -in key.pem -pubout -out pubkey.pem`
+  - `chmod 400 key.pem cert.pem pubkey.pem`
 - make sure .env has correct mysql_url for prisma in the prisma folder.
 - also make sure .env in root dir is configured properly, see .env.example
 - create user hds_user and database hds.
@@ -17,21 +21,6 @@
 
 ---
 
-## General cool stuff
-
-~~1. add toast notification system to root~~
-1. ~~drawer like zapier~~
-2. stop wasting time with all this extra crap.
-## data fetching
-
-1. useSWR for REAL TIME DATA...
-
-## auth service
-
-1.  API docs.
-
----
-
 ## admin console
 
 1. ~~Forms: login / register / reset password~~
@@ -39,11 +28,7 @@
 2. ~~setting up all the tables~~
 
 3. POS
-
-# Keys for encryption
-
-1. Generate:
-   - `cd keys`
-   - `openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem`
-   - `openssl rsa -in key.pem -pubout -out pubkey.pem`
-   - `chmod 400 key.pem cert.pem pubkey.pem`
+   - finish customer order products display.
+   - seal the deal with redux action, i.e. put customer order in db async
+     1. will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity
+   - last step is show the customer orders as invoices

@@ -35,11 +35,21 @@ export const CustomerOrderReducer = (
         return
       case CustomerOrderActionTypes.SetOrderProduct:
       case CustomerOrderActionTypes.AddOrderProduct:
-        const { productId, perUnitCost, quantity } = action.payload.orderProduct
-        draft.orderProducts.set(productId, {
-          quantity,
-          unitCost: perUnitCost,
-        })
+        const {
+          productId,
+          perUnitCost,
+          ...others
+        } = action.payload.orderProduct
+        if (draft.orderProducts && draft.orderProducts.constructor === Map) {
+          draft.orderProducts.set(productId, {
+            unitCost: perUnitCost,
+            ...others,
+          })
+        } else {
+          draft.orderProducts = new Map([
+            [productId, { unitCost: perUnitCost, ...others }],
+          ])
+        }
         return
       case CustomerOrderActionTypes.RemoveOrderProduct:
         const { productIdToRemove } = action.payload

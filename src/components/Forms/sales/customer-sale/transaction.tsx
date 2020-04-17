@@ -29,6 +29,9 @@ function Transaction({
   currentEmployee,
   storeLocationIdOptions,
 }: Transaction) {
+  //todo
+  // show products selected from the product lookup.
+  // also test to make sure ProductLookup renders minimally. Seems to be a perf issue.
   return (
     <>
       <ProductLookup

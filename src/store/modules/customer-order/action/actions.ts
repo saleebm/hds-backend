@@ -22,6 +22,7 @@ import { setErrorAction } from '@Store/modules/global/action'
 
 import mutator from '@Lib/server/mutator'
 import { ProductWithInventory } from '@Pages/dashboard/products'
+import { OrderProduct } from '@Types/customer-order'
 
 /**
  * first step of POS form is to select a customer, whether that is a new one, or an existing one
@@ -123,18 +124,20 @@ export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
   })
 }
 
-export const addOrUpdateProductOrderInCustomerSaleAction = (
-  product: ProductWithInventory,
-  quantity: number,
+export const addOrUpdateProductOrderInCustomerSaleAction = ({
+  addOrUpdateProduct,
+  actionType,
+}: {
   actionType:
     | typeof CustomerOrderActionTypes.SetOrderProduct
     | typeof CustomerOrderActionTypes.AddOrderProduct
-): CustomerResult<void> => (dispatch) => {
-  const { idProduct, listPrice } = product
+  addOrUpdateProduct: OrderProduct
+}): CustomerResult<void> => (dispatch) => {
+  const { perUnitCost, ...others } = addOrUpdateProduct
   dispatch({
     type: actionType,
     payload: {
-      orderProduct: { perUnitCost: listPrice, productId: idProduct, quantity },
+      orderProduct: { perUnitCost: perUnitCost, ...others },
     },
   })
 }
