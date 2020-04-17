@@ -20,6 +20,8 @@ const prisma = new PrismaClient.PrismaClient()
 const ADMIN_PASSWORD = process.env.ADMIN_PASS
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
+const DEFAULT_PASSWORD = 'byqipyuyxlyteuajjbewsatxldvfbuqs'
+
 if (ADMIN_PASSWORD && ADMIN_EMAIL) {
   console.log('using admin email and password:')
   console.log(ADMIN_EMAIL)
@@ -213,7 +215,7 @@ async function main() {
     //todo dont do this for real! its just seed data though
     // but using the same password and jwt for everyone!?? secure! ¯\_(ツ)_/¯
     const { passwordHash } = await cryptoFactory
-      .encryptUserPassword(ADMIN_PASSWORD || 'byqipyuyxlyteuajjbewsatxldvfbuqs')
+      .encryptUserPassword(ADMIN_PASSWORD || DEFAULT_PASSWORD)
       .catch((e) => {
         throw new Error(e)
       })

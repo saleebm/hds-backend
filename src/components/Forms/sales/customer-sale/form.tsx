@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { AnimatePresence } from 'framer-motion'
-import Router from 'next/router'
 
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { createStyles } from '@material-ui/styles'
@@ -15,9 +14,14 @@ import CustomerInfo from '@Components/Forms/sales/customer-sale/customer-info'
 import { RootStateType } from '@Store/modules/types'
 import { AnimationWrapper } from '@Components/Elements/AnimateWrapper'
 import { ProductWithInventory } from '@Pages/dashboard/products'
+import { FindOneEmployee } from '@Pages/api/v1/employees'
+import { StoreLocationsIdOptions } from '@Types/store-locations'
+import { useQueryParams } from '@Utils/hooks'
 
 type CustomerSaleProps = ReturnType<typeof mapStateToProps> & {
   products: ReadonlyArray<ProductWithInventory>
+  currentEmployee: FindOneEmployee
+  storeLocationIdOptions: StoreLocationsIdOptions
 }
 
 const mapStateToProps = (state: RootStateType) => {
@@ -43,22 +47,31 @@ export const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+enum CustomerSaleSteps {
+  customerInfo = 'customer-info',
+  transaction = 'transaction',
+}
+
 /**
- * wizard step form
+ * wizard step form containing the following two steps:
+ *  1. lookup/create customer
+ *  2. point of sale (set products, calculate total, seal the deal kinda thingy)
  */
-export default connect(mapStateToProps)(function CustomerSale({
+function CustomerSale({
   customerOrderState,
   products,
+  currentEmployee,
+  storeLocationIdOptions,
 }: CustomerSaleProps) {
   const classes = useStyles()
-
+  const [query, setQuery] = useQueryParams()
   const [step, setStep] = useState<0 | 1>(0)
   const { customerId } = customerOrderState || {}
   // the entire first step is about the customer!
   const [canMoveToTransaction, setCanMoveToTransaction] = useState(false)
 
+  // set move to transaction possibilities on change of customerId
   useEffect(() => {
-    //cant be 0.. duh
     if (!!customerId && !isNaN(customerId)) {
       setCanMoveToTransaction(true)
     } else {
@@ -66,23 +79,34 @@ export default connect(mapStateToProps)(function CustomerSale({
     }
   }, [customerId, canMoveToTransaction])
 
+  // if step is customer info, but the query says transaction and there is a customer in store,
+  // then move to the second step automatically
+  useEffect(() => {
+    if (
+      step === 0 &&
+      query &&
+      'step' in query &&
+      query.step.toString() === CustomerSaleSteps.transaction
+    ) {
+      if (!customerId) {
+        // no customerId, you need to have a customer to sell to brah
+        setQuery({ step: CustomerSaleSteps.customerInfo })
+      } else {
+        // if customerId then move forward
+        setStep(1)
+      }
+    }
+  }, [query, setQuery, customerId, step])
+
   const moveForward = useCallback(async () => {
-    await Router.push(
-      { pathname: Router.pathname, query: { step: 'transaction' } },
-      undefined,
-      { shallow: true }
-    )
+    await setQuery({ step: CustomerSaleSteps.transaction })
     setStep(1)
-  }, [setStep])
+  }, [setStep, setQuery])
 
   const moveBack = useCallback(async () => {
-    await Router.push(
-      { pathname: Router.pathname, query: { step: 'customer-info' } },
-      undefined,
-      { shallow: true }
-    )
+    await setQuery({ step: CustomerSaleSteps.customerInfo })
     setStep(0)
-  }, [setStep])
+  }, [setStep, setQuery])
 
   /*
    *todo
@@ -91,12 +115,23 @@ export default connect(mapStateToProps)(function CustomerSale({
    * - onSubmit
    */
 
+  /**
+   *todo
+   * also calculate the total on the fly async, don't forget tax (6.5%)
+   */
+
   return (
     <Container className={classes.root} maxWidth={false}>
       <AnimatePresence exitBeforeEnter>
         <AnimationWrapper animateOn={step}>
           {step === 0 && <CustomerInfo />}
-          {step === 1 && <Transaction products={products} />}
+          {step === 1 && (
+            <Transaction
+              products={products}
+              currentEmployee={currentEmployee}
+              storeLocationIdOptions={storeLocationIdOptions}
+            />
+          )}
         </AnimationWrapper>
       </AnimatePresence>
       {step === 1 && (
@@ -125,4 +160,6 @@ export default connect(mapStateToProps)(function CustomerSale({
       )}
     </Container>
   )
-})
+}
+
+export default connect(mapStateToProps)(CustomerSale)

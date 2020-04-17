@@ -28,10 +28,7 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
 /**
  * Looks up the customer
  */
-export default connect(
-  null,
-  mapDispatchToProps
-)(function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
+function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
   // options for the select field,
   const [options, setOptions] = useState<CustomerSelectType[]>([])
   const [open, setOpen] = useState(false)
@@ -138,4 +135,6 @@ export default connect(
       )}
     />
   )
-})
+}
+
+export default connect(null, mapDispatchToProps)(CustomerLookupForm)

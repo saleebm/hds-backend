@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   header: {
     boxShadow: theme.shadows['1'],
     backgroundColor: theme.palette.background.default,
-  }
+  },
 }))
 
 export function ProductsTable({ products }: Products) {
@@ -106,7 +106,7 @@ export function ProductsTable({ products }: Products) {
       }}
       detailPanel={(rowData) => (
         <TableContainer component={Paper}>
-          <Table size={'medium'}>
+          <Table size={'small'}>
             <TableHead>
               <TableRow className={classes.header} color={'primary'}>
                 <TableCell align={'justify'}>

@@ -1,6 +1,9 @@
 import { NextApiRequest } from 'next'
+import { IncomingMessage } from 'http'
 
-export default function getApiHostUrl(req: NextApiRequest): string {
+export default function getApiHostUrl(
+  req: NextApiRequest | IncomingMessage
+): string {
   if (!req.headers) {
     return ''
   }

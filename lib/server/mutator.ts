@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 import { KnownError } from './known-errors'
 import { authService } from '@Services'
-import { ServerCtx } from '@Types'
+import { ServerCtx, ServerSideProps } from '@Types'
 
 /**
  * TODO it would be nice to learn about the AbortController, try to integrate that later on
@@ -9,10 +9,13 @@ import { ServerCtx } from '@Types'
  * @param body
  * @param ctx
  */
-export default async <DataTypeResponse, PostBody extends Record<string, any>>(
+export default async <
+  DataTypeResponse,
+  PostBody extends Record<string, any> = {}
+>(
   url: string,
-  body: PostBody,
-  ctx?: ServerCtx
+  body?: PostBody,
+  ctx?: ServerCtx | ServerSideProps
 ) => {
   const token = authService.getAccessToken(ctx)
   const res = await fetch(url, {
