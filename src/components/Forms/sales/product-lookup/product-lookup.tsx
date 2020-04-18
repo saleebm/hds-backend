@@ -42,6 +42,7 @@ import {
 } from '@Types/customer-order'
 import { RootStateType } from '@Store/modules/types'
 import { CustomerOrderActionTypes } from '@Store/modules/customer-order/types'
+import { formatCurrencyOutput, formatMoney } from '@Utils/common'
 
 type ProductLookup = ReturnType<typeof mapDispatchToProps> &
   ReturnType<typeof mapStateToProps> & {
@@ -64,6 +65,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   formControl: {
     margin: 0,
     padding: theme.spacing(1),
+    height: '115px',
   },
   title: {
     margin: '1rem 0',
@@ -90,6 +92,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   hiddenContainer: {
     minHeight: '150px',
+    margin: `${theme.spacing(3)}px 0`,
+    padding: theme.spacing(1),
+  },
+  priceTagSpan: {
+    '&> span': {
+      fontVariant: 'tabular-nums',
+      fontVariationSettings: `'wght' 700, 'slnt' -100`,
+      '&:nth-child(2)': {
+        fontFeatureSettings: `'numr'`,
+      },
+    },
   },
 }))
 
@@ -383,20 +396,39 @@ function ProductLookup({
                 subheader={currentProductInSelect?.category || ''}
               />
               <CardContent>
-                <Typography
-                  variant={'body1'}
-                  component={'p'}
-                  color={'textSecondary'}
-                >
-                  Category: {currentProductInSelect?.category}
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  component={'p'}
-                  color={'textSecondary'}
-                >
-                  Price: {currentProductInSelect?.price}
-                </Typography>
+                <Grid spacing={1} container>
+                  <Grid item xs={12} sm={4}>
+                    <Typography variant={'h5'}>Category: </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={8}>
+                    <Typography
+                      variant={'body1'}
+                      component={'p'}
+                      color={'textSecondary'}
+                    >
+                      {currentProductInSelect?.category}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <Typography variant={'h5'}>Price: </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={8}>
+                    <Typography
+                      variant={'body1'}
+                      component={'p'}
+                      color={'textSecondary'}
+                    >
+                      <span
+                        className={classes.priceTagSpan}
+                        dangerouslySetInnerHTML={{
+                          __html: `${formatCurrencyOutput(
+                            formatMoney(currentProductInSelect?.price || 0)
+                          )}`,
+                        }}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
               </CardContent>
             </MotionCard>
           </Grid>
