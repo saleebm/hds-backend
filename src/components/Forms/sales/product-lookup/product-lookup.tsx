@@ -2,10 +2,21 @@ import { useForm } from 'react-hook-form'
 import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
+import { motion, Variants } from 'framer-motion'
 
+import Button from '@material-ui/core/Button'
+import { AddCircleOutlineOutlined } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { FormHelperText, TextField, Theme } from '@material-ui/core'
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  FormHelperText,
+  TextField,
+  Theme,
+} from '@material-ui/core'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
@@ -31,8 +42,6 @@ import {
 } from '@Types/customer-order'
 import { RootStateType } from '@Store/modules/types'
 import { CustomerOrderActionTypes } from '@Store/modules/customer-order/types'
-import Button from '@material-ui/core/Button'
-import { AddCircleOutlineOutlined } from '@material-ui/icons'
 
 type ProductLookup = ReturnType<typeof mapDispatchToProps> &
   ReturnType<typeof mapStateToProps> & {
@@ -56,6 +65,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 0,
     padding: theme.spacing(1),
   },
+  title: {
+    margin: '1rem 0',
+  },
   form: {
     padding: theme.spacing(1),
     margin: `${theme.spacing(3)}px auto`,
@@ -74,10 +86,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexShrink: 0,
   },
   addProductButton: {
-    maxWidth: 300,
     alignSelf: 'flex-end',
   },
+  hiddenContainer: {
+    minHeight: '150px',
+  },
 }))
+
+const MotionCard = motion.custom(Card)
 
 /**
  * This allows the employee to search for products by inventory and enter the quantity, then add that to store.
@@ -166,46 +182,48 @@ function ProductLookup({
           },
           actionType: CustomerOrderActionTypes.AddOrderProduct,
         })
-        //todo
-        // will have to reset the autocomplete manually since this doesn't seem to clear that out.
+        setCurrentProductSelected(undefined)
         reset()
       }
     },
     [currentProductInSelect, addOrUpdateProduct, reset]
   )
 
+  const hiddenVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      scaleX: 1,
+      scaleY: 0,
+    },
+    visible: {
+      opacity: 1,
+      scaleX: 1,
+      scaleY: 1,
+      transition: {
+        ease: 'anticipate',
+        duration: 0.3,
+        mass: 200,
+      },
+    },
+  }
+
   return (
     <Container disableGutters maxWidth={false} component={'section'}>
-      <Grid container justify={'flex-end'} alignItems={'flex-end'} spacing={2}>
-        <Grid item xs={4}>
-          <FormControl
-            variant={'filled'}
-            fullWidth
-            className={classes.formControl}
-          >
-            <InputLabel htmlFor={'store-location-select'}>
-              Store Location for Inventory
-            </InputLabel>
-            <Select
-              variant={'filled'}
-              disableUnderline
-              value={storeLocationIdForInventory}
-              onChange={handleStoreLocationChange}
-              inputProps={{
-                name: 'store-location',
-                id: 'store-location-select',
-              }}
-            >
-              {storeLocationIdOptions.map((loc) => (
-                <MenuItem
-                  key={loc.idStoreLocations}
-                  value={loc.idStoreLocations}
-                >
-                  <span dangerouslySetInnerHTML={{ __html: `${loc.city}` }} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      <Grid container justify={'flex-start'} spacing={2}>
+        <Grid className={classes.title} item>
+          <Typography variant={'h4'}>Transaction</Typography>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        spacing={1}
+        alignItems={'baseline'}
+        justify={'flex-start'}
+      >
+        <Grid item>
+          <Typography variant={'h5'} color={'secondary'}>
+            Customer Order Products
+          </Typography>
         </Grid>
       </Grid>
       <form
@@ -221,12 +239,15 @@ function ProductLookup({
           spacing={1}
           className={classes.formFields}
         >
-          <Grid item xs={8}>
+          <Grid item xs={12} sm={6}>
             <Autocomplete
               id={'product-lookup-input'}
               options={customerOrderProductOptions}
               blurOnSelect
+              clearOnEscape
               disablePortal
+              autoSelect
+              autoComplete
               getOptionSelected={(option, value) => option.id === value.id}
               getOptionLabel={(option) => option.name}
               getOptionDisabled={(option) =>
@@ -258,7 +279,7 @@ function ProductLookup({
               )}
             />
           </Grid>
-          <Grid item xs={4} className={classes.quantityInfo}>
+          <Grid item xs={12} sm={3} className={classes.quantityInfo}>
             <Box alignItems={'center'}>
               <FormControl
                 variant={'filled'}
@@ -306,6 +327,79 @@ function ProductLookup({
               </FormControl>
             </Box>
           </Grid>
+          <Grid item xs={12} sm={3}>
+            <FormControl
+              variant={'filled'}
+              fullWidth
+              className={classes.formControl}
+            >
+              <InputLabel htmlFor={'store-location-select'}>
+                Store Location for Inventory
+              </InputLabel>
+              <Select
+                variant={'filled'}
+                disableUnderline
+                value={storeLocationIdForInventory}
+                onChange={handleStoreLocationChange}
+                inputProps={{
+                  name: 'store-location',
+                  id: 'store-location-select',
+                }}
+              >
+                {storeLocationIdOptions.map((loc) => (
+                  <MenuItem
+                    key={loc.idStoreLocations}
+                    value={loc.idStoreLocations}
+                  >
+                    <span dangerouslySetInnerHTML={{ __html: `${loc.city}` }} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Grid
+          className={classes.hiddenContainer}
+          container
+          spacing={3}
+          justify={'center'}
+          alignItems={'center'}
+        >
+          <Grid item xs={12} sm={8}>
+            <MotionCard
+              variant={'elevation'}
+              component={'article'}
+              variants={hiddenVariants}
+              initial={'hidden'}
+              animate={!!currentProductInSelect ? 'visible' : 'hidden'}
+            >
+              <CardHeader
+                avatar={
+                  <Avatar>
+                    {currentProductInSelect?.name.slice(0, 1).toUpperCase()}
+                  </Avatar>
+                }
+                title={currentProductInSelect?.name || ''}
+                subheader={currentProductInSelect?.category || ''}
+              />
+              <CardContent>
+                <Typography
+                  variant={'body1'}
+                  component={'p'}
+                  color={'textSecondary'}
+                >
+                  Category: {currentProductInSelect?.category}
+                </Typography>
+                <Typography
+                  variant={'body1'}
+                  component={'p'}
+                  color={'textSecondary'}
+                >
+                  Price: {currentProductInSelect?.price}
+                </Typography>
+              </CardContent>
+            </MotionCard>
+          </Grid>
         </Grid>
         <Grid
           container
@@ -317,7 +411,7 @@ function ProductLookup({
             <Button
               className={classes.addProductButton}
               startIcon={<AddCircleOutlineOutlined />}
-              size={'medium'}
+              size={'large'}
               variant={'contained'}
               type={'submit'}
               disabled={!currentProductInSelect}

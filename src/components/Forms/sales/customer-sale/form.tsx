@@ -17,6 +17,7 @@ import { ProductWithInventory } from '@Pages/dashboard/products'
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
 import { useQueryParams } from '@Utils/hooks'
+import Box from '@material-ui/core/Box'
 
 type CustomerSaleProps = ReturnType<typeof mapStateToProps> & {
   products: ReadonlyArray<ProductWithInventory>
@@ -49,6 +50,14 @@ const useStyles = makeStyles((theme: Theme) =>
     moveButtons: {
       maxWidth: '350px',
       marginTop: theme.spacing(3),
+    },
+    contentBox: {
+      height: '100%',
+      minHeight: '750px',
+      width: '100%',
+      padding: 0,
+      margin: 0,
+      position: 'relative',
     },
   })
 )
@@ -123,18 +132,20 @@ function CustomerSale({
 
   return (
     <Container className={classes.root} maxWidth={false}>
-      <AnimatePresence exitBeforeEnter initial={false}>
-        <AnimationWrapper animateOn={step}>
-          {step === 0 && <CustomerInfo />}
-          {step === 1 && (
-            <Transaction
-              products={products}
-              currentEmployee={currentEmployee}
-              storeLocationIdOptions={storeLocationIdOptions}
-            />
-          )}
-        </AnimationWrapper>
-      </AnimatePresence>
+      <Box className={classes.contentBox}>
+        <AnimatePresence exitBeforeEnter initial={false}>
+          <AnimationWrapper animateOn={step}>
+            {step === 0 && <CustomerInfo />}
+            {step === 1 && (
+              <Transaction
+                products={products}
+                currentEmployee={currentEmployee}
+                storeLocationIdOptions={storeLocationIdOptions}
+              />
+            )}
+          </AnimationWrapper>
+        </AnimatePresence>
+      </Box>
       {step === 1 && (
         <Button
           variant={'contained'}

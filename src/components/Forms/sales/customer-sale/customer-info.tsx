@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 /**
- * TODO if this was real, i'd say to check for auth here too with user role, but its not and its due tomorrow so im gonna stop and get this done
  * initially show a customer lookup autocomplete input,
  * but switch to create customer if employee has to create one (ie not found in lookup)
  * @param customerOrderState
@@ -110,14 +109,12 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
 
   return (
     <Container disableGutters maxWidth={false} key={'customer-info-wrapper'}>
-      <MotionGrid container justify={'flex-start'} spacing={2}>
-        <Grid className={classes.title} item md>
-          <Typography variant={'h3'} align={'left'}>
-            Customer Info
-          </Typography>
+      <Grid container justify={'flex-start'} spacing={2}>
+        <Grid className={classes.title} item>
+          <Typography variant={'h4'}>Customer Info</Typography>
         </Grid>
-      </MotionGrid>
-      <MotionGrid
+      </Grid>
+      <Grid
         container
         wrap={'wrap'}
         spacing={1}
@@ -141,7 +138,7 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
             {isCreating ? 'Search' : 'Create new'}
           </Button>
         </Grid>
-      </MotionGrid>
+      </Grid>
       <MotionGrid
         className={classes.customerInfoForm}
         container

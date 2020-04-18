@@ -1,17 +1,29 @@
 html {
   font-family: font-family();
   /* Load system fonts */
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: font-family(sans-serif);
-  font-weight: 600;
-  font-variation-settings: 'wght' 600, 'GRAD' 72;
-  font-optical-sizing: auto;
-  font-kerning: normal;
-  font-variant-ligatures: contextual common-ligatures;
-  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "salt" 1;
+*,
+:after,
+:before {
+  outline: none;
+  // Apple iOS
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/**
+ * firefox
+ */
+[type='button']::-moz-focus-inner,
+[type='reset']::-moz-focus-inner,
+[type='submit']::-moz-focus-inner {
+  border-style: none;
 }
 
 ::-webkit-scrollbar {
@@ -29,6 +41,53 @@ body {
   background-color: rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
+/**
+ * Form elements render using OS defaults,
+ * so font-family inheritance must be specifically declared
+ */
+button,
+button span,
+input,
+optgroup,
+select,
+textarea,
+a {
+  font-family: font-family(sans-serif);
+  font-variation-settings: 'wght' 500, 'GRAD' 151;
+
+  &::-moz-focus-inner,
+  &:focus,
+  &:hover,
+  &:active {
+    outline: none;
+  }
+}
+
+
+// valid font-stretch
+body {
+  font-family: font-family(sans-serif);
+  margin: unset !important;
+  font-variation-settings: 'wght' 600, 'GRAD' 72;
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  font-variant-ligatures: contextual common-ligatures;
+  // https://rsms.me/inter/lab/
+  // stylistic alts give all the cool cv stuff
+  -webkit-font-feature-settings: 'salt' 1, 'calt' 1, 'kern' 1, 'liga' 1;
+  -moz-font-feature-settings: 'salt' 1, 'calt' 1, 'kern' 1, 'liga' 1;
+  -ms-font-feature-settings: 'salt' 1, 'calt' 1, 'kern' 1, 'liga' 1;
+  font-feature-settings: 'salt' 1, 'calt' 1, 'kern' 1, 'liga' 1;
+
+  &::backdrop {
+    background-color: inherit;
+  }
+}
+
+ol,
+ul {
+  list-style: none;
+}
 
 h1,
 h2,
@@ -37,22 +96,33 @@ h4,
 h5,
 h6,
 p {
-  font-variation-settings: 'wght' 400;
-}
-
-h1 {
-  font-variation-settings: 'wght' 500;
-}
-
-h2 {
   letter-spacing: -0.5px;
   font-variation-settings: 'wght' 400;
 }
 
+h1 {
+  letter-spacing: -2px;
+  font-variation-settings: 'wght' 500, 'GRAD' 150;
+}
+
+h2 {
+  letter-spacing: -1px;
+  font-variation-settings: 'wght' 400, 'GRAD' 151;
+}
+
 h3 {
-  font-variation-settings: 'wght' 300;
+  letter-spacing: -2px;
+  font-variation-settings: 'wght' 300, 'GRAD' 151;
+}
+
+h4 {
+  font-variation-settings: 'wght' 400, 'GRAD' 151;
+}
+
+h5 {
+  font-variation-settings: 'wght' 400, 'GRAD' 151;
 }
 
 h6 {
-  font-variation-settings: 'wght' 300;
+  font-weight: 300;
 }

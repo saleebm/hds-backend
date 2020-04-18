@@ -4,8 +4,8 @@ import { bindActionCreators, Dispatch } from 'redux'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
-
 import debounce from 'lodash.debounce'
+
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -41,6 +41,7 @@ type ButtonLinkProps = ListItemTextProps & {
   icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
   prettyName: string
   pathname: string
+  textClass: string
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
@@ -84,6 +85,7 @@ const NextListItemText = forwardRef<any, ButtonLinkProps>(
       prettyName,
       pathname,
       children,
+      textClass,
       ...props
     },
     ref
@@ -100,7 +102,14 @@ const NextListItemText = forwardRef<any, ButtonLinkProps>(
         component={MuiLink}
       >
         {icon && <ListItemIcon>{React.createElement(icon)}</ListItemIcon>}
-        <ListItemText ref={ref} {...props}>
+        <ListItemText
+          primaryTypographyProps={{
+            variant: 'body1',
+            className: textClass,
+          }}
+          ref={ref}
+          {...props}
+        >
           {children}
         </ListItemText>
       </ListItem>
@@ -111,6 +120,7 @@ const NextListItemText = forwardRef<any, ButtonLinkProps>(
 const drawerWidth = 300
 
 const useStyles = makeStyles((theme: Theme) => ({
+  // the menu items get the root here
   root: {
     boxShadow: theme.shadows['0'],
     color: theme.palette.text.primary,
@@ -124,6 +134,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.text.secondary,
     },
     whiteSpace: 'nowrap',
+    fontVariant: 'small-caps',
   },
   fullList: {
     width: 'auto',
@@ -159,6 +170,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     whiteSpace: 'nowrap',
     overflowX: 'hidden',
     willChange: 'width',
+    borderRight: `1px solid ${theme.palette.primary.main}`,
   },
   drawerOpen: {
     width: drawerWidth,
@@ -185,6 +197,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
+  },
+  listItemText: {
+    fontSize: '1.3rem',
   },
 }))
 
@@ -262,8 +277,8 @@ function NavDrawer({
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
-          <ListItemText>
-            Welcome, {user?.first || ''} {user?.last || ''}!&nbsp;
+          <ListItemText primaryTypographyProps={{ variant: 'subtitle1' }}>
+            Welcome, {user?.first || ''} {user?.last || ''}! &nbsp;
           </ListItemText>
         </ListItem>
         {ROUTE_PATHS.filter(({ includeInNav }) => includeInNav).map(
@@ -277,6 +292,7 @@ function NavDrawer({
                 classes={classes}
                 activePath={activePath}
                 pathname={pathname}
+                textClass={classes.listItemText}
               />
               <Divider />
             </Fragment>
