@@ -168,12 +168,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
-    overflowX: 'hidden',
+    overflow: 'hidden',
     willChange: 'width',
     borderRight: `1px solid ${theme.palette.primary.main}`,
   },
   drawerOpen: {
     width: drawerWidth,
+    overflow: 'overlay',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -184,7 +185,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: 'hidden',
     width: theme.spacing(7) + 1,
     [theme.breakpoints.up('sm')]: {
       width: theme.spacing(9) + 1,

@@ -26,8 +26,7 @@
     display: none;
   }
   overflow: no-display;
-  height: 100vh;
-  min-height: 100%;
+  height: available;
   scrollbar-width: 0; //firefox
   width: 100%;
   position: relative;
