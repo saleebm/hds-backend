@@ -145,6 +145,9 @@ function ProductLookup({
       storeLocationIdOptions[0].idStoreLocations
   )
 
+  /**
+   * the main object containing the order products to choose, and to insert from
+   */
   const customerOrderProductOptions: CustomerOrderProductsPOS = useMemo(
     () =>
       products.map((product) => ({
@@ -158,6 +161,7 @@ function ProductLookup({
               inventory.storeLocation === storeLocationIdForInventory
           )[0]?.quantityOnHand || 0,
         storeLocationId: storeLocationIdForInventory,
+        deliveryFee: product.deliveryPrice,
       })),
     [products, storeLocationIdForInventory]
   )
@@ -187,17 +191,20 @@ function ProductLookup({
         !!productToEnter &&
         'quantity' in productToEnter
       ) {
+        // besides the quantity, everything relies on the selected order product
         await addOrUpdateProduct({
           addOrUpdateProduct: {
+            quantity: productToEnter.quantity,
             perUnitCost: currentProductInSelect.price,
             productId: currentProductInSelect.id,
             category: currentProductInSelect.category,
             name: currentProductInSelect.name,
-            quantity: productToEnter.quantity,
             storeLocationId: currentProductInSelect.storeLocationId,
+            deliveryFee: currentProductInSelect.deliveryFee,
           },
           actionType: CustomerOrderActionTypes.AddOrderProduct,
         })
+        // reset the form to allow for more selections
         setCurrentProductSelected(undefined)
         reset()
       }

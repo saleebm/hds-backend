@@ -25,19 +25,22 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
     },
     customerInfoForm: {
-      margin: '2rem auto',
+      margin: `${theme.spacing(5)}px auto`,
       color: theme.palette.text.primary,
-      padding: 0,
+      padding: `${theme.spacing(1)}px 0`,
       boxShadow: theme.shadows['3'],
-    },
-    formTitle: {
-      margin: '0.72rem 1.3rem',
     },
     paper: {
       margin: '0',
       height: '100%',
       flexGrow: 1,
       minHeight: '350px',
+      width: '100%',
+    },
+    customerInfoWrap: {
+      position: 'relative',
+      height: '100%',
+      width: '100%',
     },
   })
 )
@@ -139,23 +142,15 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
       <MotionGrid
         className={classes.customerInfoForm}
         container
+        spacing={5}
         justify={'center'}
         alignItems={'stretch'}
         initial={'hidden'}
         variants={hiddenVariants}
         animate={isCreateUpdateFormHidden ? 'hidden' : 'visible'}
       >
-        <Paper component={'section'} elevation={3} className={classes.paper}>
-          <Grid item xs={12}>
-            <Typography
-              gutterBottom
-              variant={'h5'}
-              className={classes.formTitle}
-            >
-              {isCreating
-                ? 'Create'
-                : !!customerId && 'Please verify information is correct'}
-            </Typography>
+        <Paper component={'div'} elevation={3} className={classes.paper}>
+          <Grid item xs={12} className={classes.customerInfoWrap}>
             <CustomerCreateUpdateForm
               isUpdating={isUpdating}
               isCreating={isCreating}

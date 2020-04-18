@@ -13,6 +13,11 @@ import { Layout } from '@Components/Layout'
 
 import '@Static/styles/index.global.scss'
 
+// enable immer support for maps
+enableMapSet()
+// https://immerjs.github.io/immer/docs/freezing
+setAutoFreeze(false)
+
 function App({ pageProps, Component }: AppPropsType) {
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -20,10 +25,6 @@ function App({ pageProps, Component }: AppPropsType) {
     if (!!jssStyles && !!jssStyles.parentElement) {
       jssStyles.parentElement.removeChild(jssStyles)
     }
-    // enable immer support for maps
-    enableMapSet()
-    // https://immerjs.github.io/immer/docs/freezing
-    setAutoFreeze(false)
   }, [])
 
   return (
@@ -36,12 +37,6 @@ function App({ pageProps, Component }: AppPropsType) {
           <CssBaseline />
         </ErrorBoundary>
       </SnackbarProvider>
-      <style jsx global>{`
-        #__next {
-          width: 100%;
-          min-height: 100vh;
-        }
-      `}</style>
     </ThemeProvider>
   )
 }

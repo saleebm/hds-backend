@@ -23,6 +23,7 @@ function CustomerOrderProducts({
     name: undefined,
     category: undefined,
     price: undefined,
+    deliveryFee: undefined,
     quantity: undefined,
     storeLocationId: undefined,
   }
@@ -69,9 +70,10 @@ function CustomerOrderProducts({
           editable: 'never',
           readonly: true,
         }
+      case 'deliveryFee':
       case 'price':
         return {
-          title: 'UNIT COST',
+          title: camelCaseToFormal(key).toUpperCase(),
           field: key,
           editable: 'never',
           readonly: true,

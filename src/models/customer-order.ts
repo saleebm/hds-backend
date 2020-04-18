@@ -4,6 +4,9 @@ import {
   CustomerOrderProductsCreateManyWithoutCustomerOrderInput,
 } from '@prisma/client'
 
+/**
+ * slightly modified type to match database description
+ */
 export type OrderProduct = Omit<
   CustomerOrderProducts,
   'customerOrderId' | 'idCustomerOrderProducts'
@@ -11,19 +14,26 @@ export type OrderProduct = Omit<
   name: string
   storeLocationId: number
   category: string
+  deliveryFee: number
 }
 
+// the type for the stored OrderProduct
 export type OrderProductsInStore = ReadonlyMap<
   number,
   {
     quantity: number
     unitCost: number
+    deliveryFee: number
     name: string
     storeLocationId: number
     category: string
   }
 >
 
+/**
+ * this is the expected body arg for the endpoint
+ * @see /pages/api/v1/customer-orders/create.ts
+ */
 export type CustomerOrderCreateInputBodyArgs = {
   customerOrderProducts: CustomerOrderProductsCreateManyWithoutCustomerOrderInput
   orderTotal: number | string
@@ -32,12 +42,14 @@ export type CustomerOrderCreateInputBodyArgs = {
 
 // the info the customer will want to know
 // how much how many what
+// also delivery price
 export type CustomerOrderProductInCart = {
   name: string
   category: string
   id: number
   quantity: number
   price: number
+  deliveryFee: number
   storeLocationId: number
 }
 
