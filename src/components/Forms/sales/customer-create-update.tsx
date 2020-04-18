@@ -177,7 +177,7 @@ function CustomerCreateUpdateForm({
       onSubmit={handleSubmit(onSubmit)}
     >
       <Grid container justify={'space-around'} spacing={0}>
-        <Grid item md={5}>
+        <Grid item xs={12} sm={5}>
           <Input
             autoFocus
             required
@@ -205,7 +205,7 @@ function CustomerCreateUpdateForm({
             control={control}
           />
         </Grid>
-        <Grid item xs md={2}>
+        <Grid item xs sm={2}>
           <Input
             rules={{
               maxLength: { value: 1, message: 'TMI, just the initial!' },
@@ -231,7 +231,7 @@ function CustomerCreateUpdateForm({
             control={control}
           />
         </Grid>
-        <Grid item xs md={5}>
+        <Grid item xs sm={5}>
           <Input
             required
             rules={{
@@ -283,7 +283,7 @@ function CustomerCreateUpdateForm({
             control={control}
           />
         </Grid>
-        <Grid item xs md={4}>
+        <Grid item xs={12} sm={4}>
           <Input
             required
             rules={{
@@ -306,7 +306,7 @@ function CustomerCreateUpdateForm({
             control={control}
           />
         </Grid>
-        <Grid xs item md={4}>
+        <Grid xs={12} item sm={4}>
           <Input
             required
             rules={{
@@ -328,7 +328,7 @@ function CustomerCreateUpdateForm({
             control={control}
           />
         </Grid>
-        <Grid xs item md={4}>
+        <Grid xs={12} item sm={4}>
           <Input
             required
             rules={{

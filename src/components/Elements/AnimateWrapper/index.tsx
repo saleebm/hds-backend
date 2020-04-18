@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, Variants } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 import { FC } from 'react'
 
 const pageVariants: Variants = {
@@ -26,19 +26,15 @@ export const AnimationWrapper: FC<AnimationWrapperProps> = ({
   children,
   animateOn,
   ...rest
-}) => {
-  const shouldReduceMotion = useReducedMotion()
-
-  return (
-    <motion.div
-      key={animateOn}
-      initial={shouldReduceMotion ? undefined : 'initial'}
-      animate={shouldReduceMotion ? undefined : 'enter'}
-      exit="exit"
-      variants={{ exit: { transition: { staggerChildren: 0.1 } } }}
-      {...rest}
-    >
-      <motion.div variants={pageVariants}>{children}</motion.div>
-    </motion.div>
-  )
-}
+}) => (
+  <motion.div
+    key={animateOn}
+    initial={'initial'}
+    animate={'enter'}
+    exit={'exit'}
+    variants={{ exit: { transition: { staggerChildren: 0.1 } } }}
+    {...rest}
+  >
+    <motion.div variants={pageVariants}>{children}</motion.div>
+  </motion.div>
+)

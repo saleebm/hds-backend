@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'secondary',
       width: '100%',
     },
-    title: {
-      margin: '1rem 0',
-    },
     customerInfoForm: {
       margin: '2rem auto',
       color: theme.palette.text.primary,
@@ -109,8 +106,8 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
 
   return (
     <Container disableGutters maxWidth={false} key={'customer-info-wrapper'}>
-      <Grid container justify={'flex-start'} spacing={2}>
-        <Grid className={classes.title} item>
+      <Grid container justify={'flex-start'} spacing={1}>
+        <Grid item>
           <Typography variant={'h4'}>Customer Info</Typography>
         </Grid>
       </Grid>
@@ -121,10 +118,10 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
         alignItems={'center'}
         justify={'space-around'}
       >
-        <Grid item xs>
+        <Grid item xs={12}>
           <CustomerLookupForm isDisabled={isCreating} />
         </Grid>
-        <Grid item xs>
+        <Grid item xs={12}>
           <Button
             type={'button'}
             component={'button'}
