@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     contentBox: {
       height: '100%',
-      minHeight: '750px',
+      minHeight: '700px',
       width: '100%',
       padding: 0,
       margin: 0,

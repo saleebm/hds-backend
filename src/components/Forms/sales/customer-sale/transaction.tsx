@@ -9,6 +9,7 @@ import { ProductWithInventory } from '@Pages/dashboard/products'
 import ProductLookup from '@Components/Forms/sales/product-lookup/product-lookup'
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
+import { CustomerOrderProductsTable } from '@Components/Entities/CustomerOrderProducts'
 
 type Transaction = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & {
@@ -35,6 +36,7 @@ function Transaction({
   // also test to make sure ProductLookup renders minimally. Seems to be a perf issue.
   return (
     <Container disableGutters maxWidth={false} key={'transaction-wrapper'}>
+      <CustomerOrderProductsTable />
       <ProductLookup
         storeLocationIdOptions={storeLocationIdOptions}
         products={products}

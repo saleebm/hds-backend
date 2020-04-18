@@ -73,11 +73,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   form: {
     padding: theme.spacing(1),
     margin: `${theme.spacing(3)}px auto`,
-    height: '225px',
+    minHeight: '400px',
     display: 'flex',
     flexFlow: 'column',
     justifyContent: 'space-between',
     alignItems: 'stretch',
+    position: 'relative',
+    height: '100%',
+    width: '100%',
   },
   formFields: {
     flexGrow: 1,
@@ -234,8 +237,8 @@ function ProductLookup({
         justify={'flex-start'}
       >
         <Grid item>
-          <Typography variant={'h5'} color={'secondary'}>
-            Customer Order Products
+          <Typography variant={'h3'} color={'secondary'}>
+            Add Products to Order
           </Typography>
         </Grid>
       </Grid>
