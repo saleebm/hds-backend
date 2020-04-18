@@ -12,10 +12,6 @@ module.exports = {
     TOKEN_STORAGE_KEY: process.env.TOKEN_STORAGE_KEY,
   },
   reactStrictMode: true,
-  experimental: {
-    modern: true,
-    workerThreads: true,
-  },
   webpack(config, { isServer }) {
     // its too late in production...
     if (process.env.NODE_ENV === 'development') {
