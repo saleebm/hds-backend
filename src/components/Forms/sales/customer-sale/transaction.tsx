@@ -1,5 +1,6 @@
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
+import { Container } from '@material-ui/core'
 
 import { setDeliveryAction } from '@Store/modules/customer-order/action'
 import { RootAction } from '@Store/modules/root-action'
@@ -33,13 +34,13 @@ function Transaction({
   // show products selected from the product lookup.
   // also test to make sure ProductLookup renders minimally. Seems to be a perf issue.
   return (
-    <>
+    <Container disableGutters maxWidth={false} key={'transaction-wrapper'}>
       <ProductLookup
         storeLocationIdOptions={storeLocationIdOptions}
         products={products}
         currentEmployee={currentEmployee}
       />
-    </>
+    </Container>
   )
 }
 

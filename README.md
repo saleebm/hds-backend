@@ -8,7 +8,7 @@
   - `openssl rsa -in key.pem -pubout -out pubkey.pem`
   - `chmod 400 key.pem cert.pem pubkey.pem`
 - make sure .env has correct mysql_url for prisma in the prisma folder.
-- also make sure .env in root dir is configured properly, see .env.example
+- also make sure .env in root dir is configured properly, see [.env.example](./.env.example)
 - create user hds_user and database hds.
   - `create database hds;`
   - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
@@ -32,3 +32,7 @@
    - seal the deal with redux action, i.e. put customer order in db async
      1. will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity
    - last step is show the customer orders as invoices
+
+## Unit tests
+
+1. just get started. no excuses dude.

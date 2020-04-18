@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { enableMapSet } from 'immer'
+import { enableMapSet, setAutoFreeze } from 'immer'
 // todo don't import from dist
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
@@ -13,8 +13,6 @@ import { Layout } from '@Components/Layout'
 
 import '@Static/styles/index.global.scss'
 
-enableMapSet()
-
 function App({ pageProps, Component }: AppPropsType) {
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -22,6 +20,10 @@ function App({ pageProps, Component }: AppPropsType) {
     if (!!jssStyles && !!jssStyles.parentElement) {
       jssStyles.parentElement.removeChild(jssStyles)
     }
+    // enable immer support for maps
+    enableMapSet()
+    // https://immerjs.github.io/immer/docs/freezing
+    setAutoFreeze(false)
   }, [])
 
   return (

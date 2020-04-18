@@ -40,15 +40,27 @@ export const CustomerOrderReducer = (
           perUnitCost,
           ...others
         } = action.payload.orderProduct
-        if (draft.orderProducts && draft.orderProducts.constructor === Map) {
+        //todo
+        // eliminate this possibility with unit testing and a cup of coffee
+        // the initial map can be lost perhaps
+        if (
+          'set' in draft.orderProducts &&
+          typeof draft.orderProducts.set === 'function'
+        ) {
+          // the Map is intact from server
+          console.log('reusing map')
           draft.orderProducts.set(productId, {
             unitCost: perUnitCost,
             ...others,
           })
         } else {
-          draft.orderProducts = new Map([
-            [productId, { unitCost: perUnitCost, ...others }],
-          ])
+          // the map must be initialized again
+          console.log('initializing map')
+          draft.orderProducts = new Map()
+          draft.orderProducts.set(productId, {
+            unitCost: perUnitCost,
+            ...others,
+          })
         }
         return
       case CustomerOrderActionTypes.RemoveOrderProduct:

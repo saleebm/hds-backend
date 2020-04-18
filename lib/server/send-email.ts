@@ -10,6 +10,9 @@ export const sendEmail = async (
 
   const magicLink = `${hostname}/auth/${code}`
 
+  if (!process.env.SENDGRID_API_KEY) {
+    throw new Error('Missing SENDGRID_API_KEY')
+  }
   sgMailer.setApiKey(process.env.SENDGRID_API_KEY)
 
   await sgMailer.send({

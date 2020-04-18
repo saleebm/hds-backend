@@ -32,7 +32,7 @@ export function DashboardView({
       <Typography className={styles.pageTitle} variant={'h2'}>
         {pageTitle}
       </Typography>
-      <Container maxWidth={'xl'}>
+      <Container maxWidth={false} disableGutters>
         <SWRConfig
           value={{
             /** makes sure we have authToken in there */

@@ -56,20 +56,24 @@
     MENU TOGGLE
     */
 .mainMenuTriggerWrapper {
+  flex: 1;
+  z-index: 10000;
   position: relative;
   display: inline-grid;
   align-self: center;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  transform: matrix(1, 0, 0, 1, 0, 0);
   transform-origin: center;
   border: none !important;
   outline: none !important;
-  transform-style: preserve-3d;
   background-blend-mode: difference;
   mix-blend-mode: hard-light;
+  transform: matrix(1, 0, 0, 1, 0, 0);
+  transform-style: preserve-3d;
 
   @media (prefers-reduced-motion: no-preference) {
     .mainMenuTrigger {
@@ -88,8 +92,6 @@
   .mainMenuTrigger {
     position: relative;
     display: block;
-    width: 100px;
-    height: 50px;
     cursor: pointer;
     pointer-events: auto;
     opacity: 0.7;
@@ -105,10 +107,10 @@
     .span {
       position: absolute;
       top: 50%;
-      left: 18px;
+      left: 21px;
       width: 45px;
       height: 3px;
-      margin-top: -1px;
+      margin-top: -2px;
       transform-origin: center;
       opacity: inherit;
       border: 1px;
@@ -129,16 +131,15 @@
       position: absolute;
       top: 0;
       left: 50%;
-      width: auto;
       height: auto;
-      margin: 0 auto;
+      margin: 0;
+      width: 100%;
       cursor: pointer;
       transition-property: transform, opacity;
       transform: translate(-50%, -5px);
       text-align: center;
       white-space: nowrap;
       outline: none !important;
-      background: transparent;
       transform-style: preserve-3d;
       font-variation-settings: 'wght' 300, 'GRAD' 100, 'slnt' 33;
     }

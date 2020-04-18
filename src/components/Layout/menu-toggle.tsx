@@ -1,10 +1,11 @@
 import React from 'react'
 import { motion, Variants } from 'framer-motion'
-import { classNames } from '@Utils/common'
-import { Box, Button } from '@material-ui/core'
+import classNames from 'clsx'
+import { makeStyles } from '@material-ui/core/styles'
+import { Button } from '@material-ui/core'
+import Typography from '@material-ui/core/Typography'
 
 import styles from './layout.module.scss'
-import Typography from '@material-ui/core/Typography'
 
 interface ToggleIcon {
   isToggled: boolean
@@ -41,42 +42,44 @@ const spanTwo: Variants = {
   },
 }
 
-const MenuBarMotion = motion.custom(Box)
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.text.primary,
+  },
+  button: {
+    width: '90px',
+    height: '70px',
+  },
+}))
 
-export default ({ onToggleClicked, isToggled }: ToggleIcon) => (
-  <motion.div
-    initial={'close'}
-    animate={isToggled ? 'close' : 'open'}
-    className={styles.mainMenuTriggerWrapper}
-    title={isToggled ? 'close menu' : 'open menu'}
-    aria-label={isToggled ? 'close menu' : 'open menu'}
-  >
-    <Button
-      aria-label={'menu button'}
-      variant={'text'}
+export const MenuToggle = ({ onToggleClicked, isToggled }: ToggleIcon) => {
+  const classes = useStyles()
+  return (
+    <motion.div
+      initial={'close'}
+      animate={isToggled ? 'close' : 'open'}
+      className={styles.mainMenuTriggerWrapper}
       title={isToggled ? 'close menu' : 'open menu'}
-      onClick={onToggleClicked}
-      className={styles.mainMenuTrigger}
+      aria-label={isToggled ? 'close menu' : 'open menu'}
     >
-      <MenuBarMotion
-        bgcolor={'white'}
-        borderColor={'yellow'}
-        variants={spanOne}
-        className={styles.span}
-        initial={'initial'}
-      />
-      <MenuBarMotion
-        bgcolor={'white'}
-        borderColor={'yellow'}
-        variants={spanTwo}
-        initial={'initial'}
-        className={styles.span}
-      />
-      <Typography
-        variant={'button'}
-        component={'span'}
-        className={classNames(styles.span, styles.text)}
-      />
-    </Button>
-  </motion.div>
-)
+      <Button
+        aria-label={'menu button'}
+        variant={'text'}
+        title={isToggled ? 'close menu' : 'open menu'}
+        onClick={onToggleClicked}
+        className={classNames(classes.button, styles.mainMenuTrigger)}
+      >
+        <motion.span
+          variants={spanOne}
+          className={classNames(styles.span, classes.root)}
+          initial={'initial'}
+        />
+        <motion.span
+          variants={spanTwo}
+          initial={'initial'}
+          className={classNames(styles.span, classes.root)}
+        />
+      </Button>
+    </motion.div>
+  )
+}

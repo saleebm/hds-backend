@@ -1,5 +1,6 @@
 'use strict'
-
+// shout out to Create React App, thanks for this eslint
+// slightly modified
 const restrictedGlobals = require('confusing-browser-globals')
 
 module.exports = {

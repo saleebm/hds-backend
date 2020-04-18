@@ -109,7 +109,6 @@ function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
       openOnFocus
       clearOnEscape
       blurOnSelect
-      disablePortal
       getOptionSelected={(option, value) =>
         option.customerId === value.customerId
       }
@@ -120,15 +119,16 @@ function CustomerLookupForm({ setCustomer, isDisabled }: CustomerLookup) {
         <TextField
           {...params}
           label="Select customer"
-          variant="outlined"
+          variant={'filled'}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <>
                 {loading ? (
                   <CircularProgress color="inherit" size={20} />
-                ) : null}
-                {params.InputProps.endAdornment}
+                ) : (
+                  params.InputProps.endAdornment
+                )}
               </>
             ),
           }}

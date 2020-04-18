@@ -17,11 +17,8 @@ import {
   CustomerUpdatedResponse,
   UpdateOneBody,
 } from '@Types/customer'
-
 import { setErrorAction } from '@Store/modules/global/action'
-
 import mutator from '@Lib/server/mutator'
-import { ProductWithInventory } from '@Pages/dashboard/products'
 import { OrderProduct } from '@Types/customer-order'
 
 /**

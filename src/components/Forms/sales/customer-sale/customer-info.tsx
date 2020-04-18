@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { motion, Variants } from 'framer-motion'
 
+import Container from '@material-ui/core/Container'
 import { createStyles } from '@material-ui/styles'
-import { Box, Button, Grid, Paper, Theme, Typography } from '@material-ui/core'
+import { Button, Grid, Paper, Theme, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { AddCircleOutline, SearchOutlined } from '@material-ui/icons'
 
@@ -108,41 +109,39 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
   }, [])
 
   return (
-    <>
-      <Box component={'section'} className={classes.root}>
-        <Grid container justify={'flex-start'} spacing={2}>
-          <Grid className={classes.title} item md>
-            <Typography variant={'h2'} align={'left'}>
-              Customer Info
-            </Typography>
-          </Grid>
+    <Container disableGutters maxWidth={false} key={'customer-info-wrapper'}>
+      <MotionGrid container justify={'flex-start'} spacing={2}>
+        <Grid className={classes.title} item md>
+          <Typography variant={'h3'} align={'left'}>
+            Customer Info
+          </Typography>
         </Grid>
-        <Grid
-          container
-          wrap={'wrap'}
-          spacing={1}
-          alignItems={'center'}
-          justify={'space-around'}
-        >
-          <Grid item xs>
-            <CustomerLookupForm isDisabled={isCreating} />
-          </Grid>
-          <Grid item xs>
-            <Button
-              type={'button'}
-              component={'button'}
-              variant={'outlined'}
-              /* if user is creating, show option to search  **/
-              endIcon={isCreating ? <SearchOutlined /> : <AddCircleOutline />}
-              title={'add new customer'}
-              /* if user is creating, on click, set creating to false so they can search **/
-              onClick={isCreating ? () => setIsCreating(false) : onAddNewClick}
-            >
-              {isCreating ? 'Search' : 'Create new'}
-            </Button>
-          </Grid>
+      </MotionGrid>
+      <MotionGrid
+        container
+        wrap={'wrap'}
+        spacing={1}
+        alignItems={'center'}
+        justify={'space-around'}
+      >
+        <Grid item xs>
+          <CustomerLookupForm isDisabled={isCreating} />
         </Grid>
-      </Box>
+        <Grid item xs>
+          <Button
+            type={'button'}
+            component={'button'}
+            variant={'outlined'}
+            /* if user is creating, show option to search  **/
+            endIcon={isCreating ? <SearchOutlined /> : <AddCircleOutline />}
+            title={'add new customer'}
+            /* if user is creating, on click, set creating to false so they can search **/
+            onClick={isCreating ? () => setIsCreating(false) : onAddNewClick}
+          >
+            {isCreating ? 'Search' : 'Create new'}
+          </Button>
+        </Grid>
+      </MotionGrid>
       <MotionGrid
         className={classes.customerInfoForm}
         container
@@ -171,7 +170,7 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
           </Grid>
         </Paper>
       </MotionGrid>
-    </>
+    </Container>
   )
 }
 

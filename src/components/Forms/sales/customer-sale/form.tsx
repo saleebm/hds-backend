@@ -27,7 +27,7 @@ type CustomerSaleProps = ReturnType<typeof mapStateToProps> & {
 // the slugs used in the query
 enum CustomerSaleSteps {
   CUSTOMER_INFO = 'customer-info',
-  TRANSACTION = 'TRANSACTION',
+  TRANSACTION = 'transaction',
 }
 
 const mapStateToProps = (state: RootStateType) => {
@@ -123,7 +123,7 @@ function CustomerSale({
 
   return (
     <Container className={classes.root} maxWidth={false}>
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence exitBeforeEnter initial={false}>
         <AnimationWrapper animateOn={step}>
           {step === 0 && <CustomerInfo />}
           {step === 1 && (

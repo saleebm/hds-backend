@@ -56,9 +56,29 @@ export function withRedux(WrappedApp: any) {
     initialStoreState,
     ...rest
   }) => {
+    const { customerOrderReducer } = initialStoreState || {}
+
+    const { orderProducts, ...customerOrderStore } = customerOrderReducer || {}
+
+    // since there is a Map, it is necessary to unserialize and serialize
+    const serializedOrderProducts =
+      !!customerOrderReducer && customerOrderReducer.orderProducts
+        ? JSON.parse(customerOrderReducer.orderProducts).reduce(
+            (opMap: Map<string, any>, [key, val]: any) => opMap.set(key, val),
+            new Map()
+          )
+        : {}
+
     // initialize and reuse on: next.js csr
     const reduxStore: Store<RootStateType, any> = initStore({
-      initialStoreState,
+      initialStoreState: {
+        authReducer: initialStoreState.authReducer || {},
+        globalReducer: initialStoreState.globalReducer || {},
+        customerOrderReducer: {
+          ...customerOrderStore,
+          orderProducts: serializedOrderProducts,
+        },
+      },
     })
 
     const { dispatch } = reduxStore || {}
@@ -164,9 +184,36 @@ export function withRedux(WrappedApp: any) {
       }
     }
 
+    const initialState = store?.getState()
+    const { customerOrderReducer, authReducer, globalReducer } =
+      initialState || {}
+
+    if (!!customerOrderReducer) {
+      const { orderProducts, ...customerOrderDeets } =
+        customerOrderReducer || {}
+
+      return {
+        ...appProps,
+        initialStoreState: !!initialState
+          ? {
+              customerOrderReducer: {
+                ...customerOrderDeets,
+                orderProducts: JSON.stringify(
+                  orderProducts && orderProducts.entries()
+                    ? [...orderProducts.entries()]
+                    : {}
+                ), // must be serialized due to Map in redux store
+              },
+              authReducer,
+              globalReducer,
+            }
+          : {},
+      }
+    }
+
     return {
       ...appProps,
-      initialStoreState: store?.getState(),
+      initialStoreState: initialState,
     }
   }
 

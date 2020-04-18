@@ -175,9 +175,9 @@ function ProductLookup({
   )
 
   return (
-    <Container maxWidth={false} component={'section'}>
+    <Container disableGutters maxWidth={false} component={'section'}>
       <Grid container justify={'flex-end'} alignItems={'flex-end'} spacing={2}>
-        <Grid item md={4}>
+        <Grid item xs={4}>
           <FormControl
             variant={'filled'}
             fullWidth
@@ -221,7 +221,7 @@ function ProductLookup({
           spacing={1}
           className={classes.formFields}
         >
-          <Grid item md={8}>
+          <Grid item xs={8}>
             <Autocomplete
               id={'product-lookup-input'}
               options={customerOrderProductOptions}
@@ -258,7 +258,7 @@ function ProductLookup({
               )}
             />
           </Grid>
-          <Grid item md={4} className={classes.quantityInfo}>
+          <Grid item xs={4} className={classes.quantityInfo}>
             <Box alignItems={'center'}>
               <FormControl
                 variant={'filled'}
