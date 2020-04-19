@@ -3,10 +3,12 @@ import { isServer } from '@Utils/common'
 
 let axiosInstance: AxiosInstance
 
+/**
+ * todo drop this im using fetch from now on. save the bundle the 5.38kb gzipped
+ */
 export default function () {
   if (isServer() || !axiosInstance) {
     axiosInstance = axios.create({
-      //todo port needs to be established
       baseURL: isServer() ? 'http://localhost:3000/api/v1/' : '/api/v1/',
       method: 'get',
       withCredentials: true,

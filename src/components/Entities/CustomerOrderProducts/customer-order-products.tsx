@@ -106,6 +106,7 @@ function CustomerOrderProducts({
 
   return (
     <Table
+      style={{ height: '100%' }}
       title={'Customer Order Products'}
       editable={{
         onRowAdd: undefined,

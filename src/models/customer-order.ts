@@ -17,18 +17,17 @@ export type OrderProduct = Omit<
   deliveryFee: number
 }
 
+export type OrderProductInStore = {
+  quantity: number
+  unitCost: number
+  deliveryFee: number
+  name: string
+  storeLocationId: number
+  category: string
+}
+
 // the type for the stored OrderProduct
-export type OrderProductsInStore = ReadonlyMap<
-  number,
-  {
-    quantity: number
-    unitCost: number
-    deliveryFee: number
-    name: string
-    storeLocationId: number
-    category: string
-  }
->
+export type OrderProductsInStore = ReadonlyMap<number, OrderProductInStore>
 
 /**
  * this is the expected body arg for the endpoint

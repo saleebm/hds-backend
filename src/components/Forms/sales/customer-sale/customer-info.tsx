@@ -15,7 +15,7 @@ import { RootStateType } from '@Store/modules/types'
 
 type CustomerSale = ReturnType<typeof mapStateToProps>
 
-const MotionGrid = motion.custom(Grid)
+const MotionPaper = motion.custom(Paper)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,21 +25,25 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
     },
     customerInfoForm: {
-      margin: `${theme.spacing(5)}px auto`,
+      margin: `${theme.spacing(5)}px 0`,
       color: theme.palette.text.primary,
       padding: `${theme.spacing(1)}px 0`,
       boxShadow: theme.shadows['3'],
     },
     paper: {
-      margin: '0',
+      margin: 0,
+      padding: 0,
       height: '100%',
       flexGrow: 1,
       minHeight: '350px',
-      width: '100%',
     },
     customerInfoWrap: {
       position: 'relative',
       height: '100%',
+      width: '100%',
+    },
+    button: {
+      margin: '0 auto',
       width: '100%',
     },
   })
@@ -109,23 +113,27 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
 
   return (
     <Container disableGutters maxWidth={false} key={'customer-info-wrapper'}>
-      <Grid container justify={'flex-start'} spacing={1}>
+      <Grid container justify={'flex-start'} spacing={2}>
         <Grid item>
-          <Typography variant={'h4'}>Customer Info</Typography>
+          <Typography variant={'h4'} gutterBottom>
+            Customer Info
+          </Typography>
         </Grid>
       </Grid>
       <Grid
         container
         wrap={'wrap'}
-        spacing={1}
+        spacing={3}
         alignItems={'center'}
         justify={'space-around'}
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={8} md={7}>
           <CustomerLookupForm isDisabled={isCreating} />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={3} md={4}>
           <Button
+            className={classes.button}
+            color={'secondary'}
             type={'button'}
             component={'button'}
             variant={'outlined'}
@@ -139,17 +147,19 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
           </Button>
         </Grid>
       </Grid>
-      <MotionGrid
-        className={classes.customerInfoForm}
-        container
-        spacing={5}
-        justify={'center'}
-        alignItems={'stretch'}
+      <MotionPaper
         initial={'hidden'}
         variants={hiddenVariants}
         animate={isCreateUpdateFormHidden ? 'hidden' : 'visible'}
+        elevation={3}
+        className={classes.paper}
       >
-        <Paper component={'div'} elevation={3} className={classes.paper}>
+        <Grid
+          className={classes.customerInfoForm}
+          container
+          justify={'center'}
+          alignItems={'stretch'}
+        >
           <Grid item xs={12} className={classes.customerInfoWrap}>
             <CustomerCreateUpdateForm
               isUpdating={isUpdating}
@@ -157,8 +167,8 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
               isHidden={isCreateUpdateFormHidden}
             />
           </Grid>
-        </Paper>
-      </MotionGrid>
+        </Grid>
+      </MotionPaper>
     </Container>
   )
 }

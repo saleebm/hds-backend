@@ -1,5 +1,12 @@
 import { useForm } from 'react-hook-form'
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import React, {
+  ChangeEvent,
+  StrictMode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { motion, Variants } from 'framer-motion'
@@ -18,10 +25,8 @@ import {
   Theme,
 } from '@material-ui/core'
 import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
-import Container from '@material-ui/core/Container'
+import Select from '@material-ui/core/NativeSelect'
 import Box from '@material-ui/core/Box'
 import Input from '@material-ui/core/Input'
 import Typography from '@material-ui/core/Typography'
@@ -29,10 +34,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { ProductWithInventory } from '@Pages/dashboard/products'
 import { RootAction } from '@Store/modules/root-action'
-import {
-  addOrUpdateProductOrderInCustomerSaleAction,
-  removeProductOrderInCustomerSaleAction,
-} from '@Store/modules/customer-order/action'
+import { addOrUpdateProductOrderInCustomerSaleAction } from '@Store/modules/customer-order/action'
 import { useDebouncedCallback } from '@Utils/hooks'
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
@@ -66,14 +68,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 0,
     padding: theme.spacing(1),
     height: '115px',
+    display: 'flex',
+    justifyContent: 'center',
   },
   title: {
-    margin: '1rem 0',
+    position: 'relative',
   },
   form: {
     padding: theme.spacing(1),
-    margin: `${theme.spacing(3)}px auto`,
-    minHeight: '400px',
+    marginBottom: theme.spacing(1),
     display: 'flex',
     flexFlow: 'column',
     justifyContent: 'space-between',
@@ -84,6 +87,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   formFields: {
     flexGrow: 1,
+    height: '100%',
+    position: 'relative',
   },
   quantityInfo: {
     padding: `${theme.spacing(3)}px 0`,
@@ -91,12 +96,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexShrink: 0,
   },
   addProductButton: {
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
+    width: '200px',
   },
   hiddenContainer: {
     minHeight: '150px',
-    margin: `${theme.spacing(3)}px 0`,
-    padding: theme.spacing(1),
+    margin: `${theme.spacing(1)}px 0`,
+    paddingLeft: theme.spacing(1),
   },
   priceTagSpan: {
     '&> span': {
@@ -107,6 +113,11 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
     },
   },
+  cardContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 }))
 
 const MotionCard = motion.custom(Card)
@@ -116,7 +127,6 @@ const MotionCard = motion.custom(Card)
  * @param products
  * @param currentEmployee
  * @param addOrUpdateProduct
- * @param removeProduct
  * @param storeLocationIdOptions
  * @param currentProducts
  * @constructor
@@ -125,12 +135,11 @@ function ProductLookup({
   products,
   currentEmployee,
   addOrUpdateProduct,
-  removeProduct,
   storeLocationIdOptions,
   currentProducts,
 }: ProductLookup) {
   const classes = useStyles()
-  const { register, reset, errors, handleSubmit } = useForm<
+  const { reset, errors, handleSubmit, register } = useForm<
     ProductEnterInPosForm
   >()
   /*
@@ -166,11 +175,32 @@ function ProductLookup({
     [products, storeLocationIdForInventory]
   )
 
-  const handleStoreLocationChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    setStoreLocationId(event.target.value as number)
-  }
+  // make sure the quantity changes on store location input chosen
+  useEffect(() => {
+    const productOverThere = customerOrderProductOptions.find(
+      (product) => product.id === currentProductInSelect?.id
+    )
+    setCurrentProductSelected(productOverThere)
+  }, [
+    storeLocationIdForInventory,
+    currentProductInSelect,
+    customerOrderProductOptions,
+  ])
+
+  const handleStoreLocationChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      if (event.target.value) {
+        const locationChosen =
+          typeof event.target.value === 'string'
+            ? parseInt(event.target.value)
+            : (typeof event.target.value === 'number' && event.target.value) ||
+              storeLocationIdOptions[0].idStoreLocations
+
+        if (!isNaN(locationChosen)) setStoreLocationId(locationChosen)
+      }
+    },
+    [storeLocationIdOptions]
+  )
 
   const [setProductSelectedCallback] = useDebouncedCallback(
     async (productInSelection: CustomerOrderProductInCart | undefined) => {
@@ -231,240 +261,251 @@ function ProductLookup({
   }
 
   return (
-    <Container disableGutters maxWidth={false} component={'section'}>
-      <Grid container justify={'flex-start'} spacing={2}>
+    <StrictMode>
+      <Grid container justify={'flex-start'} spacing={0}>
         <Grid className={classes.title} item>
           <Typography variant={'h4'}>Transaction</Typography>
         </Grid>
       </Grid>
       <Grid
         container
-        spacing={1}
-        alignItems={'baseline'}
+        spacing={0}
+        alignItems={'flex-start'}
         justify={'flex-start'}
       >
-        <Grid item>
-          <Typography variant={'h3'} color={'secondary'}>
-            Add Products to Order
-          </Typography>
+        <Grid item xs={12} sm={8} md={7}>
+          <form
+            title={'add products to customer order form'}
+            onSubmit={handleSubmit(onProductAdd)}
+            className={classes.form}
+          >
+            <Grid
+              container
+              alignItems={'stretch'}
+              justify={'space-evenly'}
+              spacing={1}
+              className={classes.formFields}
+            >
+              <Grid item xs={12}>
+                <Typography variant={'h3'} color={'secondary'}>
+                  Add Products to Order
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <Autocomplete
+                  id={'product-lookup-input'}
+                  options={customerOrderProductOptions}
+                  blurOnSelect
+                  clearOnEscape
+                  disablePortal
+                  autoSelect
+                  autoComplete
+                  getOptionSelected={(option, value) => option.id === value.id}
+                  getOptionLabel={(option) => option.name}
+                  getOptionDisabled={(option) =>
+                    option.quantity === 0 ||
+                    (currentProducts &&
+                      'has' in currentProducts &&
+                      currentProducts.has(option.id))
+                  }
+                  groupBy={(option) => option.category}
+                  onChange={(
+                    event: ChangeEvent<any>,
+                    value: CustomerOrderProductInCart | null
+                  ) => setProductSelectedCallback(value || undefined)}
+                  aria-required
+                  openOnFocus
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={'Select product'}
+                      variant={'outlined'}
+                      fullWidth
+                      inputRef={register({ required: true })}
+                      size={'medium'}
+                      name={ProductLookupFields.product}
+                      inputProps={{
+                        ...params.inputProps,
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} className={classes.quantityInfo}>
+                <Box alignItems={'center'}>
+                  <FormControl
+                    variant={'filled'}
+                    fullWidth
+                    className={classes.formControl}
+                    disabled={!currentProductInSelect}
+                    error={!!errors.quantity}
+                    aria-errormessage={
+                      (!!errors.quantity &&
+                        (errors.quantity.message as string)) ||
+                      undefined
+                    }
+                  >
+                    <InputLabel htmlFor={'quantity-select'}>
+                      Quantity
+                    </InputLabel>
+                    <Input
+                      name={ProductLookupFields.quantity}
+                      inputRef={register({
+                        required: { value: true, message: 'This is required' },
+                        min: { value: 1, message: 'Must be at least one.' },
+                        max: {
+                          value: currentProductInSelect?.quantity || 1,
+                          message: `Max quantity is ${currentProductInSelect?.quantity}`,
+                        },
+                      })}
+                      id={'quantity-select'}
+                      type={'number'}
+                      error={!!errors.quantity}
+                      aria-describedby={
+                        (errors.quantity?.type &&
+                          `error-quantity-${errors.quantity?.type}`) ||
+                        undefined
+                      }
+                    />
+                    {!!currentProductInSelect && (
+                      <FormHelperText error={false} variant={'standard'}>
+                        <Typography variant={'caption'} color={'textSecondary'}>
+                          Available in stock: {currentProductInSelect?.quantity}
+                        </Typography>
+                      </FormHelperText>
+                    )}
+                    {!!errors.quantity && errors.quantity.type && (
+                      <FormHelperText
+                        id={`error-quantity-${errors.quantity.type}`}
+                      >
+                        {errors.quantity.message}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl
+                  variant={'filled'}
+                  fullWidth
+                  className={classes.formControl}
+                >
+                  <InputLabel
+                    id={'store-location-selector'}
+                    htmlFor={'store-location-select'}
+                  >
+                    Store Location for Inventory
+                  </InputLabel>
+                  <Select
+                    variant={'filled'}
+                    id={'store-location-select-input'}
+                    disableUnderline
+                    defaultValue={storeLocationIdForInventory}
+                    onChange={handleStoreLocationChange}
+                    inputProps={{
+                      name: 'store-location',
+                      id: 'store-location-select',
+                    }}
+                  >
+                    {storeLocationIdOptions.map((loc) => (
+                      <option
+                        dangerouslySetInnerHTML={{ __html: `${loc.city}` }}
+                        key={loc.idStoreLocations}
+                        value={loc.idStoreLocations}
+                      />
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={0}
+              alignItems={'center'}
+              justify={'flex-start'}
+            >
+              <Grid item>
+                <Button
+                  className={classes.addProductButton}
+                  startIcon={<AddCircleOutlineOutlined />}
+                  size={'large'}
+                  variant={'contained'}
+                  type={'submit'}
+                  disabled={!currentProductInSelect}
+                  title={'Add product to customer order'}
+                >
+                  Add
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Grid>
+        <Grid item xs={12} sm={4} md={5}>
+          <Grid
+            className={classes.hiddenContainer}
+            container
+            spacing={3}
+            justify={'center'}
+            alignItems={'center'}
+          >
+            <Grid className={classes.cardContainer} item xs={12}>
+              <MotionCard
+                variant={'elevation'}
+                component={'article'}
+                variants={hiddenVariants}
+                initial={'hidden'}
+                animate={!!currentProductInSelect ? 'visible' : 'hidden'}
+              >
+                <CardHeader
+                  avatar={
+                    <Avatar>
+                      {currentProductInSelect?.name.slice(0, 1).toUpperCase()}
+                    </Avatar>
+                  }
+                  title={currentProductInSelect?.name || ''}
+                  subheader={currentProductInSelect?.category || ''}
+                />
+                <CardContent>
+                  <Grid spacing={1} container>
+                    <Grid item xs={12} sm={4}>
+                      <Typography variant={'h5'}>Category: </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
+                      <Typography
+                        variant={'body1'}
+                        component={'p'}
+                        color={'textSecondary'}
+                      >
+                        {currentProductInSelect?.category}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Typography variant={'h5'}>Price: </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
+                      <Typography
+                        variant={'body1'}
+                        component={'p'}
+                        color={'textSecondary'}
+                      >
+                        <span
+                          className={classes.priceTagSpan}
+                          dangerouslySetInnerHTML={{
+                            __html: `${formatCurrencyOutput(
+                              formatMoney(currentProductInSelect?.price || 0)
+                            )}`,
+                          }}
+                        />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </MotionCard>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
-      <form
-        title={'add products to customer order form'}
-        onSubmit={handleSubmit(onProductAdd)}
-        className={classes.form}
-        tabIndex={-1}
-      >
-        <Grid
-          container
-          alignItems={'stretch'}
-          justify={'space-evenly'}
-          spacing={1}
-          className={classes.formFields}
-        >
-          <Grid item xs={12} sm={6}>
-            <Autocomplete
-              id={'product-lookup-input'}
-              options={customerOrderProductOptions}
-              blurOnSelect
-              clearOnEscape
-              disablePortal
-              autoSelect
-              autoComplete
-              getOptionSelected={(option, value) => option.id === value.id}
-              getOptionLabel={(option) => option.name}
-              getOptionDisabled={(option) =>
-                option.quantity === 0 ||
-                (currentProducts &&
-                  'has' in currentProducts &&
-                  currentProducts.has(option.id))
-              }
-              groupBy={(option) => option.category}
-              onChange={(
-                event: ChangeEvent<any>,
-                value: CustomerOrderProductInCart | null
-              ) => setProductSelectedCallback(value || undefined)}
-              aria-required
-              openOnFocus
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={'Select product'}
-                  variant={'outlined'}
-                  fullWidth
-                  inputRef={register({ required: true })}
-                  size={'medium'}
-                  name={ProductLookupFields.product}
-                  inputProps={{
-                    ...params.inputProps,
-                  }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3} className={classes.quantityInfo}>
-            <Box alignItems={'center'}>
-              <FormControl
-                variant={'filled'}
-                fullWidth
-                className={classes.formControl}
-                disabled={!currentProductInSelect}
-                error={!!errors.quantity}
-                aria-errormessage={
-                  (!!errors.quantity && (errors.quantity.message as string)) ||
-                  undefined
-                }
-              >
-                <InputLabel htmlFor={'quantity-select'}>Quantity</InputLabel>
-                <Input
-                  name={ProductLookupFields.quantity}
-                  inputRef={register({
-                    required: { value: true, message: 'This is required' },
-                    min: { value: 1, message: 'Must be at least one.' },
-                    max: {
-                      value: currentProductInSelect?.quantity || 1,
-                      message: `Max quantity is ${currentProductInSelect?.quantity}`,
-                    },
-                  })}
-                  id={'quantity-select'}
-                  type={'number'}
-                  error={!!errors.quantity}
-                  aria-describedby={
-                    (errors.quantity?.type &&
-                      `error-quantity-${errors.quantity?.type}`) ||
-                    undefined
-                  }
-                />
-                {!!currentProductInSelect && (
-                  <FormHelperText error={false} variant={'standard'}>
-                    <Typography variant={'caption'} color={'textSecondary'}>
-                      Available in stock: {currentProductInSelect?.quantity}
-                    </Typography>
-                  </FormHelperText>
-                )}
-                {!!errors.quantity && errors.quantity.type && (
-                  <FormHelperText id={`error-quantity-${errors.quantity.type}`}>
-                    {errors.quantity.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              variant={'filled'}
-              fullWidth
-              className={classes.formControl}
-            >
-              <InputLabel htmlFor={'store-location-select'}>
-                Store Location for Inventory
-              </InputLabel>
-              <Select
-                variant={'filled'}
-                disableUnderline
-                value={storeLocationIdForInventory}
-                onChange={handleStoreLocationChange}
-                inputProps={{
-                  name: 'store-location',
-                  id: 'store-location-select',
-                }}
-              >
-                {storeLocationIdOptions.map((loc) => (
-                  <MenuItem
-                    key={loc.idStoreLocations}
-                    value={loc.idStoreLocations}
-                  >
-                    <span dangerouslySetInnerHTML={{ __html: `${loc.city}` }} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Grid
-          className={classes.hiddenContainer}
-          container
-          spacing={3}
-          justify={'center'}
-          alignItems={'center'}
-        >
-          <Grid item xs={12} sm={8}>
-            <MotionCard
-              variant={'elevation'}
-              component={'article'}
-              variants={hiddenVariants}
-              initial={'hidden'}
-              animate={!!currentProductInSelect ? 'visible' : 'hidden'}
-            >
-              <CardHeader
-                avatar={
-                  <Avatar>
-                    {currentProductInSelect?.name.slice(0, 1).toUpperCase()}
-                  </Avatar>
-                }
-                title={currentProductInSelect?.name || ''}
-                subheader={currentProductInSelect?.category || ''}
-              />
-              <CardContent>
-                <Grid spacing={1} container>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant={'h5'}>Category: </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={8}>
-                    <Typography
-                      variant={'body1'}
-                      component={'p'}
-                      color={'textSecondary'}
-                    >
-                      {currentProductInSelect?.category}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant={'h5'}>Price: </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={8}>
-                    <Typography
-                      variant={'body1'}
-                      component={'p'}
-                      color={'textSecondary'}
-                    >
-                      <span
-                        className={classes.priceTagSpan}
-                        dangerouslySetInnerHTML={{
-                          __html: `${formatCurrencyOutput(
-                            formatMoney(currentProductInSelect?.price || 0)
-                          )}`,
-                        }}
-                      />
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </MotionCard>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          spacing={0}
-          alignItems={'flex-end'}
-          justify={'flex-end'}
-        >
-          <Grid item>
-            <Button
-              className={classes.addProductButton}
-              startIcon={<AddCircleOutlineOutlined />}
-              size={'large'}
-              variant={'contained'}
-              type={'submit'}
-              disabled={!currentProductInSelect}
-              title={'Add product to customer order'}
-            >
-              Add
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-    </Container>
+    </StrictMode>
   )
 }
 
@@ -475,7 +516,6 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
   bindActionCreators(
     {
       addOrUpdateProduct: addOrUpdateProductOrderInCustomerSaleAction,
-      removeProduct: removeProductOrderInCustomerSaleAction,
     },
     dispatch
   )

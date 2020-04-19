@@ -5,7 +5,7 @@ import { SendTwoTone } from '@material-ui/icons'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, StrictMode } from 'react'
 import { Customer } from '@prisma/client'
 
 import { makeStyles, Theme } from '@material-ui/core/styles'
@@ -173,7 +173,7 @@ function CustomerCreateUpdateForm({
   }
 
   return (
-    <>
+    <StrictMode>
       <form
         noValidate
         aria-hidden={isHidden}
@@ -384,7 +384,7 @@ function CustomerCreateUpdateForm({
           <Typography>{isCreating ? 'Create new' : 'Update'}</Typography>
         </Button>
       </form>
-    </>
+    </StrictMode>
   )
 }
 

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { AnimatePresence } from 'framer-motion'
 
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { createStyles } from '@material-ui/styles'
@@ -12,7 +11,6 @@ import Transaction from '@Components/Forms/sales/customer-sale/transaction'
 import CustomerInfo from '@Components/Forms/sales/customer-sale/customer-info'
 
 import { RootStateType } from '@Store/modules/types'
-import { AnimationWrapper } from '@Components/Elements/AnimateWrapper'
 import { ProductWithInventory } from '@Pages/dashboard/products'
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
@@ -40,7 +38,7 @@ const mapStateToProps = (state: RootStateType) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      margin: theme.spacing(1),
+      minHeight: '700px',
       height: '100%',
       display: 'flex',
       flexFlow: 'column',
@@ -49,15 +47,18 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     moveButtons: {
       maxWidth: '350px',
-      marginTop: theme.spacing(3),
+      margin: `${theme.spacing(1)}px 0`,
     },
     contentBox: {
       height: '100%',
-      minHeight: '700px',
       width: '100%',
+      position: 'relative',
       padding: 0,
       margin: 0,
-      position: 'relative',
+      display: 'flex',
+      flexFlow: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
     },
   })
 )
@@ -131,32 +132,17 @@ function CustomerSale({
    */
 
   return (
-    <Container className={classes.root} maxWidth={false}>
+    <Container className={classes.root} maxWidth={false} disableGutters>
       <Box className={classes.contentBox}>
-        <AnimatePresence exitBeforeEnter initial={false}>
-          <AnimationWrapper animateOn={step}>
-            {step === 0 && <CustomerInfo />}
-            {step === 1 && (
-              <Transaction
-                products={products}
-                currentEmployee={currentEmployee}
-                storeLocationIdOptions={storeLocationIdOptions}
-              />
-            )}
-          </AnimationWrapper>
-        </AnimatePresence>
+        {step === 0 && <CustomerInfo />}
+        {step === 1 && (
+          <Transaction
+            products={products}
+            currentEmployee={currentEmployee}
+            storeLocationIdOptions={storeLocationIdOptions}
+          />
+        )}
       </Box>
-      {step === 1 && (
-        <Button
-          variant={'contained'}
-          className={classes.moveButtons}
-          title={'Back to choose or create customer'}
-          endIcon={<ArrowBack />}
-          onClick={moveBack}
-        >
-          Back
-        </Button>
-      )}
       {step === 0 && (
         <Button
           className={classes.moveButtons}
@@ -168,6 +154,17 @@ function CustomerSale({
           onClick={moveForward}
         >
           Next
+        </Button>
+      )}
+      {step === 1 && (
+        <Button
+          variant={'contained'}
+          className={classes.moveButtons}
+          title={'Back to choose or create customer'}
+          endIcon={<ArrowBack />}
+          onClick={moveBack}
+        >
+          Back
         </Button>
       )}
     </Container>

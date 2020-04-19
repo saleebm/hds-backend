@@ -19,7 +19,7 @@ import {
 } from '@Types/customer'
 import { setErrorAction } from '@Store/modules/global/action'
 import mutator from '@Lib/server/mutator'
-import { OrderProduct } from '@Types/customer-order'
+import { OrderProduct, OrderProductInStore } from '@Types/customer-order'
 
 /**
  * first step of POS form is to select a customer, whether that is a new one, or an existing one
@@ -139,6 +139,10 @@ export const addOrUpdateProductOrderInCustomerSaleAction = ({
   })
 }
 
+/**
+ * todo this should be simple to implement into the customer order product table
+ * @param idProduct
+ */
 export const removeProductOrderInCustomerSaleAction = (
   idProduct: number
 ): CustomerResult<void> => (dispatch) => {
@@ -148,4 +152,34 @@ export const removeProductOrderInCustomerSaleAction = (
       productIdToRemove: idProduct,
     },
   })
+}
+
+export const setOrderTotalAction = (): CustomerResult<void> => (
+  dispatch,
+  getState
+) => {
+  const {
+    customerOrderReducer: { orderProducts },
+  } = getState() || {}
+
+  if (orderProducts && 'values' in orderProducts) {
+    const products: ReadonlyArray<OrderProductInStore> = Array.from(
+      orderProducts.values()
+    )
+
+    let orderTotal = Array.isArray(products)
+      ? products.reduce(
+          (acc, product) =>
+            acc + (product.quantity * product.unitCost + product.deliveryFee),
+          0
+        )
+      : 0
+
+    orderTotal += orderTotal * 0.065
+
+    dispatch({
+      type: CustomerOrderActionTypes.SetOrderTotal,
+      payload: { orderTotal },
+    })
+  }
 }

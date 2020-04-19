@@ -5,7 +5,7 @@
  */
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
-import { ThunkExtraArgs } from '@Store/modules/types'
+import { RootStateType, ThunkExtraArgs } from '@Store/modules/types'
 import { OrderProduct, OrderProductsInStore } from '@Types/customer-order'
 
 export interface ICustomerOrderState {
@@ -18,7 +18,7 @@ export interface ICustomerOrderState {
    */
   readonly expectedDeliveryDate: Date | undefined
   /**
-   * The total computed by the store from the products added
+   * The total computed by the store from the products added with tax and delivery charge
    */
   readonly orderTotal: number
   /**
@@ -93,7 +93,7 @@ export interface IRemoveOrderProductAction
 
 export type CustomerResult<TResult> = ThunkAction<
   TResult,
-  ICustomerOrderState,
+  RootStateType,
   ThunkExtraArgs,
   CustomerOrderActions
 >
