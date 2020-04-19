@@ -93,7 +93,7 @@ function Table<P extends object>({
     {},
     {
       addRowPosition: 'last',
-      draggable: false,
+      draggable: false, // turning this on makes some wierd errors pop up from react-dnd
       columnsButton: true,
       actionsColumnIndex: -1,
       sorting: true,

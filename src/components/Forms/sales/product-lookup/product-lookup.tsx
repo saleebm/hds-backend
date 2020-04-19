@@ -260,11 +260,6 @@ function ProductLookup({
 
   return (
     <StrictMode>
-      <Grid container justify={'flex-start'} spacing={0}>
-        <Grid className={classes.title} item>
-          <Typography variant={'h4'}>Transaction</Typography>
-        </Grid>
-      </Grid>
       <Grid
         container
         spacing={0}
@@ -285,7 +280,11 @@ function ProductLookup({
               className={classes.formFields}
             >
               <Grid item xs={12}>
-                <Typography variant={'h3'} color={'secondary'}>
+                <Typography
+                  className={classes.title}
+                  variant={'h3'}
+                  color={'secondary'}
+                >
                   Add Products to Order
                 </Typography>
               </Grid>
@@ -442,7 +441,7 @@ function ProductLookup({
           <Grid
             className={classes.hiddenContainer}
             container
-            spacing={3}
+            spacing={0}
             justify={'center'}
             alignItems={'center'}
           >
@@ -463,13 +462,14 @@ function ProductLookup({
                   title={currentProductInSelect?.name || ''}
                   subheader={currentProductInSelect?.category || ''}
                 />
-                <CardContent>
-                  <Grid spacing={1} container>
-                    <Grid item xs={12} sm={4}>
-                      <Typography variant={'h5'}>Category: </Typography>
+                <CardContent color={'transparent'}>
+                  <Grid spacing={2} container>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant={'h5'}>Category:</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={8}>
+                    <Grid item xs={12} sm={6}>
                       <Typography
+                        align={'right'}
                         variant={'body1'}
                         component={'p'}
                         color={'textSecondary'}
@@ -477,14 +477,15 @@ function ProductLookup({
                         {currentProductInSelect?.category}
                       </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <Typography variant={'h5'}>Price: </Typography>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant={'h5'}>Price:</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={8}>
+                    <Grid item xs={12} sm={6}>
                       <Typography
                         variant={'body1'}
                         component={'p'}
                         color={'textSecondary'}
+                        align={'right'}
                       >
                         <span
                           className={classes.priceTagSpan}

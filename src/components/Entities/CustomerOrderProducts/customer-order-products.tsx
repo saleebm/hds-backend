@@ -120,6 +120,8 @@ function CustomerOrderProducts({
       }}
       optionsToMerge={{
         padding: 'dense',
+        maxBodyHeight: '400px',
+        pageSizeOptions: [5],
       }}
       columns={columnData as Column<Partial<CustomerOrderProductInCart>>[]}
       data={tableData}

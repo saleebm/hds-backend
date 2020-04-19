@@ -41,6 +41,10 @@ export default handler(
       orderTotal,
       customerOrderProducts,
     } = req.body.customerOrderCreate as CustomerOrderCreateInputBodyArgs
+    //
+    // const filteredOrderProducts =
+    //   Array.isArray(customerOrderProducts.create) &&
+    //   customerOrderProducts.create.map((orderProduct) => ({}))
 
     try {
       const customerOrder = await prisma.customerOrder.create({

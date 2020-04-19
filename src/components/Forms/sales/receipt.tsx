@@ -44,6 +44,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '1.25rem',
     fontVariant: 'all-petite-caps',
   },
+  dateFormat: {
+    fontSize: '1.35rem',
+    lineHeight: 2,
+    marginRight: theme.spacing(1),
+  },
   typographyProduct: {
     fontVariant: 'small-caps',
     fontSize: '1rem',
@@ -92,10 +97,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-function PriceCalculator({
+function Receipt({
   orderProducts,
   setOrderTotal,
   orderTotal,
+  deliveryDate,
 }: PriceCalculatorProps) {
   const classes = useStyles()
   const [orderProductRef, setOrderProductRef] = useState<
@@ -322,6 +328,25 @@ function PriceCalculator({
             </Typography>
           </Grid>
         </Grid>
+        <Grid className={classes.row} container spacing={0}>
+          <Grid className={classes.boxLeft} item xs={6}>
+            <Typography className={classes.typography} variant={'caption'}>
+              Delivery Date:
+            </Typography>
+          </Grid>
+          <Grid className={classes.boxRight} item xs={6}>
+            <Typography
+              className={classes.dateFormat}
+              variant={'body1'}
+              component={'p'}
+              color={'textSecondary'}
+            >
+              {!!deliveryDate
+                ? Intl.DateTimeFormat('en-US').format(deliveryDate)
+                : 'MM/DD/YYYY'}
+            </Typography>
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   )
@@ -338,6 +363,7 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
 const mapStateToProps = (state: RootStateType) => ({
   orderProducts: state.customerOrderReducer.orderProducts,
   orderTotal: state.customerOrderReducer.orderTotal,
+  deliveryDate: state.customerOrderReducer.expectedDeliveryDate,
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(PriceCalculator)
+export default connect(mapStateToProps, mapDispatchToProps)(Receipt)

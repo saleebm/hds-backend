@@ -1,11 +1,21 @@
+import { connect } from 'react-redux'
+import { Typography } from '@material-ui/core'
 import { DashboardView } from '@Components/Views/dashboard'
+import { RootStateType } from '@Store/modules/types'
 
-function Dashboard() {
+//todo maybe some widgets
+function Dashboard({ employee }: ReturnType<typeof mapStateToProps>) {
   return (
     <DashboardView pageTitle={'Dashboard'}>
-      <p>todo: widgets?</p>
+      <Typography variant={'h2'} style={{ textTransform: 'uppercase' }}>
+        Welcome, {employee?.firstName} {employee?.lastName}
+      </Typography>
     </DashboardView>
   )
 }
 
-export default Dashboard
+const mapStateToProps = (state: RootStateType) => ({
+  employee: state.authReducer.currentUser,
+})
+
+export default connect(mapStateToProps)(Dashboard)

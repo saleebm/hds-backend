@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
 import { SWRConfig } from 'swr'
-
-import MuiPickersUtilsProvider from '@material-ui/pickers/MuiPickersUtilsProvider'
-import DateFnsUtils from '@date-io/date-fns'
+import enLocale from 'date-fns/locale/en-US'
+import DateFnsUtils from '@date-io/date-fns' // choose your lib
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import Typography from '@material-ui/core/Typography'
 import { Container } from '@material-ui/core'
 
@@ -45,7 +45,7 @@ export function DashboardView({
             },
           }}
         >
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <MuiPickersUtilsProvider locale={enLocale} utils={DateFnsUtils}>
             {children}
           </MuiPickersUtilsProvider>
         </SWRConfig>

@@ -1,3 +1,5 @@
+import React, { useCallback } from 'react'
+import { bindActionCreators, Dispatch } from 'redux'
 import { Container, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -6,16 +8,17 @@ import ProductLookup from '@Components/Forms/sales/product-lookup/product-lookup
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
 import { CustomerOrderProductsTable } from '@Components/Entities/CustomerOrderProducts'
-import PriceCalculator from '@Components/Forms/sales/price-calculator'
-import { useCallback } from 'react'
+import Receipt from '@Components/Forms/sales/receipt'
 import { CustomerOrderProductInCart } from '@Types/customer-order'
-import { bindActionCreators, Dispatch } from 'redux'
 import { RootAction } from '@Store/modules/root-action'
 import {
   removeProductOrderInCustomerSaleAction,
   updateOrderProductQuantityAction,
 } from '@Store/modules/customer-order/action'
 import { connect } from 'react-redux'
+import DeliveryDatePicker from '@Components/Forms/sales/delivery-date-picker'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
 
 type Transaction = {
   products: ReadonlyArray<ProductWithInventory>
@@ -32,10 +35,22 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   root: {
-    height: '600px',
+    height: '100%',
   },
   productTableWrap: {
     marginBottom: theme.spacing(3),
+    height:
+      '100%' /* make sure the delete button does not cause the other elements below to move awkwardly */,
+    display: 'flex',
+    flexFlow: 'column',
+    justifyContent: 'stretch',
+    alignItems: 'stretch',
+  },
+  paper: {
+    display: 'flex',
+    flexFlow: 'column',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
 }))
 
@@ -85,6 +100,9 @@ function Transaction({
   return (
     <Container disableGutters maxWidth={false} key={'transaction-wrapper'}>
       <Grid className={classes.productTableWrap} container spacing={3}>
+        <Grid item>
+          <Typography variant={'h2'}>Transaction</Typography>
+        </Grid>
         <Grid item xs={12}>
           <CustomerOrderProductsTable
             onRowUpdate={onRowUpdate}
@@ -94,11 +112,24 @@ function Transaction({
       </Grid>
       <Grid className={classes.root} container spacing={2} color={'primary'}>
         <Grid item xs={12} sm={7}>
-          <ProductLookup
-            storeLocationIdOptions={storeLocationIdOptions}
-            products={products}
-            currentEmployee={currentEmployee}
-          />
+          <Grid container spacing={3} alignItems={'center'} justify={'center'}>
+            <Grid item xs={12}>
+              <Paper
+                variant={'outlined'}
+                className={classes.paper}
+                elevation={5}
+              >
+                <ProductLookup
+                  storeLocationIdOptions={storeLocationIdOptions}
+                  products={products}
+                  currentEmployee={currentEmployee}
+                />
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <DeliveryDatePicker />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} sm={5}>
           <Grid
@@ -108,7 +139,7 @@ function Transaction({
             direction={'column'}
           >
             <Grid className={classes.priceCalc} item xs={12}>
-              <PriceCalculator />
+              <Receipt />
             </Grid>
           </Grid>
         </Grid>

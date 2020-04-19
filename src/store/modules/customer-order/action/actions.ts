@@ -121,6 +121,15 @@ export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
   })
 }
 
+export const setStoreLocationAction = (
+  storeLocationId: number
+): CustomerResult<any> => (dispatch) => {
+  dispatch({
+    type: CustomerOrderActionTypes.SetStoreLocation,
+    payload: { storeLocationId },
+  })
+}
+
 export const updateOrderProductQuantityAction = ({
   quantity,
   productId,
