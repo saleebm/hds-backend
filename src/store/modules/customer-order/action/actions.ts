@@ -121,18 +121,27 @@ export const setDeliveryAction = (deliveryDate: Date): CustomerResult<void> => (
   })
 }
 
-export const addOrUpdateProductOrderInCustomerSaleAction = ({
-  addOrUpdateProduct,
-  actionType,
+export const updateOrderProductQuantityAction = ({
+  quantity,
+  productId,
 }: {
-  actionType:
-    | typeof CustomerOrderActionTypes.SetOrderProduct
-    | typeof CustomerOrderActionTypes.AddOrderProduct
-  addOrUpdateProduct: OrderProduct
+  quantity: number
+  productId: number
 }): CustomerResult<void> => (dispatch) => {
-  const { perUnitCost, ...others } = addOrUpdateProduct
   dispatch({
-    type: actionType,
+    type: CustomerOrderActionTypes.SetOrderProduct,
+    payload: { quantity, productId },
+  })
+}
+
+export const addProductOrderInCustomerSaleAction = ({
+  product,
+}: {
+  product: OrderProduct
+}): CustomerResult<void> => (dispatch) => {
+  const { perUnitCost, ...others } = product
+  dispatch({
+    type: CustomerOrderActionTypes.AddOrderProduct,
     payload: {
       orderProduct: { perUnitCost: perUnitCost, ...others },
     },
@@ -140,7 +149,6 @@ export const addOrUpdateProductOrderInCustomerSaleAction = ({
 }
 
 /**
- * todo this should be simple to implement into the customer order product table
  * @param idProduct
  */
 export const removeProductOrderInCustomerSaleAction = (

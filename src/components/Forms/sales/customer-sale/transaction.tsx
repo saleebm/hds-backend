@@ -7,16 +7,23 @@ import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
 import { CustomerOrderProductsTable } from '@Components/Entities/CustomerOrderProducts'
 import PriceCalculator from '@Components/Forms/sales/price-calculator'
+import { useCallback } from 'react'
+import { CustomerOrderProductInCart } from '@Types/customer-order'
+import { bindActionCreators, Dispatch } from 'redux'
+import { RootAction } from '@Store/modules/root-action'
+import {
+  removeProductOrderInCustomerSaleAction,
+  updateOrderProductQuantityAction,
+} from '@Store/modules/customer-order/action'
+import { connect } from 'react-redux'
 
-//todo
-// it would be nice to keep this full profile in a currentEmployee store instead of passing it down 10 components
 type Transaction = {
   products: ReadonlyArray<ProductWithInventory>
   storeLocationIdOptions: StoreLocationsIdOptions
   currentEmployee: FindOneEmployee
-}
+} & ReturnType<typeof mapDispatchToProps>
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   priceCalc: {
     flex: 1,
   },
@@ -27,7 +34,10 @@ const useStyles = makeStyles({
   root: {
     height: '600px',
   },
-})
+  productTableWrap: {
+    marginBottom: theme.spacing(3),
+  },
+}))
 
 /**
  * Time to seal the deal.
@@ -38,21 +48,57 @@ function Transaction({
   products,
   currentEmployee,
   storeLocationIdOptions,
+  removeProduct,
+  updateProduct,
 }: Transaction) {
   const classes = useStyles()
-  //todo
-  // remove products and update quantity from the table with dispatch
+
+  const onRowDelete = useCallback(
+    async (deletedRow: Partial<CustomerOrderProductInCart>) => {
+      if (deletedRow && deletedRow.id) {
+        removeProduct(deletedRow.id)
+      }
+    },
+    [removeProduct]
+  )
+
+  const onRowUpdate = useCallback(
+    async (
+      updatedRow: Partial<{ quantity: number | string; id: number | string }>
+    ) => {
+      if (updatedRow && updatedRow.id && updatedRow.quantity) {
+        const quantity =
+          typeof updatedRow.quantity === 'string'
+            ? parseInt(updatedRow.quantity)
+            : updatedRow.quantity
+        const productId =
+          typeof updatedRow.id === 'string'
+            ? parseInt(updatedRow.id)
+            : updatedRow.id
+
+        updateProduct({ quantity, productId })
+      }
+    },
+    [updateProduct]
+  )
 
   return (
     <Container disableGutters maxWidth={false} key={'transaction-wrapper'}>
-      <ProductLookup
-        storeLocationIdOptions={storeLocationIdOptions}
-        products={products}
-        currentEmployee={currentEmployee}
-      />
+      <Grid className={classes.productTableWrap} container spacing={3}>
+        <Grid item xs={12}>
+          <CustomerOrderProductsTable
+            onRowUpdate={onRowUpdate}
+            onRowDelete={onRowDelete}
+          />
+        </Grid>
+      </Grid>
       <Grid className={classes.root} container spacing={2} color={'primary'}>
         <Grid item xs={12} sm={7}>
-          <CustomerOrderProductsTable />
+          <ProductLookup
+            storeLocationIdOptions={storeLocationIdOptions}
+            products={products}
+            currentEmployee={currentEmployee}
+          />
         </Grid>
         <Grid item xs={12} sm={5}>
           <Grid
@@ -71,4 +117,13 @@ function Transaction({
   )
 }
 
-export default Transaction
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
+  bindActionCreators(
+    {
+      removeProduct: removeProductOrderInCustomerSaleAction,
+      updateProduct: updateOrderProductQuantityAction,
+    },
+    dispatch
+  )
+
+export default connect(null, mapDispatchToProps)(Transaction)

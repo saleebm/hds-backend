@@ -13,10 +13,15 @@ import Table from '@Components/Elements/Table/table'
 import { RootStateType } from '@Store/modules/types'
 import { connect } from 'react-redux'
 
-type CustomerOrderProductsProps = ReturnType<typeof mapStateToProps>
+type CustomerOrderProductsProps = ReturnType<typeof mapStateToProps> & {
+  onRowDelete: (oldData: Partial<CustomerOrderProductInCart>) => Promise<any>
+  onRowUpdate: (oldData: Partial<CustomerOrderProductInCart>) => Promise<any>
+}
 
 function CustomerOrderProducts({
   customerOrderProducts,
+  onRowDelete,
+  onRowUpdate,
 }: CustomerOrderProductsProps) {
   const tableRowColumns: Partial<CustomerOrderProductInCart> = {
     id: undefined,
@@ -110,8 +115,8 @@ function CustomerOrderProducts({
       title={'Customer Order Products'}
       editable={{
         onRowAdd: undefined,
-        onRowDelete: undefined,
-        onRowUpdate: undefined,
+        onRowDelete,
+        onRowUpdate,
       }}
       optionsToMerge={{
         padding: 'dense',

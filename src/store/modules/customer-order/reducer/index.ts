@@ -34,6 +34,12 @@ export const CustomerOrderReducer = (
         draft.storeLocationId = action.payload.storeLocationId
         return
       case CustomerOrderActionTypes.SetOrderProduct:
+        //  only allowing for quantity updates for simplicity's sake
+        const { quantity, productId: idToUpdate } = action.payload
+        const previousProduct = draft.orderProducts.get(idToUpdate)
+        if (previousProduct)
+          draft.orderProducts.set(idToUpdate, { ...previousProduct, quantity })
+        return
       case CustomerOrderActionTypes.AddOrderProduct:
         const {
           productId,

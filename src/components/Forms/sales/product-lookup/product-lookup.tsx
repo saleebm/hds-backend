@@ -34,7 +34,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { ProductWithInventory } from '@Pages/dashboard/products'
 import { RootAction } from '@Store/modules/root-action'
-import { addOrUpdateProductOrderInCustomerSaleAction } from '@Store/modules/customer-order/action'
+import { addProductOrderInCustomerSaleAction } from '@Store/modules/customer-order/action'
 import { useDebouncedCallback } from '@Utils/hooks'
 import { FindOneEmployee } from '@Pages/api/v1/employees'
 import { StoreLocationsIdOptions } from '@Types/store-locations'
@@ -43,7 +43,6 @@ import {
   CustomerOrderProductsPOS,
 } from '@Types/customer-order'
 import { RootStateType } from '@Store/modules/types'
-import { CustomerOrderActionTypes } from '@Store/modules/customer-order/types'
 import { formatCurrencyOutput, formatMoney } from '@Utils/common'
 
 type ProductLookup = ReturnType<typeof mapDispatchToProps> &
@@ -222,8 +221,8 @@ function ProductLookup({
         'quantity' in productToEnter
       ) {
         // besides the quantity, everything relies on the selected order product
-        await addOrUpdateProduct({
-          addOrUpdateProduct: {
+        addOrUpdateProduct({
+          product: {
             quantity: productToEnter.quantity,
             perUnitCost: currentProductInSelect.price,
             productId: currentProductInSelect.id,
@@ -232,7 +231,6 @@ function ProductLookup({
             storeLocationId: currentProductInSelect.storeLocationId,
             deliveryFee: currentProductInSelect.deliveryFee,
           },
-          actionType: CustomerOrderActionTypes.AddOrderProduct,
         })
         // reset the form to allow for more selections
         setCurrentProductSelected(undefined)
@@ -515,7 +513,7 @@ const mapStateToProps = (state: RootStateType) => ({
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
   bindActionCreators(
     {
-      addOrUpdateProduct: addOrUpdateProductOrderInCustomerSaleAction,
+      addOrUpdateProduct: addProductOrderInCustomerSaleAction,
     },
     dispatch
   )

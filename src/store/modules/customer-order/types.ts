@@ -38,7 +38,7 @@ export enum CustomerOrderActionTypes {
   SetDeliveryDate = '@pos/SET_DELIVERY_DATE',
   SetOrderTotal = '@pos/SET_ORDER_TOTAL',
   AddOrderProduct = '@pos/ADD_ORDER_PRODUCT',
-  SetOrderProduct = '@pos/SET_ORDER_PRODUCT', // i.e. To change the quantity
+  SetOrderProduct = '@pos/SET_ORDER_PRODUCT', // i.e. To change the quantity.
   RemoveOrderProduct = '@pos/REMOVE_ORDER_PRODUCT',
   SetStoreLocation = '@pos/SET_STORE_LOCATION',
 }
@@ -74,14 +74,14 @@ export interface ISetStoreLocationAction
   payload: { storeLocationId: number }
 }
 
-export interface IUpdateOrderProductAction
-  extends Action<
-    | CustomerOrderActionTypes.AddOrderProduct
-    | CustomerOrderActionTypes.SetOrderProduct
-  > {
-  type:
-    | typeof CustomerOrderActionTypes.AddOrderProduct
-    | typeof CustomerOrderActionTypes.SetOrderProduct
+export interface IUpdateOrderProductQuantity
+  extends Action<CustomerOrderActionTypes.SetOrderProduct> {
+  type: typeof CustomerOrderActionTypes.SetOrderProduct
+  payload: { quantity: number; productId: number }
+}
+export interface IAddOrderProductAction
+  extends Action<CustomerOrderActionTypes.AddOrderProduct> {
+  type: typeof CustomerOrderActionTypes.AddOrderProduct
   payload: { orderProduct: OrderProduct }
 }
 
@@ -103,5 +103,6 @@ export type CustomerOrderActions =
   | ISetDeliveryAction
   | ISetOrderTotalAction
   | ISetStoreLocationAction
-  | IUpdateOrderProductAction
+  | IAddOrderProductAction
   | IRemoveOrderProductAction
+  | IUpdateOrderProductQuantity
