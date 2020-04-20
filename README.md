@@ -28,11 +28,20 @@
 2. ~~setting up all the tables~~
 
 3. POS
-   - finish customer order products display.
-   - seal the deal with redux action, i.e. put customer order in db async
+   - ~~finish customer order products display.~~
+   - ~~seal the deal with redux action, i.e. put customer order in db async~~
      1. will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity
    - last step is show the customer orders as invoices
 
 ## Unit tests
 
 1. just get started. no excuses dude.
+
+## General refactoring
+
+1. It would be wise to refactor these aspects of this application before considering it ready for production:
+   - Redux store states do not accommodate for transient states.
+     1. for example, customer order state should handle the states of the order, i.e. attempt add product, add product success, add product fail.
+     2. I wonder if it would make sense to submit the order partially in steps to the server concurrently, and handle the canceled order by time out or allow the store location to resume previous orders.
+   - Refine data fetching methods, ie remove axios dependency and stick to fetch.
+   - Reduce redundant instantiations of prisma client from the api routes and server side requests into single utility
