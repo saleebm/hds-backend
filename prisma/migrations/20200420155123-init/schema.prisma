@@ -5,7 +5,7 @@ generator client {
 
 datasource mysql {
   provider = "mysql"
-  url      = env("MYSQL_URL")
+  url = "***"
 }
 
 model Customer {

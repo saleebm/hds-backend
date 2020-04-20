@@ -44,7 +44,7 @@ export default handler(
 
     //todo type safety
     // make sure idProduct is there since not planning to create
-    // also consider to do this inventory management elsewhere ? (not really sure where: but does not feel right here)
+    // also consider doing this inventory management elsewhere ? (not really sure where: but does not feel right here)
     /**
      * The products purchased filtered for inventory management
      *
@@ -63,6 +63,10 @@ export default handler(
             : orderProduct.storeLocationIdOfInventory,
       }))
 
+    /**
+     * The POS provides employees option to select products from other locations
+     * This makes sure we update the correct inventory product
+     */
     if (Array.isArray(filteredOrderProducts)) {
       const productInventoryUpdate = []
 
@@ -72,24 +76,23 @@ export default handler(
           !isNaN(product.productId) &&
           product.storeLocationIdOfInventory
         ) {
-          const possibleInventoryItem = await prisma.inventory.findMany({
+          const possibleInventoryItem = await prisma.inventory.findOne({
             where: {
-              productId: product.productId,
-              storeLocation: product.storeLocationIdOfInventory,
+              productId_storeLocation: {
+                productId: product.productId,
+                storeLocation: product.storeLocationIdOfInventory,
+              },
             },
-            first: 1,
-            select: { quantityOnHand: true },
           })
-          if (
-            Array.isArray(possibleInventoryItem) &&
-            !!possibleInventoryItem[0]
-          ) {
-            const { quantityOnHand } = possibleInventoryItem[0]
+          if (!!possibleInventoryItem && possibleInventoryItem.quantityOnHand) {
+            const { quantityOnHand } = possibleInventoryItem
             productInventoryUpdate.push(
-              prisma.inventory.updateMany({
+              prisma.inventory.update({
                 where: {
-                  storeLocation: product.storeLocationIdOfInventory,
-                  productId: product.productId,
+                  productId_storeLocation: {
+                    storeLocation: product.storeLocationIdOfInventory,
+                    productId: product.productId,
+                  },
                 },
                 data: {
                   quantityOnHand: quantityOnHand - product.quantityPurchased,

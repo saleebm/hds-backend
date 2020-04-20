@@ -30,8 +30,10 @@
 3. POS
    - ~~finish customer order products display.~~
    - ~~seal the deal with redux action, i.e. put customer order in db async~~
-     1. will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity
-   - last step is show the customer orders as invoices
+     1. ~~will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity~~
+   - show the customer orders as invoices
+     1. create base invoice
+     2.  
 
 ## Unit tests
 
@@ -45,3 +47,4 @@
      2. I wonder if it would make sense to submit the order partially in steps to the server concurrently, and handle the canceled order by time out or allow the store location to resume previous orders.
    - Refine data fetching methods, ie remove axios dependency and stick to fetch.
    - Reduce redundant instantiations of prisma client from the api routes and server side requests into single utility
+   - API routes checking for auth redundancy as well as verifying request params / method
