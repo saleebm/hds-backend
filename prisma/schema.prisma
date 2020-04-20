@@ -63,21 +63,21 @@ model CustomerOrderProducts {
 model Employee {
   address           String
   city              String
-  createdAt         DateTime                @default(now())
-  email             String                  @unique
-  employeeId        Int                     @default(autoincrement()) @id
+  createdAt         DateTime               @default(now())
+  email             String                 @unique
+  employeeId        Int                    @default(autoincrement()) @id
   firstName         String
   lastName          String
   password          String
   positionName      EmployeePositionName
-  roleCapability    EmployeeRoleCapability  @default(NONE)
+  roleCapability    EmployeeRoleCapability @default(NONE)
   salary            Float
   state             String
   storeLocationId   Int
-  updatedAt         DateTime                @updatedAt
+  updatedAt         DateTime               @updatedAt
   userSigningSecret String
   zipCode           Int
-  storeLocations    StoreLocations          @relation(fields: [storeLocationId], references: [idStoreLocations])
+  storeLocations    StoreLocations         @relation(fields: [storeLocationId], references: [idStoreLocations])
   invoice           Invoice[]
   magicCode         MagicCode?
   salesOrders       SalesOrders[]
