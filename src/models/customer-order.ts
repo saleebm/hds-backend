@@ -2,6 +2,7 @@ import {
   CustomerOrderCreateInput,
   CustomerOrderProducts,
   CustomerOrderProductsCreateManyWithoutCustomerOrderInput,
+  CustomerOrderProductsCreateWithoutCustomerOrderInput,
 } from '@prisma/client'
 
 /**
@@ -29,12 +30,23 @@ export type OrderProductInStore = {
 // the type for the stored OrderProduct
 export type OrderProductsInStore = ReadonlyMap<number, OrderProductInStore>
 
+// thankful for no limit to interface characters
+export interface CustomerOrderProductsCreateIncludesStoreLocationId
+  extends CustomerOrderProductsCreateWithoutCustomerOrderInput {
+  storeLocationIdOfInventory: number
+}
+
+export interface CustomerOrderProductsCreateMany
+  extends CustomerOrderProductsCreateManyWithoutCustomerOrderInput {
+  create: CustomerOrderProductsCreateIncludesStoreLocationId[]
+}
+
 /**
  * this is the expected body arg for the endpoint
  * @see /pages/api/v1/customer-orders/create.ts
  */
 export type CustomerOrderCreateInputBodyArgs = {
-  customerOrderProducts: CustomerOrderProductsCreateManyWithoutCustomerOrderInput
+  customerOrderProducts: CustomerOrderProductsCreateMany
   orderTotal: number | string
   storeLocationId: number
 } & Omit<CustomerOrderCreateInput, 'invoice' | 'orderTotal' | 'storeLocations'>

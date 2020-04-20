@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect } from 'react-redux'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { createStyles } from '@material-ui/styles'
 import Container from '@material-ui/core/Container'
@@ -18,11 +18,11 @@ import { useQueryParams } from '@Utils/hooks'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import mutator from '@Lib/server/mutator'
-import { CustomerOrderCreateInputBodyArgs } from '@Types/customer-order'
 import {
-  CustomerOrder,
-  CustomerOrderProductsCreateWithoutCustomerOrderInput,
-} from '@prisma/client'
+  CustomerOrderCreateInputBodyArgs,
+  CustomerOrderProductsCreateIncludesStoreLocationId,
+} from '@Types/customer-order'
+import { CustomerOrder } from '@prisma/client'
 import { useSnackbarContext } from '@Utils/context'
 import { bindActionCreators, Dispatch } from 'redux'
 import { RootAction } from '@Store/modules/root-action'
@@ -102,6 +102,7 @@ function CustomerSale({
   storeLocationIdOptions,
   setStoreLocationId,
 }: CustomerSaleProps) {
+  const router = useRouter()
   const { toggleSnackbar } = useSnackbarContext()
   const classes = useStyles()
   const [query, setQuery] = useQueryParams()
@@ -115,6 +116,15 @@ function CustomerSale({
   } = customerOrderState || {}
   // the entire first step is about the customer!
   const [canMoveToTransaction, setCanMoveToTransaction] = useState(false)
+  // callback when order created
+  const timeoutRef = useRef<number>()
+  const callbackRef = useRef(
+    async (customerOrderIdCreated: number) =>
+      await router.replace(
+        '/dashboard/invoices/[customerOrderId]',
+        `/dashboard/invoices/${customerOrderIdCreated}`
+      )
+  )
 
   // set move to transaction possibilities on change of customerId
   useEffect(() => {
@@ -177,12 +187,13 @@ function CustomerSale({
       'entries' in orderProducts &&
       Array.isArray(Array.from(orderProducts.entries()))
     ) {
-      const createProducts: Array<CustomerOrderProductsCreateWithoutCustomerOrderInput> = Array.from(
+      const createProducts: Array<CustomerOrderProductsCreateIncludesStoreLocationId> = Array.from(
         orderProducts.entries()
-      ).map(([productId, { quantity, unitCost }]) => ({
+      ).map(([productId, { quantity, unitCost, storeLocationId }]) => ({
         product: { connect: { idProduct: productId } },
         quantity: typeof quantity === 'string' ? parseInt(quantity) : quantity,
-        perUnitCost: unitCost,
+        perUnitCost: typeof unitCost === 'string' ? Number(unitCost) : unitCost,
+        storeLocationIdOfInventory: storeLocationId,
       }))
       try {
         const createdOrder = await mutator<
@@ -201,18 +212,40 @@ function CustomerSale({
           toggleSnackbar({
             isOpen: true,
             severity: 'success',
-            message: `New Order Received: #${createdOrder.customerOrder?.idCustomerOrder}`,
+            message: `New Order Received: #${createdOrder.customerOrder?.idCustomerOrder}. Redirecting to Invoice.`,
           })
-          await Router.replace('/dashboard/point-of-sale')
-        }
+          // console.table(createdOrder.customerOrder)
+
+          // set timeout first
+          timeoutRef.current = window?.setTimeout(
+            () =>
+              callbackRef.current(createdOrder.customerOrder.idCustomerOrder),
+            3000
+          )
+          return () => window?.clearTimeout(timeoutRef.current)
+        } // end if createdOrder
+        return () =>
+          toggleSnackbar({
+            isOpen: true,
+            severity: 'warning',
+            message: 'Something went wrong, server did not respond',
+          })
       } catch (e) {
+        console.error(e)
+        return () =>
+          toggleSnackbar({
+            isOpen: true,
+            severity: 'error',
+            message: e.toString(),
+          })
+      }
+    } else {
+      return () =>
         toggleSnackbar({
           isOpen: true,
-          severity: 'error',
-          message: e.toString(),
+          severity: 'warning',
+          message: 'Something in the form is missing...',
         })
-        console.error(e)
-      }
     }
   }, [
     expectedDeliveryDate,
@@ -236,13 +269,17 @@ function CustomerSale({
         )}
       </Box>
       <Grid container>
-        {step === 0 && (
+        {step === 0 ? (
           <Grid className={classes.buttonContainer} item xs={12}>
             <Button
               className={classes.moveButtons}
               variant={'contained'}
-              disabled={!canMoveToTransaction}
-              aria-disabled={!canMoveToTransaction}
+              disabled={
+                canMoveToTransaction != null ? !canMoveToTransaction : false
+              }
+              aria-disabled={
+                canMoveToTransaction != null ? !canMoveToTransaction : false
+              }
               title={'Next to pick products'}
               endIcon={<ArrowForward />}
               onClick={moveForward}
@@ -250,8 +287,8 @@ function CustomerSale({
               Next
             </Button>
           </Grid>
-        )}
-        {step === 1 && (
+        ) : null}
+        {step === 1 ? (
           <>
             <Grid className={classes.buttonContainer} item xs={12} md={6}>
               <Button
@@ -281,7 +318,7 @@ function CustomerSale({
               </Button>
             </Grid>
           </>
-        )}
+        ) : null}
       </Grid>
     </Container>
   )

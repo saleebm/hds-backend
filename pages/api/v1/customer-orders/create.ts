@@ -41,11 +41,67 @@ export default handler(
       orderTotal,
       customerOrderProducts,
     } = req.body.customerOrderCreate as CustomerOrderCreateInputBodyArgs
-    //
-    // const filteredOrderProducts =
-    //   Array.isArray(customerOrderProducts.create) &&
-    //   customerOrderProducts.create.map((orderProduct) => ({}))
 
+    //todo type safety
+    // make sure idProduct is there since not planning to create
+    // also consider to do this inventory management elsewhere ? (not really sure where: but does not feel right here)
+    /**
+     * The products purchased filtered for inventory management
+     *
+     */
+    const filteredOrderProducts =
+      Array.isArray(customerOrderProducts.create) &&
+      customerOrderProducts.create.map((orderProduct) => ({
+        productId: orderProduct.product.connect?.idProduct,
+        quantityPurchased:
+          typeof orderProduct.quantity === 'string'
+            ? parseInt(orderProduct.quantity)
+            : orderProduct.quantity,
+        storeLocationIdOfInventory:
+          typeof orderProduct.storeLocationIdOfInventory === 'string'
+            ? parseInt(orderProduct.storeLocationIdOfInventory)
+            : orderProduct.storeLocationIdOfInventory,
+      }))
+
+    if (Array.isArray(filteredOrderProducts)) {
+      const productInventoryUpdate = []
+
+      for await (const product of filteredOrderProducts) {
+        if (
+          product.productId &&
+          !isNaN(product.productId) &&
+          product.storeLocationIdOfInventory
+        ) {
+          const possibleInventoryItem = await prisma.inventory.findMany({
+            where: {
+              productId: product.productId,
+              storeLocation: product.storeLocationIdOfInventory,
+            },
+            first: 1,
+            select: { quantityOnHand: true },
+          })
+          if (
+            Array.isArray(possibleInventoryItem) &&
+            !!possibleInventoryItem[0]
+          ) {
+            const { quantityOnHand } = possibleInventoryItem[0]
+            productInventoryUpdate.push(
+              prisma.inventory.updateMany({
+                where: {
+                  storeLocation: product.storeLocationIdOfInventory,
+                  productId: product.productId,
+                },
+                data: {
+                  quantityOnHand: quantityOnHand - product.quantityPurchased,
+                },
+              })
+            )
+          } // end check of possibleInventoryItem
+        } // end check productId && store location exist
+      } // end for await loop
+      // now Promise.all it like a champ the batch payload
+      await Promise.all(productInventoryUpdate)
+    }
     try {
       const customerOrder = await prisma.customerOrder.create({
         data: {
@@ -53,12 +109,21 @@ export default handler(
           expectedDeliveryDate: new Date(expectedDeliveryDate),
           orderTotal:
             typeof orderTotal === 'string'
-              ? Number(parseLocaleNumber(req.body.orderTotal))
+              ? Number(parseLocaleNumber(orderTotal))
               : orderTotal,
           storeLocations: {
             connect: { idStoreLocations: storeLocationId },
           },
-          customerOrderProducts: customerOrderProducts,
+          customerOrderProducts: {
+            /* have to do this so no invalid args passed in, ie storeLocationId */
+            create: customerOrderProducts.create.map(
+              ({ product, quantity, perUnitCost }) => ({
+                product,
+                quantity,
+                perUnitCost,
+              })
+            ),
+          },
         },
       })
 
