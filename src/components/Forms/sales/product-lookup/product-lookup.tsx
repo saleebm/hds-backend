@@ -397,7 +397,7 @@ function ProductLookup({
                     variant={'filled'}
                     id={'store-location-select-input'}
                     disableUnderline
-                    defaultValue={storeLocationIdForInventory}
+                    value={storeLocationIdForInventory}
                     onChange={handleStoreLocationChange}
                     inputProps={{
                       name: 'store-location',

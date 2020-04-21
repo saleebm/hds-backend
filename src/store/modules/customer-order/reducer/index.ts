@@ -19,6 +19,12 @@ export const CustomerOrderReducer = (
 ) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case CustomerOrderActionTypes.ResetCustomerOrder:
+        draft.orderProducts = new Map([])
+        draft.customerId = undefined
+        draft.expectedDeliveryDate = undefined
+        draft.orderTotal = 0
+        return
       case CustomerOrderActionTypes.SetCustomer:
       case CustomerOrderActionTypes.CreatedCustomer:
       case CustomerOrderActionTypes.UpdatedCustomer:

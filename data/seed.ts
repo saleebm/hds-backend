@@ -184,15 +184,15 @@ async function main() {
     employeesCreateInput.push(
       prisma.employee.create({
         data: {
-          positionName: 'PRESIDENT_CEO',
+          positionName: 'INFORMATION_TECHNOLOGY',
           zipCode: 38939,
           userSigningSecret: await cryptoFactory
             .generateJWTSecret(32)
             .catch((e) => {
               throw new Error(e)
             }),
-          lastName: 'Monkey',
-          firstName: 'ball',
+          lastName: 'Saleeb',
+          firstName: 'Mina',
           state: 'FL',
           password: yourEncryptedHash,
           roleCapability: 'READ_WRITE',
@@ -227,7 +227,6 @@ async function main() {
         throw new Error(e)
       })
 
-    // todo: map these jobs to permissions.
     const { loc_zip, LOCATION, STATE, FIRST, LAST, Salary, JOB } = emp
 
     const numString = getNumString()

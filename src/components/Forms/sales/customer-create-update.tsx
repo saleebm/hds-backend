@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import { useEffect, useState, StrictMode } from 'react'
 import { Customer } from '@prisma/client'
-
+import clsx from 'clsx'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { createStyles } from '@material-ui/styles'
 
@@ -18,6 +18,7 @@ import { RootStateType } from '@Store/modules/types'
 import { RootAction } from '@Store/modules/root-action'
 import {
   createCustomerAction,
+  resetCustomerOrderAction,
   updateCustomerAction,
 } from '@Store/modules/customer-order/action'
 import { CustomerEditableFields } from '@Types/customer'
@@ -36,6 +37,11 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
       margin: theme.spacing(1),
+    },
+    // the shrink is falling short for some reason
+    formControl: {
+      top: '-7px',
+      left: '-7px',
     },
     label: {
       margin: theme.spacing(1),
@@ -60,6 +66,7 @@ function CustomerCreateUpdateForm({
   customerOrderState,
   createCustomer,
   updateCustomer,
+  resetCustomerOrder,
   isCreating,
   isUpdating,
   isHidden,
@@ -73,7 +80,7 @@ function CustomerCreateUpdateForm({
   const {
     handleSubmit,
     control,
-    setValue,
+    setValue: setValueOfForm,
     reset,
     errors,
     formState: { isSubmitting },
@@ -89,13 +96,16 @@ function CustomerCreateUpdateForm({
     }
   }, [stateErrors, toggleSnackbar])
 
+  // on select of create, then reset the fields and wipe data on customer clean
   useEffect(() => {
     if (isCreating) {
       reset()
+      resetCustomerOrder()
       setCurrentCustomer(null)
     }
-  }, [reset, isCreating])
+  }, [isCreating, resetCustomerOrder, reset])
 
+  // on customer id put into state, get the customer info and put it as currentCustomer
   useEffect(() => {
     if (customerId) {
       try {
@@ -115,9 +125,21 @@ function CustomerCreateUpdateForm({
         console.error(e)
         setLoading(false)
       }
+    } else {
+      //todo
+      // reset not working
+      // perhaps bc input control incorrectly implemented
+      for (const fieldElementName in customerCreateUpdateFields) {
+        // Possible iteration over unexpected (custom / inherited) members, probably missing hasOwnProperty check
+        // noinspection JSUnfilteredForInLoop
+        setValueOfForm(fieldElementName as keyof CustomerEditableFields, '')
+      }
+      reset()
     }
-  }, [toggleSnackbar, customerId])
+  }, [toggleSnackbar, customerId, setValueOfForm, reset])
 
+  // on selection of customer and when customer is put in dataabase,
+  // then set the values of the current customer as values of form fields
   useEffect(() => {
     if (!!currentCustomer) {
       const customerFiltered = Object.entries(currentCustomer)
@@ -128,9 +150,9 @@ function CustomerCreateUpdateForm({
         .map(([key, value]) => ({
           [key]: value ? value : '',
         }))
-      setValue(customerFiltered)
+      setValueOfForm(customerFiltered)
     }
-  }, [currentCustomer, setValue])
+  }, [currentCustomer, setValueOfForm])
 
   const onSubmit = async (editableFields: CustomerEditableFields) => {
     if (isCreating) {
@@ -180,7 +202,7 @@ function CustomerCreateUpdateForm({
         className={styles.createForm}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Grid container justify={'space-around'} spacing={0}>
+        <Grid container justify={'space-around'} spacing={3}>
           <Grid item xs={12}>
             <Typography variant={'h5'}>
               {!isCreating
@@ -205,7 +227,7 @@ function CustomerCreateUpdateForm({
               label={'First name'}
               name={customerCreateUpdateFields.firstName}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.firstName}
               aria-invalid={!!errors.firstName}
               errorType={errors.firstName?.type}
@@ -230,7 +252,7 @@ function CustomerCreateUpdateForm({
               label={'Middle initial'}
               name={customerCreateUpdateFields.middleInitial}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.middleInitial}
               aria-invalid={!!errors.middleInitial}
               errorType={errors.middleInitial?.type}
@@ -258,7 +280,7 @@ function CustomerCreateUpdateForm({
               name={customerCreateUpdateFields.lastName}
               labelClasses={classes.label}
               isDisabled={isLoading}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.lastName}
               errorType={errors.lastName?.type}
               aria-invalid={!!errors.lastName}
@@ -285,7 +307,7 @@ function CustomerCreateUpdateForm({
               isDisabled={isLoading}
               name={customerCreateUpdateFields.address}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.address}
               aria-invalid={!!errors.address}
               errorType={errors.address?.type}
@@ -310,7 +332,7 @@ function CustomerCreateUpdateForm({
               isDisabled={isLoading}
               name={customerCreateUpdateFields.city}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.city}
               aria-invalid={!!errors.city}
               errorType={errors.city?.type}
@@ -332,7 +354,7 @@ function CustomerCreateUpdateForm({
               label={'State'}
               name={customerCreateUpdateFields.state}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.state}
               aria-invalid={!!errors.state}
               errorType={errors.state?.type}
@@ -359,7 +381,7 @@ function CustomerCreateUpdateForm({
               isDisabled={isLoading}
               name={customerCreateUpdateFields.zipCode}
               labelClasses={classes.label}
-              wrapClasses={classes.margin}
+              wrapClasses={clsx(classes.margin, classes.formControl)}
               isError={!!errors.zipCode}
               aria-invalid={!!errors.zipCode}
               errorType={errors.zipCode?.type}
@@ -398,6 +420,7 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
     {
       updateCustomer: updateCustomerAction,
       createCustomer: createCustomerAction,
+      resetCustomerOrder: resetCustomerOrderAction,
     },
     dispatch
   )

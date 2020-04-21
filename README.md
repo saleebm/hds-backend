@@ -32,8 +32,8 @@
    - ~~seal the deal with redux action, i.e. put customer order in db async~~
      1. ~~will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity~~
    - show the customer orders as invoices
-     1. create base invoice
-     2.  
+     1. create base invoice on server side if not created already
+     2. line items - bill to pay, deducts amount from invoice total as added.
 
 ## Unit tests
 
@@ -48,3 +48,9 @@
    - Refine data fetching methods, ie remove axios dependency and stick to fetch.
    - Reduce redundant instantiations of prisma client from the api routes and server side requests into single utility
    - API routes checking for auth redundancy as well as verifying request params / method
+
+2. Database structure + documentation
+   - a lot of crap in the database makes no sense without a documentation of the underlying structure and planning that went into it, i.e. "Jobs" - "Invoice" relationship
+   - it would help to at least comment the info into the schema file for prisma
+   
+3. I did absolutely zero seo, not to mention even the basics like page title and unique meta.

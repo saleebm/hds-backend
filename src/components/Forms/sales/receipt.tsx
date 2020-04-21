@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     textOverflow: 'ellipsis',
   },
   priceTagSpan: {
-    padding: `0 ${theme.spacing(3)}px`,
+    paddingRight: theme.spacing(1),
     '&> span': {
       fontVariant: 'tabular-nums',
       fontVariationSettings: `'wght' 700, 'slnt' -100`,

@@ -11,6 +11,7 @@ declare global {
       SENDGRID_API_KEY: string
       ADMIN_PASS: string
       ADMIN_EMAIL: string
+      NAMESPACE: string
     }
   }
 }

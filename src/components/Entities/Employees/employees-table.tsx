@@ -129,10 +129,12 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
               TECHNICIAN: 'Technician',
               DELIVERY: 'Delivery',
               WAREHOUSE: 'Warehouse',
+              INFORMATION_TECHNOLOGY: 'Information Technology',
               INSTALLATIONS: 'Installations',
               INSTALLATIONS_DELIVERIES: 'Installations and Deliveries',
               INSTALLATIONS_DELIVERIES_SALES:
                 'Installations, Deliveries, and Sales',
+              NOT_ASSIGNED: 'Not assigned',
               WAREHOUSE_INSTALLATIONS_DELIVERIES:
                 'Installations, Deliveries, and Warehouse',
               WAREHOUSE_DELIVERIES: 'Warehouse and Deliveries',

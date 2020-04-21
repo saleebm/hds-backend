@@ -21,23 +21,25 @@ model Customer {
   zipCode       Int
   customerOrder CustomerOrder[]
   invoice       Invoice[]
-  jobs          Jobs[]
+  jobs          Job[]
 }
 
 model CustomerOrder {
   actualDeliveryDate    DateTime?
   customerId            Int
   dateCancelled         DateTime?
+  employeeId            Int
   expectedDeliveryDate  DateTime
   idCustomerOrder       Int                     @default(autoincrement()) @id
-  isCanceled            Int?                    @default(0)
+  isCanceled            Boolean                 @default(false)
   orderDate             DateTime                @default(now())
   orderTotal            Float
   storeLocationId       Int
   customer              Customer                @relation(fields: [customerId], references: [idCustomer])
   storeLocations        StoreLocations          @relation(fields: [storeLocationId], references: [idStoreLocations])
+  employee              Employee                @relation(fields: [employeeId], references: [employeeId])
   customerOrderProducts CustomerOrderProducts[]
-  invoice               Invoice[]
+  invoice               Invoice
 
   @@index([customerId], name: "customerId_idx")
   @@index([customerId], name: "customerorder_ibfk_1")
@@ -69,7 +71,7 @@ model Employee {
   firstName         String
   lastName          String
   password          String
-  positionName      EmployeePositionName
+  positionName      EmployeePositionName   @default(NOT_ASSIGNED)
   roleCapability    EmployeeRoleCapability @default(NONE)
   salary            Float
   state             String
@@ -81,6 +83,7 @@ model Employee {
   invoice           Invoice[]
   magicCode         MagicCode?
   salesOrders       SalesOrders[]
+  customerOrders    CustomerOrder[]
 
   @@index([storeLocationId], name: "employee_ibfk_1")
   @@index([storeLocationId], name: "storeLocationId_idx")
@@ -103,6 +106,7 @@ model Inventory {
   @@unique([productId, storeLocation])
 }
 
+// created with the customer order
 model Invoice {
   createdAt        DateTime           @default(now())
   customerId       Int
@@ -111,16 +115,24 @@ model Invoice {
   employeeId       Int
   idInvoice        Int                @default(autoincrement()) @id
   invoiceNumber    String             @unique
+  // accounts for the orderTotal and jobFeeTotal
   invoiceTotal     Float
-  job              Int
-  paidDate         DateTime
+  jobId            Int
+  // the total from the job fees
+  jobFeeTotal      Float              @default(0)
+  // the total from the customer order
+  orderTotal       Float
+  // the date paid off in full 
+  paidDate         DateTime?
   storeLocationId  Int
   updatedAt        DateTime           @updatedAt
   customer         Customer           @relation(fields: [customerId], references: [idCustomer])
   customerOrder    CustomerOrder      @relation(fields: [customerOrderId], references: [idCustomerOrder])
   employee         Employee           @relation(fields: [employeeId], references: [employeeId])
-  jobs             Jobs               @relation(fields: [job], references: [idJobs])
+  // includes the various operations for the invoice
+  job              Job                @relation(fields: [jobId], references: [idJob])
   storeLocations   StoreLocations     @relation(fields: [storeLocationId], references: [idStoreLocations])
+  // charges to the customer appear on the invoice as InvoiceLineItems, include fees for 
   invoiceLineItems InvoiceLineItems[]
 
   @@index([customerId], name: "customerId_idx")
@@ -130,41 +142,41 @@ model Invoice {
   @@index([customerOrderId], name: "invoice_ibfk_2")
   @@index([employeeId], name: "invoice_ibfk_3")
   @@index([storeLocationId], name: "invoice_ibfk_4")
-  @@index([job], name: "invoice_ibfk_5_idx")
+  @@index([jobId], name: "invoice_ibfk_5_idx")
   @@index([storeLocationId], name: "storeLocationId_idx")
 }
 
+// these are the individual bills given to the user
 model InvoiceLineItems {
   idinvoiceLineItem Int      @default(autoincrement()) @id
   invoiceId         Int
   lineItemTotal     Float
-  productId         Int?
-  quantity          Int
   invoice           Invoice  @relation(fields: [invoiceId], references: [idInvoice])
-  product           Product? @relation(fields: [productId], references: [idProduct])
+  dueDate           DateTime @default(now())
 
   @@index([invoiceId], name: "invoiceId_idx")
   @@index([invoiceId], name: "invoicelineitems_ibfk_1")
-  @@index([productId], name: "invoicelineitems_ibfk_4")
-  @@index([productId], name: "productId_idx")
 }
 
-model Jobs {
+// job is automatically assigned to an invoice (1:1)
+// job contains the various "Operations" (1:m) of the customerOrder
+model Job {
   customerId     Int
-  dateCompleted  DateTime
+  dateCompleted  DateTime?
   dateScheduled  DateTime
   details        String?
   hoursActual    Float?
   hoursScheduled Float
-  idJobs         Int          @default(autoincrement()) @id
+  idJob          Int          @default(autoincrement()) @id
   customer       Customer     @relation(fields: [customerId], references: [idCustomer])
-  invoice        Invoice[]
+  invoice        Invoice
   operations     Operations[]
 
   @@index([customerId], name: "customerId_idx")
   @@index([customerId], name: "jobs_ibfk_1")
 }
 
+// magic code is sent to employees on account creation if no password provided or on password reset request
 model MagicCode {
   code      String   @id
   updatedAt DateTime @updatedAt
@@ -172,14 +184,19 @@ model MagicCode {
   employee  Employee @relation(fields: [userId], references: [employeeId])
 }
 
+// many to one with Job
+// created after the fact so it includes the hours charged and then goes into the invoice as a line item
 model Operations {
   chargePerHour Float
   details       String?
   hoursCharged  Float
-  idOperations  Int     @default(autoincrement()) @id
+  idOperations  Int      @default(autoincrement()) @id
   jobId         Int
+  customerId    Int
+  // what the company is doing, i.e. installation or delivery
   operationName String
-  jobs          Jobs    @relation(fields: [jobId], references: [idJobs])
+  job           Job      @relation(fields: [jobId], references: [idJob])
+  customer      Customer @relation(fields: [customerId], references: [idCustomer])
 
   @@index([jobId], name: "jobId_idx")
   @@index([jobId], name: "operations_ibfk_1")
@@ -200,7 +217,6 @@ model Product {
   updatedAt             DateTime                @updatedAt
   customerOrderProducts CustomerOrderProducts[]
   inventory             Inventory[]
-  invoiceLineItems      InvoiceLineItems[]
   salesOrderItem        SalesOrderItem[]
 }
 
@@ -284,6 +300,8 @@ enum EmployeePositionName {
   INSTALLATIONS_DELIVERIES_SALES
   WAREHOUSE_INSTALLATIONS_DELIVERIES
   WAREHOUSE_DELIVERIES
+  INFORMATION_TECHNOLOGY
+  NOT_ASSIGNED
 }
 
 enum EmployeeRoleCapability {

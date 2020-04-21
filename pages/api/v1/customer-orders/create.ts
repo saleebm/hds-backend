@@ -1,5 +1,7 @@
-import { handler } from '@Lib/server'
+import { v5 as uuid } from 'uuid'
 import { CustomerOrder, PrismaClient } from '@prisma/client'
+
+import { handler } from '@Lib/server'
 import {
   InvalidArgumentError,
   NotImplementedError,
@@ -30,6 +32,10 @@ export default handler(
       throw new UnauthenticatedError()
     }
 
+    const NAMESPACE = process.env.NAMESPACE
+    if (!NAMESPACE)
+      throw new Error('No namespace found, you forgot to add it to the env?')
+
     if (!req.body.customerOrderCreate) {
       throw new InvalidArgumentError('Missing customerOrderCreate body arg')
     }
@@ -40,8 +46,17 @@ export default handler(
       storeLocationId,
       orderTotal,
       customerOrderProducts,
+      employee,
     } = req.body.customerOrderCreate as CustomerOrderCreateInputBodyArgs
 
+    const storeLocations = {
+      connect: { idStoreLocations: storeLocationId },
+    }
+    // need to make sure to get the correct value type
+    const totalCharged =
+      typeof orderTotal === 'string'
+        ? Number(parseLocaleNumber(orderTotal))
+        : orderTotal
     //todo type safety
     // make sure idProduct is there since not planning to create
     // also consider doing this inventory management elsewhere ? (not really sure where: but does not feel right here)
@@ -108,15 +123,11 @@ export default handler(
     try {
       const customerOrder = await prisma.customerOrder.create({
         data: {
-          customer: customer,
+          employee,
+          customer,
           expectedDeliveryDate: new Date(expectedDeliveryDate),
-          orderTotal:
-            typeof orderTotal === 'string'
-              ? Number(parseLocaleNumber(orderTotal))
-              : orderTotal,
-          storeLocations: {
-            connect: { idStoreLocations: storeLocationId },
-          },
+          orderTotal: totalCharged,
+          storeLocations,
           customerOrderProducts: {
             /* have to do this so no invalid args passed in, ie storeLocationId */
             create: customerOrderProducts.create.map(
@@ -126,6 +137,24 @@ export default handler(
                 perUnitCost,
               })
             ),
+          },
+          invoice: {
+            create: {
+              dueDate: new Date(expectedDeliveryDate),
+              customer,
+              employee,
+              storeLocations,
+              invoiceTotal: totalCharged,
+              orderTotal: totalCharged,
+              invoiceNumber: uuid('todo: customerIdGoesHere', NAMESPACE),
+              job: {
+                create: {
+                  customer: { connect: { idCustomer: 1 } },
+                  hoursScheduled: 0,
+                  dateScheduled: new Date(expectedDeliveryDate),
+                },
+              },
+            },
           },
         },
       })

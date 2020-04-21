@@ -26,7 +26,10 @@ import { CustomerOrder } from '@prisma/client'
 import { useSnackbarContext } from '@Utils/context'
 import { bindActionCreators, Dispatch } from 'redux'
 import { RootAction } from '@Store/modules/root-action'
-import { setStoreLocationAction } from '@Store/modules/customer-order/action'
+import {
+  resetCustomerOrderAction,
+  setStoreLocationAction,
+} from '@Store/modules/customer-order/action'
 
 type CustomerSaleProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & {
@@ -48,7 +51,13 @@ const mapStateToProps = (state: RootStateType) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>) =>
-  bindActionCreators({ setStoreLocationId: setStoreLocationAction }, dispatch)
+  bindActionCreators(
+    {
+      setStoreLocationId: setStoreLocationAction,
+      resetCustomerOrder: resetCustomerOrderAction,
+    },
+    dispatch
+  )
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -101,6 +110,7 @@ function CustomerSale({
   currentEmployee,
   storeLocationIdOptions,
   setStoreLocationId,
+  resetCustomerOrder,
 }: CustomerSaleProps) {
   const router = useRouter()
   const { toggleSnackbar } = useSnackbarContext()
@@ -196,6 +206,14 @@ function CustomerSale({
         storeLocationIdOfInventory: storeLocationId,
       }))
       try {
+        if (!employee)
+          return () =>
+            toggleSnackbar({
+              isOpen: true,
+              message: 'No current employee. Ask typescript why',
+              severity: 'error',
+            })
+
         const createdOrder = await mutator<
           { customerOrder: CustomerOrder },
           { customerOrderCreate: CustomerOrderCreateInputBodyArgs }
@@ -206,6 +224,7 @@ function CustomerSale({
             storeLocationId,
             orderTotal,
             customerOrderProducts: { create: createProducts },
+            employee: { connect: { employeeId: employee.employeeId } },
           },
         })
         if (createdOrder && createdOrder.customerOrder?.idCustomerOrder) {
@@ -214,8 +233,8 @@ function CustomerSale({
             severity: 'success',
             message: `New Order Received: #${createdOrder.customerOrder?.idCustomerOrder}. Redirecting to Invoice.`,
           })
-          // console.table(createdOrder.customerOrder)
-
+          // reset the customer order state
+          resetCustomerOrder()
           // set timeout first
           timeoutRef.current = window?.setTimeout(
             () =>
@@ -253,20 +272,22 @@ function CustomerSale({
     orderProducts,
     orderTotal,
     storeLocationId,
+    resetCustomerOrder,
     toggleSnackbar,
+    employee,
   ])
 
   return (
     <Container className={classes.root} maxWidth={false} disableGutters>
       <Box className={classes.contentBox}>
-        {step === 0 && <CustomerInfo />}
-        {step === 1 && (
+        {step === 0 ? <CustomerInfo /> : null}
+        {step === 1 ? (
           <Transaction
             products={products}
             currentEmployee={currentEmployee}
             storeLocationIdOptions={storeLocationIdOptions}
           />
-        )}
+        ) : null}
       </Box>
       <Grid container>
         {step === 0 ? (

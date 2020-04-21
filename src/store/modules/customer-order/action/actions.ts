@@ -200,3 +200,9 @@ export const setOrderTotalAction = (): CustomerResult<void> => (
     })
   }
 }
+
+export const resetCustomerOrderAction = (): CustomerResult<any> => (
+  dispatch
+) => {
+  dispatch({ type: CustomerOrderActionTypes.ResetCustomerOrder })
+}

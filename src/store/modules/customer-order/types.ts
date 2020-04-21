@@ -41,6 +41,7 @@ export enum CustomerOrderActionTypes {
   SetOrderProduct = '@pos/SET_ORDER_PRODUCT', // i.e. To change the quantity.
   RemoveOrderProduct = '@pos/REMOVE_ORDER_PRODUCT',
   SetStoreLocation = '@pos/SET_STORE_LOCATION',
+  ResetCustomerOrder = '@pos/RESET_CUSTOMER_ORDER',
 }
 
 export interface ISetCustomerAction
@@ -91,6 +92,10 @@ export interface IRemoveOrderProductAction
   payload: { productIdToRemove: number }
 }
 
+export interface IResetCustomerOrderAction
+  extends Action<CustomerOrderActionTypes.ResetCustomerOrder> {
+  type: typeof CustomerOrderActionTypes.ResetCustomerOrder
+}
 export type CustomerResult<TResult> = ThunkAction<
   TResult,
   RootStateType,
@@ -106,3 +111,4 @@ export type CustomerOrderActions =
   | IAddOrderProductAction
   | IRemoveOrderProductAction
   | IUpdateOrderProductQuantity
+  | IResetCustomerOrderAction

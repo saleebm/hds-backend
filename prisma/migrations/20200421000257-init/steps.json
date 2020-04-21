@@ -19,7 +19,9 @@
         "INSTALLATIONS_DELIVERIES",
         "INSTALLATIONS_DELIVERIES_SALES",
         "WAREHOUSE_INSTALLATIONS_DELIVERIES",
-        "WAREHOUSE_DELIVERIES"
+        "WAREHOUSE_DELIVERIES",
+        "INFORMATION_TECHNOLOGY",
+        "NOT_ASSIGNED"
       ]
     },
     {
@@ -217,7 +219,7 @@
       "tag": "CreateField",
       "model": "Customer",
       "field": "jobs",
-      "type": "Jobs",
+      "type": "Job",
       "arity": "List"
     },
     {
@@ -244,6 +246,13 @@
       "field": "dateCancelled",
       "type": "DateTime",
       "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrder",
+      "field": "employeeId",
+      "type": "Int",
+      "arity": "Required"
     },
     {
       "tag": "CreateField",
@@ -299,8 +308,8 @@
       "tag": "CreateField",
       "model": "CustomerOrder",
       "field": "isCanceled",
-      "type": "Int",
-      "arity": "Optional"
+      "type": "Boolean",
+      "arity": "Required"
     },
     {
       "tag": "CreateDirective",
@@ -325,7 +334,7 @@
         "directive": "default"
       },
       "argument": "",
-      "value": "0"
+      "value": "false"
     },
     {
       "tag": "CreateField",
@@ -468,6 +477,52 @@
     {
       "tag": "CreateField",
       "model": "CustomerOrder",
+      "field": "employee",
+      "type": "Employee",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "CustomerOrder",
+          "field": "employee"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "CustomerOrder",
+          "field": "employee"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[employeeId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "CustomerOrder",
+          "field": "employee"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[employeeId]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "CustomerOrder",
       "field": "customerOrderProducts",
       "type": "CustomerOrderProducts",
       "arity": "List"
@@ -477,7 +532,7 @@
       "model": "CustomerOrder",
       "field": "invoice",
       "type": "Invoice",
-      "arity": "List"
+      "arity": "Required"
     },
     {
       "tag": "CreateDirective",
@@ -946,6 +1001,31 @@
       "arity": "Required"
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "positionName"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Employee",
+          "field": "positionName"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "NOT_ASSIGNED"
+    },
+    {
       "tag": "CreateField",
       "model": "Employee",
       "field": "roleCapability",
@@ -1095,6 +1175,13 @@
       "model": "Employee",
       "field": "salesOrders",
       "type": "SalesOrders",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Employee",
+      "field": "customerOrders",
+      "type": "CustomerOrder",
       "arity": "List"
     },
     {
@@ -1403,6 +1490,22 @@
       }
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Inventory",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[productId, storeLocation]"
+            }
+          ]
+        },
+        "directive": "unique"
+      }
+    },
+    {
       "tag": "CreateModel",
       "model": "Invoice"
     },
@@ -1537,8 +1640,47 @@
     {
       "tag": "CreateField",
       "model": "Invoice",
-      "field": "job",
+      "field": "jobId",
       "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Invoice",
+      "field": "jobFeeTotal",
+      "type": "Float",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "jobFeeTotal"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Invoice",
+          "field": "jobFeeTotal"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "0"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Invoice",
+      "field": "orderTotal",
+      "type": "Float",
       "arity": "Required"
     },
     {
@@ -1546,7 +1688,7 @@
       "model": "Invoice",
       "field": "paidDate",
       "type": "DateTime",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -1714,8 +1856,8 @@
     {
       "tag": "CreateField",
       "model": "Invoice",
-      "field": "jobs",
-      "type": "Jobs",
+      "field": "job",
+      "type": "Job",
       "arity": "Required"
     },
     {
@@ -1724,7 +1866,7 @@
         "path": {
           "tag": "Field",
           "model": "Invoice",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       }
@@ -1736,12 +1878,12 @@
         "path": {
           "tag": "Field",
           "model": "Invoice",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       },
       "argument": "fields",
-      "value": "[job]"
+      "value": "[jobId]"
     },
     {
       "tag": "CreateArgument",
@@ -1750,12 +1892,12 @@
         "path": {
           "tag": "Field",
           "model": "Invoice",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       },
       "argument": "references",
-      "value": "[idJobs]"
+      "value": "[idJob]"
     },
     {
       "tag": "CreateField",
@@ -1959,7 +2101,7 @@
           "arguments": [
             {
               "name": "",
-              "value": "[job]"
+              "value": "[jobId]"
             },
             {
               "name": "name",
@@ -2054,20 +2196,6 @@
     {
       "tag": "CreateField",
       "model": "InvoiceLineItems",
-      "field": "productId",
-      "type": "Int",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
-      "field": "quantity",
-      "type": "Int",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "InvoiceLineItems",
       "field": "invoice",
       "type": "Invoice",
       "arity": "Required"
@@ -2114,9 +2242,9 @@
     {
       "tag": "CreateField",
       "model": "InvoiceLineItems",
-      "field": "product",
-      "type": "Product",
-      "arity": "Optional"
+      "field": "dueDate",
+      "type": "DateTime",
+      "arity": "Required"
     },
     {
       "tag": "CreateDirective",
@@ -2124,9 +2252,9 @@
         "path": {
           "tag": "Field",
           "model": "InvoiceLineItems",
-          "field": "product"
+          "field": "dueDate"
         },
-        "directive": "relation"
+        "directive": "default"
       }
     },
     {
@@ -2136,26 +2264,12 @@
         "path": {
           "tag": "Field",
           "model": "InvoiceLineItems",
-          "field": "product"
+          "field": "dueDate"
         },
-        "directive": "relation"
+        "directive": "default"
       },
-      "argument": "fields",
-      "value": "[productId]"
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "InvoiceLineItems",
-          "field": "product"
-        },
-        "directive": "relation"
-      },
-      "argument": "references",
-      "value": "[idProduct]"
+      "argument": "",
+      "value": "now()"
     },
     {
       "tag": "CreateDirective",
@@ -2198,95 +2312,55 @@
       }
     },
     {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Model",
-          "model": "InvoiceLineItems",
-          "arguments": [
-            {
-              "name": "",
-              "value": "[productId]"
-            },
-            {
-              "name": "name",
-              "value": "\"invoicelineitems_ibfk_4\""
-            }
-          ]
-        },
-        "directive": "index"
-      }
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Model",
-          "model": "InvoiceLineItems",
-          "arguments": [
-            {
-              "name": "",
-              "value": "[productId]"
-            },
-            {
-              "name": "name",
-              "value": "\"productId_idx\""
-            }
-          ]
-        },
-        "directive": "index"
-      }
-    },
-    {
       "tag": "CreateModel",
-      "model": "Jobs"
+      "model": "Job"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "customerId",
       "type": "Int",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "dateCompleted",
       "type": "DateTime",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "dateScheduled",
       "type": "DateTime",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "details",
       "type": "String",
       "arity": "Optional"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "hoursActual",
       "type": "Float",
       "arity": "Optional"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "hoursScheduled",
       "type": "Float",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
-      "field": "idJobs",
+      "model": "Job",
+      "field": "idJob",
       "type": "Int",
       "arity": "Required"
     },
@@ -2295,8 +2369,8 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "Jobs",
-          "field": "idJobs"
+          "model": "Job",
+          "field": "idJob"
         },
         "directive": "default"
       }
@@ -2307,8 +2381,8 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "Jobs",
-          "field": "idJobs"
+          "model": "Job",
+          "field": "idJob"
         },
         "directive": "default"
       },
@@ -2320,15 +2394,15 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "Jobs",
-          "field": "idJobs"
+          "model": "Job",
+          "field": "idJob"
         },
         "directive": "id"
       }
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "customer",
       "type": "Customer",
       "arity": "Required"
@@ -2338,7 +2412,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "Jobs",
+          "model": "Job",
           "field": "customer"
         },
         "directive": "relation"
@@ -2350,7 +2424,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "Jobs",
+          "model": "Job",
           "field": "customer"
         },
         "directive": "relation"
@@ -2364,7 +2438,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "Jobs",
+          "model": "Job",
           "field": "customer"
         },
         "directive": "relation"
@@ -2374,14 +2448,14 @@
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "invoice",
       "type": "Invoice",
-      "arity": "List"
+      "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "Jobs",
+      "model": "Job",
       "field": "operations",
       "type": "Operations",
       "arity": "List"
@@ -2391,7 +2465,7 @@
       "location": {
         "path": {
           "tag": "Model",
-          "model": "Jobs",
+          "model": "Job",
           "arguments": [
             {
               "name": "",
@@ -2411,7 +2485,7 @@
       "location": {
         "path": {
           "tag": "Model",
-          "model": "Jobs",
+          "model": "Job",
           "arguments": [
             {
               "name": "",
@@ -2608,6 +2682,13 @@
     {
       "tag": "CreateField",
       "model": "Operations",
+      "field": "customerId",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Operations",
       "field": "operationName",
       "type": "String",
       "arity": "Required"
@@ -2615,8 +2696,8 @@
     {
       "tag": "CreateField",
       "model": "Operations",
-      "field": "jobs",
-      "type": "Jobs",
+      "field": "job",
+      "type": "Job",
       "arity": "Required"
     },
     {
@@ -2625,7 +2706,7 @@
         "path": {
           "tag": "Field",
           "model": "Operations",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       }
@@ -2637,7 +2718,7 @@
         "path": {
           "tag": "Field",
           "model": "Operations",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       },
@@ -2651,12 +2732,58 @@
         "path": {
           "tag": "Field",
           "model": "Operations",
-          "field": "jobs"
+          "field": "job"
         },
         "directive": "relation"
       },
       "argument": "references",
-      "value": "[idJobs]"
+      "value": "[idJob]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Operations",
+      "field": "customer",
+      "type": "Customer",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Operations",
+          "field": "customer"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Operations",
+          "field": "customer"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[customerId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Operations",
+          "field": "customer"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[idCustomer]"
     },
     {
       "tag": "CreateDirective",
@@ -2881,13 +3008,6 @@
       "model": "Product",
       "field": "inventory",
       "type": "Inventory",
-      "arity": "List"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Product",
-      "field": "invoiceLineItems",
-      "type": "InvoiceLineItems",
       "arity": "List"
     },
     {
