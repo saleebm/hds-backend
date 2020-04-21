@@ -4,7 +4,8 @@ import { isServer } from '@Utils/common'
 let axiosInstance: AxiosInstance
 
 /**
- * todo drop this im using fetch from now on. save the bundle the 5.38kb gzipped
+ *todo drop this im using fetch from now on. save the bundle the 5.38kb gzipped
+ * redux dispatch still uses it
  */
 export default function () {
   if (isServer() || !axiosInstance) {

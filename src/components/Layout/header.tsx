@@ -1,12 +1,14 @@
+import dynamic from 'next/dynamic'
 import { Router } from 'next/router'
 import { connect } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { LinearProgress } from '@material-ui/core'
 import Container from '@material-ui/core/Container'
-import { NavDrawer } from '@Components/Layout/index'
 import { RootStateType } from '@Store/modules/types'
 
 import styles from './layout.module.scss'
+
+const NavDrawer = dynamic(() => import('./nav-drawer'))
 
 type HeaderProps = ReturnType<typeof mapStateToProps>
 
@@ -70,11 +72,29 @@ const Header = ({ isAuthenticated }: HeaderProps) => {
           variant={'indeterminate'}
         />
       )}
-      {isAuthenticated && (
-        <Container className={styles.header}>
+      <Container className={styles.header}>
+        {isAuthenticated ? (
           <NavDrawer />
-        </Container>
-      )}
+        ) : (
+          <span
+            style={{
+              clip: 'rect(1px, 1px, 1px, 1px) !important',
+              visibility: 'hidden',
+              position: 'absolute',
+              insetBlockStart: 0,
+              overflow: 'hidden !important',
+              height: '1px',
+              width: '1px',
+              padding: 0,
+              margin: 0,
+            }}
+            dangerouslySetInnerHTML={{
+              __html:
+                'super dangerously set inner html you might be asking why but i have no answer muahahahahahahahaha jk the container props say children are required so boom. children.... if only it was so easy in real life to make children, i can barely talk to a female without gasping for air because of my lack of self-esteem and imposter syndrome. i am working on it though, at least i am aware. thanks',
+            }}
+          />
+        )}
+      </Container>
     </>
   )
 }

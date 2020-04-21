@@ -10,15 +10,18 @@ import { Store } from 'redux'
 import { RootStateType } from '@Store/modules/types'
 import { AuthActionTypes, refreshJWTAction } from '@Store/modules/auth/action'
 import { authService } from '@Services'
-import { getAxiosInstance } from '@Lib/axios-instance'
 import { Viewer } from '@Pages/api/v1/account/viewer'
 import { useInterval } from '@Utils/hooks'
+import mutator from '@Lib/server/mutator'
+import getApiHostUrl from '@Lib/server/get-api-host'
 
 interface InitStoreOptions {
+  // todo strict type check
   initialStoreState?: any
   ctx?: AppPropsWithStore | ServerSideProps
 }
 
+// todo strict type check
 export interface AppProviderProps {
   initialStoreState: any
   appProps: any
@@ -60,7 +63,7 @@ export function withRedux(WrappedApp: any) {
 
     const { orderProducts, ...customerOrderStore } = customerOrderReducer || {}
 
-    // since there is a Map, it is necessary to unserialize and serialize
+    // since a Map exists in store and sometimes passes in through server, deserialize it
     const serializedOrderProducts =
       !!customerOrderReducer && customerOrderReducer.orderProducts
         ? JSON.parse(customerOrderReducer.orderProducts).reduce(
@@ -117,9 +120,11 @@ export function withRedux(WrappedApp: any) {
       appProps = await App.getInitialProps.call(WrappedApp, ctx)
     }
 
-    // using GIP instead of GSSP because then I can statically generate those pages
-    // routing authenticated/unauthenticated server side
-    // make sure that the headers not already sent or this code block would be useless
+    //todo
+    // the problem from the README describes this part
+    // I wrongly assumed that GIP would still run on the server even with getStaticProps/getStaticPaths
+    // but it does not. All the dashboard pages rely on the following to
+    // route authenticated/unauthenticated server side
     if (req && res && !res.headersSent && typeof res.writeHead === 'function') {
       const authToken = authService.getAccessToken(ctx)
       /**
@@ -131,28 +136,28 @@ export function withRedux(WrappedApp: any) {
         }
       }
 
-      if (!!store && authToken) {
+      if (!!store && !!authToken) {
         // did not work with checkAuthStatusAction thunk dispatch.
         // as in doing store.dispatch(checkAuthStatusAction())
         // probably because I have to bindActionCreators??
         try {
-          const authCodeResponse = await getAxiosInstance().post<Viewer>(
-            'account/viewer',
-            undefined,
-            {
-              headers: {
-                authorization: `Bearer ${authToken}`,
-              },
-            }
+          const viewerRequestPath = `${getApiHostUrl(
+            req
+          )}/api/v1/account/viewer`
+
+          const authCodeResponse = await mutator<Viewer>(
+            viewerRequestPath,
+            {},
+            ctx
           )
-          if (authCodeResponse.data && authCodeResponse.data.userId) {
+          if (authCodeResponse && authCodeResponse.userId) {
             const {
               userId,
               email,
               firstName,
               lastName,
               roleCapability,
-            } = authCodeResponse.data
+            } = authCodeResponse
             // dispatch
             store.dispatch({
               type: AuthActionTypes.CheckAuthStatusSuccess,
@@ -177,9 +182,10 @@ export function withRedux(WrappedApp: any) {
           }
         } catch (e) {
           redirectUnauthenticated()
-        }
-      } else {
-        //no auth token at all
+        } // end try-catch
+      } //end if store and auth token
+      else {
+        // if not authorized by server and not going to login page or auth page (reset password), redirect to login
         redirectUnauthenticated()
       }
     }
@@ -188,6 +194,7 @@ export function withRedux(WrappedApp: any) {
     const { customerOrderReducer, authReducer, globalReducer } =
       initialState || {}
 
+    // if customer order state, serialize the Map object in it
     if (!!customerOrderReducer) {
       const { orderProducts, ...customerOrderDeets } =
         customerOrderReducer || {}
@@ -202,7 +209,7 @@ export function withRedux(WrappedApp: any) {
                   orderProducts && orderProducts.entries()
                     ? [...orderProducts.entries()]
                     : {}
-                ), // must be serialized due to Map in redux store
+                ),
               },
               authReducer,
               globalReducer,

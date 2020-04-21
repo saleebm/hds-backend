@@ -58,21 +58,16 @@ const mapStateToProps: (
   state: RootStateType
 ) => {
   isAuthenticated: boolean
-  user: { last: string; first: string } | null
+  user: { last?: string; first?: string }
 } = (state: RootStateType) => {
   const { authReducer } = state
-  return authReducer?.isAuthenticated
-    ? {
-        isAuthenticated: authReducer.isAuthenticated,
-        user: {
-          first: authReducer.currentUser!.firstName!,
-          last: authReducer.currentUser!.lastName!,
-        },
-      }
-    : {
-        isAuthenticated: false,
-        user: null,
-      }
+  return {
+    isAuthenticated: authReducer.isAuthenticated,
+    user: {
+      first: authReducer.currentUser?.firstName,
+      last: authReducer.currentUser?.lastName,
+    },
+  }
 }
 
 const NextListItemText = forwardRef<any, ButtonLinkProps>(

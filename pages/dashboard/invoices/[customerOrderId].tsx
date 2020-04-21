@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 
 import { DashboardView } from '@Components/Views/dashboard'
 import { InvoiceGetStaticPropsReturnType, InvoiceParams } from '@Types/invoices'
@@ -6,35 +6,15 @@ import { InvoiceGetStaticPropsReturnType, InvoiceParams } from '@Types/invoices'
 function Invoices({ customerOrder }: InvoiceGetStaticPropsReturnType) {
   return (
     <DashboardView pageTitle={'Invoice'}>
-      <p>{customerOrder ? customerOrder : 'Nothing here'}</p>
+      <p>{!!customerOrder ? customerOrder : 'Nothing here'}</p>
     </DashboardView>
   )
 }
 
-// docs: https://nextjs.org/docs/basic-features/data-fetching#simple-example
-export const getStaticPaths: GetStaticPaths<InvoiceParams> = async () => {
-  const { PrismaClient } = await import('@prisma/client')
-  const prisma = new PrismaClient()
-  // get all customer orders, but only select the customer order id
-  const customerOrders = await prisma.customerOrder.findMany({
-    select: { idCustomerOrder: true },
-  })
-
-  const paths = customerOrders.map((order) => ({
-    params: { customerOrderId: `${order.idCustomerOrder}` },
-  }))
-
-  return {
-    paths,
-    fallback: true,
-  }
-}
-
-export const getStaticProps: GetStaticProps<
+export const getServerSideProps: GetServerSideProps<
   InvoiceGetStaticPropsReturnType,
   InvoiceParams
 > = async ({ params }) => {
-  // type guarding
   if (params && 'customerOrderId' in params) {
     const customerOrderId = parseInt(params.customerOrderId)
     // stop if not a number
@@ -55,8 +35,13 @@ export const getStaticProps: GetStaticProps<
         customerOrder: JSON.stringify(customerOrder),
       },
     }
+  } else {
+    return {
+      props: {
+        customerOrder: '',
+      },
+    }
   }
-  throw new Error('Oooooops')
 }
 
 export default Invoices

@@ -42,6 +42,7 @@
 ## General refactoring
 
 1. It would be wise to refactor these aspects of this application before considering it ready for production:
+
    - Redux store states do not accommodate for transient states.
      1. for example, customer order state should handle the states of the order, i.e. attempt add product, add product success, add product fail.
      2. I wonder if it would make sense to submit the order partially in steps to the server concurrently, and handle the canceled order by time out or allow the store location to resume previous orders.
@@ -50,7 +51,21 @@
    - API routes checking for auth redundancy as well as verifying request params / method
 
 2. Database structure + documentation
+
    - a lot of crap in the database makes no sense without a documentation of the underlying structure and planning that went into it, i.e. "Jobs" - "Invoice" relationship
    - it would help to at least comment the info into the schema file for prisma
-   
+
 3. I did absolutely zero seo, not to mention even the basics like page title and unique meta.
+
+## issues
+
+1. Static generation cuts off server side authentication in GIP here: [withRedux](./lib/hoc/with-redux.tsx)
+
+   - current GIP depends on server req to reroute properly with auth state
+   - implications right now include no static generation for dashboard pages without refactoring
+   - instigates possible issues down the road with following separation of concerns
+   - optionally move it to the client side, and use router to reroute
+
+## personal learning interests
+
+1. How to implement a listener or subscriber to state properly with the redux pattern or by any other means albeit effective, or experimental :)

@@ -1,8 +1,9 @@
+import Head from 'next/head'
 import { useEffect } from 'react'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { enableMapSet, setAutoFreeze } from 'immer'
-// todo don't import from dist
+// todo don't import from dist. Does not seem to be another option besides manually taking action.
 import { AppPropsType } from 'next/dist/next-server/lib/utils'
 
 import { SnackbarProvider } from '@Utils/context'
@@ -28,16 +29,21 @@ function App({ pageProps, Component }: AppPropsType) {
   }, [])
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <SnackbarProvider>
-        <ErrorBoundary>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-          <CssBaseline />
-        </ErrorBoundary>
-      </SnackbarProvider>
-    </ThemeProvider>
+    <>
+      <Head>
+        <title>HDS Admin</title>
+      </Head>
+      <ThemeProvider theme={darkTheme}>
+        <SnackbarProvider>
+          <ErrorBoundary>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+            <CssBaseline />
+          </ErrorBoundary>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </>
   )
 }
 

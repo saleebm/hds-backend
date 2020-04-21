@@ -11,15 +11,18 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
 import { useSnackbarContext } from '@Utils/context'
-import { getAxiosInstance } from '@Lib/axios-instance'
 import { useStyles } from './login'
 
-import styles from '@Components/Forms/form.module.scss'
+import mutator from '@Lib/server/mutator'
+import {
+  ResetPassword,
+  ResetPasswordRes,
+} from '@Pages/api/v1/account/reset-password'
 
+import styles from '@Components/Forms/form.module.scss'
 function ResetPasswordRequest({ userId }: { userId: number }) {
   const classes = useStyles()
   const { toggleSnackbar } = useSnackbarContext()
-  const axios = getAxiosInstance()
   const {
     register,
     handleSubmit,
@@ -33,11 +36,10 @@ function ResetPasswordRequest({ userId }: { userId: number }) {
 
   const resetPasswordRequest = useCallback(
     async (body: { password: string; validatePassword: string }) => {
-      await axios
-        .post('account/reset-password', {
-          newPassword: body.password,
-          userId,
-        })
+      await mutator<ResetPasswordRes, ResetPassword>(
+        '/api/v1/account/reset-password',
+        { newPassword: body.password, userId }
+      )
         .catch((e) => {
           toggleSnackbar({
             message: e.toString(),
@@ -45,18 +47,18 @@ function ResetPasswordRequest({ userId }: { userId: number }) {
             isOpen: true,
           })
         })
-        .then((res) => {
-          if (res && res.data && res.data.success) {
+        .then(async (res) => {
+          if (res && 'success' in res && res.success) {
             toggleSnackbar({
               message: 'Success. You may now login.',
               isOpen: true,
               severity: 'success',
             })
-            Router.replace('/', undefined, { shallow: true })
+            await Router.replace('/', undefined, { shallow: true })
           }
         })
     },
-    [toggleSnackbar, userId, axios]
+    [toggleSnackbar, userId]
   )
 
   return (

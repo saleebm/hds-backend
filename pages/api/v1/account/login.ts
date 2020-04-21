@@ -26,6 +26,10 @@ export type LoginRequestSuccess = {
   refreshToken: string
 } & EmpDataFiltered
 
+export type LoginBody = {
+  email: string
+  password: string
+}
 /**
  * POST
  * @param req
@@ -36,7 +40,7 @@ export default handler(
     req: IncomingMessage & {
       query: { [p: string]: string | string[] }
       cookies: { [p: string]: string }
-      body: any
+      body: LoginBody
     }
   ): Promise<LoginRequestSuccess> => {
     // bail

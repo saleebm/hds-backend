@@ -10,6 +10,9 @@ import getApiHostUrl from '@Lib/server/get-api-host'
 
 const prisma = new PrismaClient()
 
+export type ResetPasswordRequest = {
+  email: string
+}
 /**
  * sends email to reset password
  * @param req.body.password || req.body.code

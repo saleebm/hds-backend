@@ -15,15 +15,17 @@ import { AccountCircle, SecurityRounded, SendTwoTone } from '@material-ui/icons'
 import { createStyles } from '@material-ui/styles'
 
 import { emailRegEx } from '@Utils/common'
-import { getAxiosInstance } from '@Lib/axios-instance'
 
 import { useSnackbarContext } from '@Utils/context'
 import { RootAction } from '@Store/modules/root-action'
 import { setErrorAction } from '@Store/modules/global/action'
 import { loginUserAction } from '@Store/modules/auth/action'
-import { LoginRequestSuccess } from '@Pages/api/v1/account/login'
+import { LoginBody, LoginRequestSuccess } from '@Pages/api/v1/account/login'
 
 import styles from '@Components/Forms/form.module.scss'
+import mutator from '@Lib/server/mutator'
+import { ResetPasswordRequest } from '@Pages/api/v1/account/reset-password-request'
+import fetcher from '@Lib/server/fetcher'
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,7 +65,6 @@ function LoginForm({
     [isLogin]
   )
   const classes = useStyles()
-  const axios = getAxiosInstance()
   const {
     register,
     unregister,
@@ -75,54 +76,57 @@ function LoginForm({
 
   const loginRequest = useCallback(
     async (props) => {
-      // todo use mutator instead of axios
-      await axios
-        .post<{ data: any }>('account/login', props)
-        .catch((e) => {
-          console.warn(e)
-          // the only error possible at this point, since email has to be in system to even submit
-          setError('password', 'validate', 'Incorrect password or username')
+      try {
+        await mutator<LoginRequestSuccess, LoginBody>(
+          '/api/v1/account/login',
+          props
+        ).then((res) => {
+          loginUser({
+            loginSuccessResponse: res as LoginRequestSuccess,
+          })
         })
-        .then((res) => {
-          if (typeof res === 'object' && 'data' in res && !!res.data) {
-            // data will contain tokens and user data, so pass that over to loginUserAction dispatch thunk to handle
-            try {
-              loginUser({
-                loginSuccessResponse: (res.data as unknown) as LoginRequestSuccess,
-              })
-            } catch (e) {
-              toggleSnackbar({
-                message: e.toString(),
-                severity: 'error',
-                isOpen: true,
-              })
-              setErrorDispatch({ error: e, reference: 'login user dispatch' })
-            }
-          }
+      } catch (e) {
+        console.warn(e)
+        // the only error possible at this point, since email has to be in system to even submit
+        setError('password', 'validate', 'An incorrect password or username')
+        toggleSnackbar({
+          message: e.toString(),
+          severity: 'error',
+          isOpen: true,
         })
+        setErrorDispatch({ error: e, reference: 'login user dispatch' })
+      }
     },
-    [toggleSnackbar, axios, setError, loginUser, setErrorDispatch]
+    [toggleSnackbar, setError, loginUser, setErrorDispatch]
   )
 
   const resetPasswordRequest = useCallback(
     async (body: { email: string }) => {
-      await axios
-        .post('account/reset-password-request', body)
-        .catch((e) => {
-          console.warn(e)
-          setError('email', 'validate', 'Nonexistent email in sysem')
+      try {
+        await mutator<{ success: boolean }, ResetPasswordRequest>(
+          '/api/v1/account/reset-password-request',
+          body
+        ).then((res) => {
+          toggleSnackbar(
+            res && 'success' in res && res.success
+              ? {
+                  message: 'Success. Please check your email.',
+                  severity: 'success',
+                  isOpen: true,
+                }
+              : {
+                  message: 'Sorry, do not go. Do not collect 200. Go to jail.',
+                  isOpen: true,
+                  severity: 'warning',
+                }
+          )
         })
-        .then((res) => {
-          if (res && res.data && res.data.success) {
-            toggleSnackbar({
-              message: 'Success. Please check your email.',
-              severity: 'success',
-              isOpen: true,
-            })
-          }
-        })
+      } catch (e) {
+        console.warn(e)
+        setError('email', 'validate', 'Nonexistent email in system')
+      }
     },
-    [toggleSnackbar, setError, axios]
+    [toggleSnackbar, setError]
   )
 
   const switchToResetPasswordRequest = () => {
@@ -167,16 +171,19 @@ function LoginForm({
               pattern: emailRegEx,
               validate: async (value) => {
                 try {
-                  const { data } = await axios.get(
-                    `account/email-exists?email=${value}`
-                  )
-                  // console.log(data)
-                  if (data && 'exists' in data) {
+                  const res = await fetcher<{
+                    exists: boolean
+                  }>(undefined, `/api/v1/account/email-exists?email=${value}`)
+                  // console.log(res)
+                  if (res && 'exists' in res) {
                     // data.exists is either true or false
-                    return data.exists
+                    return res.exists
+                  } else {
+                    return false
                   }
                 } catch (e) {
                   console.warn(e)
+                  return false
                 }
               },
             })}

@@ -3,7 +3,7 @@ import { KnownError } from '@Lib/server/known-errors'
 import unfetch from 'isomorphic-unfetch'
 
 export default async <T>(
-  token: string,
+  token?: string,
   url?: string,
   ...args:
     | unfetch.IsomorphicBody
