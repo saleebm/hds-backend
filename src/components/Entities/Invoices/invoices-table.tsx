@@ -7,6 +7,7 @@ import {
 } from '@Utils/common'
 import { InvoiceSingle, InvoicesServerSideProps } from '@Types/invoices'
 import { Typography } from '@material-ui/core'
+import { MaterialNextBtn } from '@Components/Elements/Button'
 
 type InvoiceData = {
   invoices: InvoicesServerSideProps
@@ -38,6 +39,20 @@ export function InvoicesTable({ invoices }: InvoiceData) {
             field: value,
             editable: 'never',
             readonly: true,
+            render: (rowData: Partial<InvoiceSingle>) => (
+              <MaterialNextBtn
+                variant={'text'}
+                style={{ whiteSpace: 'pre' }}
+                nextLinkProps={{
+                  href: '/dashboard/invoices/[customerOrderId]',
+                  as: `/dashboard/invoices/${rowData.customerOrderId}`,
+                }}
+              >
+                <Typography variant={'subtitle1'}>
+                  View Full Invoice #{rowData.idInvoice}
+                </Typography>
+              </MaterialNextBtn>
+            ),
           }
         case 'jobId':
           return {

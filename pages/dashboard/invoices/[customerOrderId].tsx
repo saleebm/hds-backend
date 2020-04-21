@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import { Typography } from '@material-ui/core'
 
 import { DashboardView } from '@Components/Views/dashboard'
 import {
@@ -7,7 +8,6 @@ import {
   InvoiceParams,
 } from '@Types/invoices'
 import { InvoiceUpdateForm } from '@Components/Forms/invoices'
-import { Typography } from '@material-ui/core'
 
 /**
  * Technically, the customer order contains all the data needed, including the invoice.
@@ -41,10 +41,12 @@ export const getServerSideProps: GetServerSideProps<
     const customerOrder = await prisma.customerOrder.findOne({
       where: { idCustomerOrder: customerOrderId },
       include: {
-        invoice: true,
+        invoice: { include: { invoiceLineItems: true } },
         customer: true,
         storeLocations: true,
-        customerOrderProducts: { include: { storeLocation: true } },
+        customerOrderProducts: {
+          include: { storeLocation: true, product: true },
+        },
         employee: true,
       },
     })

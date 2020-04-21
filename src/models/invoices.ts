@@ -4,7 +4,12 @@ import {
   CustomerOrder,
   CustomerOrderProductsGetPayload,
   EmployeeGetPayload,
+  FindOneInvoiceLineItemsArgs,
   InvoiceGetPayload,
+  InvoiceLineItems,
+  InvoiceLineItemsCreateArgs,
+  InvoiceLineItemsWhereInput,
+  InvoiceLineItemsWhereUniqueInput,
   StoreLocationsGetPayload,
 } from '@prisma/client'
 
@@ -27,25 +32,18 @@ export type InvoiceData = CustomerOrder & {
     }['storeLocations']
   >
   customerOrderProducts: Array<
-    CustomerOrderProductsGetPayload<
-      {
-        storeLocations: boolean
-        customerOrderProducts: boolean
-        invoice: boolean
-        employee: boolean
-        customer: boolean
-      }['customerOrderProducts']
-    >
+    CustomerOrderProductsGetPayload<{
+      include: {
+        storeLocation: true
+        product: true
+      }
+    }>
   >
-  invoice: InvoiceGetPayload<
-    {
-      storeLocations: boolean
-      customerOrderProducts: boolean
-      invoice: boolean
-      employee: boolean
-      customer: boolean
-    }['invoice']
-  >
+  invoice: InvoiceGetPayload<{
+    include: {
+      invoiceLineItems: true
+    }
+  }>
   employee: EmployeeGetPayload<
     {
       storeLocations: boolean
@@ -79,3 +77,23 @@ export type InvoiceSingle = InvoiceGetPayload<{
   }
 }>
 export type InvoicesServerSideProps = Array<InvoiceSingle>
+
+export type InvoiceLineItemBodyReq = InvoiceLineItemsWhereInput
+
+export interface InvoiceLineItemsMod extends InvoiceLineItems {}
+export interface InvoiceLineItemsReturn {
+  invoiceLineItems: InvoiceLineItemsMod[]
+}
+
+export interface InvoiceEditableFields {
+  lineItemTotal: number
+  dueDate: Date
+}
+
+export interface InvoiceLineItemCreateArgs extends InvoiceEditableFields {
+  invoiceId: number
+}
+
+export interface InvoiceLineCreateBodyArgs {
+  createLineItem: InvoiceLineItemCreateArgs
+}

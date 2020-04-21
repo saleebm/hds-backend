@@ -8,10 +8,10 @@ export const darkTheme = responsiveFontSizes(
     palette: {
       type: 'dark',
       primary: {
-        main: '#bf1650',
+        main: '#7636bf',
       },
       secondary: {
-        main: '#ccc',
+        main: '#206080',
       },
       error: {
         main: red.A400,
