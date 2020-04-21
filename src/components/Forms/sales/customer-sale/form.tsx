@@ -204,6 +204,7 @@ function CustomerSale({
         quantity: typeof quantity === 'string' ? parseInt(quantity) : quantity,
         perUnitCost: typeof unitCost === 'string' ? Number(unitCost) : unitCost,
         storeLocationIdOfInventory: storeLocationId,
+        storeLocation: { connect: { idStoreLocations: storeLocationId } },
       }))
       try {
         if (!employee)

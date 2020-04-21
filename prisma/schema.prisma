@@ -48,13 +48,15 @@ model CustomerOrder {
 }
 
 model CustomerOrderProducts {
-  customerOrderId         Int
-  idCustomerOrderProducts Int           @default(autoincrement()) @id
-  perUnitCost             Float
-  productId               Int
-  quantity                Int
-  customerOrder           CustomerOrder @relation(fields: [customerOrderId], references: [idCustomerOrder])
-  product                 Product       @relation(fields: [productId], references: [idProduct])
+  customerOrderId            Int
+  idCustomerOrderProducts    Int            @default(autoincrement()) @id
+  perUnitCost                Float
+  productId                  Int
+  quantity                   Int
+  storeLocationIdOfInventory Int
+  storeLocation              StoreLocations @relation(fields: [storeLocationIdOfInventory], references: [idStoreLocations])
+  customerOrder              CustomerOrder  @relation(fields: [customerOrderId], references: [idCustomerOrder])
+  product                    Product        @relation(fields: [productId], references: [idProduct])
 
   @@index([customerOrderId], name: "customerOrderId_idx")
   @@index([customerOrderId], name: "customerorderproducts_ibfk_1")
@@ -257,17 +259,18 @@ model SalesOrders {
 }
 
 model StoreLocations {
-  address          String
-  city             String
-  idStoreLocations Int             @default(autoincrement()) @id
-  phone            String
-  state            String
-  zipCode          Int
-  customerOrder    CustomerOrder[]
-  employee         Employee[]
-  inventory        Inventory[]
-  invoice          Invoice[]
-  salesOrders      SalesOrders[]
+  address               String
+  city                  String
+  idStoreLocations      Int                     @default(autoincrement()) @id
+  phone                 String
+  state                 String
+  zipCode               Int
+  customerOrder         CustomerOrder[]
+  employee              Employee[]
+  inventory             Inventory[]
+  invoice               Invoice[]
+  salesOrders           SalesOrders[]
+  customerOrderProducts CustomerOrderProducts[]
 }
 
 model Suppliers {

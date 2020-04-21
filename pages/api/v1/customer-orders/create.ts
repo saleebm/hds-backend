@@ -130,10 +130,8 @@ export default handler(
           customerOrderProducts: {
             /* have to do this so no invalid args passed in, ie storeLocationId */
             create: customerOrderProducts.create.map(
-              ({ product, quantity, perUnitCost }) => ({
-                product,
-                quantity,
-                perUnitCost,
+              ({ storeLocationIdOfInventory, ...everythingImportant }) => ({
+                ...everythingImportant,
               })
             ),
           },

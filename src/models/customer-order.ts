@@ -10,7 +10,7 @@ import {
  */
 export type OrderProduct = Omit<
   CustomerOrderProducts,
-  'customerOrderId' | 'idCustomerOrderProducts'
+  'customerOrderId' | 'idCustomerOrderProducts' | 'storeLocationIdOfInventory'
 > & {
   name: string
   storeLocationId: number

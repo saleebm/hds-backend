@@ -241,7 +241,7 @@ function CustomerCreateUpdateForm({
           <Grid item xs sm={2}>
             <Input
               rules={{
-                maxLength: { value: 1, message: 'TMI, just the initial!' },
+                maxLength: { value: 2, message: 'TMI, just the initial!' },
               }}
               aria-describedby={
                 'error-middleInitial-required error-middleInitial-minLength'

@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'right',
   },
   typography: {
-    fontSize: '1.25rem',
+    fontSize: '1.15rem',
     fontVariant: 'all-petite-caps',
   },
   dateFormat: {
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   typographyProduct: {
     fontVariant: 'small-caps',
     fontSize: '1rem',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'pre-wrap',
     textOverflow: 'ellipsis',
   },
   priceTagSpan: {
@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontVariant: 'petite-caps',
   },
   gridProminent: {
-    padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
+    padding: `1px 3px`,
   },
 }))
 
@@ -201,7 +201,7 @@ function Receipt({
                   component={'p'}
                   variant={'body1'}
                 >
-                  {product.name}
+                  <span dangerouslySetInnerHTML={{ __html: product.name }} />
                 </Typography>
               </Grid>
               <Grid item xs={3}>

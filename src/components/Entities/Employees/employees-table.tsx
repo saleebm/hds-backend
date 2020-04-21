@@ -153,7 +153,7 @@ function EmployeesTable({ locations, employeeData }: EmployeesPageProps) {
           }
         case 'salary':
           return {
-            title: 'Salary',
+            title: 'SALARY',
             type: 'currency',
             field: value,
             editable: 'always',
