@@ -1,4 +1,3 @@
-import { v5 as uuid } from 'uuid'
 import { CustomerOrder, PrismaClient } from '@prisma/client'
 
 import { handler } from '@Lib/server'
@@ -146,7 +145,6 @@ export default handler(
               storeLocations,
               invoiceTotal: totalCharged,
               orderTotal: totalCharged,
-              invoiceNumber: uuid('todo: customerIdGoesHere', NAMESPACE),
               job: {
                 create: {
                   customer: { connect: { idCustomer: 1 } },

@@ -114,7 +114,6 @@ model Invoice {
   dueDate          DateTime
   employeeId       Int
   idInvoice        Int                @default(autoincrement()) @id
-  invoiceNumber    String             @unique
   // accounts for the orderTotal and jobFeeTotal
   invoiceTotal     Float
   jobId            Int
@@ -144,6 +143,7 @@ model Invoice {
   @@index([storeLocationId], name: "invoice_ibfk_4")
   @@index([jobId], name: "invoice_ibfk_5_idx")
   @@index([storeLocationId], name: "storeLocationId_idx")
+  @@unique([customerId, customerOrderId])
 }
 
 // these are the individual bills given to the user
