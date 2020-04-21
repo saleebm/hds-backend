@@ -256,3 +256,4 @@ keys/*
 .dist/*
 error.log
 access.log
+prisma/migrations/*
