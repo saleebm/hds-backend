@@ -1,14 +1,11 @@
-import dynamic from 'next/dynamic'
 import { Router } from 'next/router'
 import { connect } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { LinearProgress } from '@material-ui/core'
 import Container from '@material-ui/core/Container'
 import { RootStateType } from '@Store/modules/types'
-
+import NavDrawer from '@Components/Layout/nav-drawer'
 import styles from './layout.module.scss'
-
-const NavDrawer = dynamic(() => import('./nav-drawer'))
 
 type HeaderProps = ReturnType<typeof mapStateToProps>
 
@@ -90,7 +87,7 @@ const Header = ({ isAuthenticated }: HeaderProps) => {
             }}
             dangerouslySetInnerHTML={{
               __html:
-                'super dangerously set inner html you might be asking why but i have no answer muahahahahahahahaha jk the container props say children are required so boom. children.... if only it was so easy in real life to make children, i can barely talk to a female without gasping for air because of my lack of self-esteem and imposter syndrome. i am working on it though, at least i am aware. thanks',
+                'super dangerously set inner html you might be asking why but i have no answer muahahahahahahahaha jk the container props say children are required so boom. children.... if only it was so easy in real life to make children, i mean procreate right, i can barely talk to a female without gasping for air because of my lack of self-esteem and imposter syndrome. i am working on it though, at least i am aware. thanks',
             }}
           />
         )}

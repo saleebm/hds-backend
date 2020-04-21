@@ -24,7 +24,7 @@ import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 import IconButton from '@material-ui/core/IconButton'
 
 import { useHoverIntent } from '@Utils/hooks'
-import { MenuToggle } from '@Components/Layout'
+import { MenuToggle } from '@Components/Layout/menu-toggle'
 import { classNames } from '@Utils/common'
 import ROUTE_PATHS from './routes'
 

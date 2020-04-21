@@ -14,8 +14,8 @@
   - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
   - `grant all privileges on hds.* to hds_user@localhost;`
 - finally run `npm run prisma2:init` to have prisma generate database schema
-- to seed the test data
-  - `run npm run seed`
+- to seed the test data (see [seed file and dummy data](./data/seed.ts))
+  - `npm run seed`
 
 # TODO
 
@@ -32,8 +32,8 @@
    - ~~seal the deal with redux action, i.e. put customer order in db async~~
      1. ~~will have to deduct quantity picked from each CustomerOrderProduct off the Product's inventory location quantity~~
    - show the customer orders as invoices
-     1. create base invoice on server side if not created already
-     2. line items - bill to pay, deducts amount from invoice total as added.
+     1. ~~create base invoice on server side if not created already~~
+     2. line items - bill to pay, deduct the amount from invoice total as added.
 
 ## Unit tests
 
@@ -69,3 +69,4 @@
 ## personal learning interests
 
 1. How to implement a listener or subscriber to state properly with the redux pattern or by any other means albeit effective, or experimental :)
+2. How to have server handle tokens so that the cookies stored on a secure domain have httpOnly and secure flags

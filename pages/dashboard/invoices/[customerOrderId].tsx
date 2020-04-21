@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps<
   if (params && 'customerOrderId' in params) {
     const customerOrderId = parseInt(params.customerOrderId)
     // stop if not a number
-    if (isNaN(customerOrderId)) throw new Error('Nope')
+    if (isNaN(customerOrderId)) return { props: { customerOrder: '' } }
 
     const { PrismaClient } = await import('@prisma/client')
     const prisma = new PrismaClient()
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<
       include: { invoice: true, customer: true, storeLocations: true },
     })
 
-    if (!customerOrder) throw new Error('No customer order found')
+    if (!customerOrder) return { props: { customerOrder: '' } }
 
     return {
       props: {
