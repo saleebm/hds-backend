@@ -3,12 +3,17 @@ import { GetServerSideProps } from 'next'
 import { DashboardView } from '@Components/Views/dashboard'
 import { InvoicesServerSideProps } from '@Types/invoices'
 import { InvoicesTable } from '@Components/Entities/Invoices'
+import { Typography } from '@material-ui/core'
 
 function Invoices({ invoices }: { invoices: string }) {
   const invoicesParsed: InvoicesServerSideProps = JSON.parse(invoices)
   return (
     <DashboardView pageTitle={'Invoices'}>
-      <InvoicesTable invoices={invoicesParsed} />
+      {!!invoicesParsed && Array.isArray(invoicesParsed) ? (
+        <InvoicesTable invoices={invoicesParsed} />
+      ) : (
+        <Typography variant={'h3'}>No invoices available yet.</Typography>
+      )}
     </DashboardView>
   )
 }
