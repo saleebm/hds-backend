@@ -4,12 +4,9 @@ import {
   CustomerOrder,
   CustomerOrderProductsGetPayload,
   EmployeeGetPayload,
-  FindOneInvoiceLineItemsArgs,
   InvoiceGetPayload,
   InvoiceLineItems,
-  InvoiceLineItemsCreateArgs,
   InvoiceLineItemsWhereInput,
-  InvoiceLineItemsWhereUniqueInput,
   StoreLocationsGetPayload,
 } from '@prisma/client'
 

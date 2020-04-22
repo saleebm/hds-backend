@@ -7,11 +7,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { Box, Grid } from '@material-ui/core'
 import { Calendar } from '@material-ui/pickers'
 import { darken } from '@material-ui/core/styles/colorManipulator'
-import {
-  InvoiceData,
-  InvoiceLineItemsMod,
-  InvoiceLineItemsReturn,
-} from '@Types/invoices'
+import { InvoiceData, InvoiceLineItemsMod } from '@Types/invoices'
 import { formatCurrencyOutput, formatMoney } from '@Utils/common'
 
 interface InvoiceDataProps {
