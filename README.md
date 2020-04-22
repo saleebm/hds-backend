@@ -130,9 +130,6 @@ Now reboot.
 sudo reboot
 ```
 
-#### nvm
-
-if you added the oh my zsh plugins above, and add
 
 I like to have my server automatically reboot every night so add a cron-job for this
 
@@ -163,6 +160,10 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
 ### node, pm2
+
+#### nvm
+
+if you added the oh my zsh plugins above, and added nvm to the zshrc, then you can use the following nvm commands
 
 ```shell script
 nvm install stable
