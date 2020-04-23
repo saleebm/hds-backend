@@ -114,15 +114,10 @@ sudo mysql_secure_installation
 
 nginx, if not using bionic awk it out from this snippet:
 
-```shell script
+follow up to date info here: 
 
-sudo wget https://nginx.org/keys/nginx_signing.key
-sudo apt-key add nginx_signing.key
-sudo touch /etc/apt/sources.list.d/nginx_official.list
-sudo sed -i 'deb https://nginx.org/packages/mainline/ubuntu/ bionic nginx
-deb-src https://nginx.org/packages/mainline/ubuntu/ bionic nginx' /etc/apt/sources.list.d/nginx_official.list
+http://nginx.org/en/linux_packages.html#Ubuntu
 
-```
 
 Now reboot.
 
