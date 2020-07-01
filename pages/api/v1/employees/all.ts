@@ -3,7 +3,6 @@ import {
   EmployeeOrderByInput,
   EmployeeSelect,
   EmployeeWhereInput,
-  EmployeeWhereUniqueInput,
   PrismaClient,
 } from '@prisma/client'
 
@@ -43,36 +42,6 @@ export default handler(
     const includeArg: EmployeeInclude =
       ('include' in req.body && req.body.include) || undefined
 
-    const afterArg =
-      ('after' in req.body && (req.body.after as EmployeeWhereUniqueInput)) ||
-      undefined
-
-    // if last is set, don't pass first arg
-    const lastArg =
-      typeof afterArg !== 'undefined'
-        ? undefined
-        : ('last' in req.body &&
-            req.body.last &&
-            parseInt(
-              Array.isArray(req.body.last) ? req.body.last[0] : req.body.last
-            )) ||
-          undefined
-
-    // if last is set, don't pass first arg
-    const firstArg =
-      typeof lastArg !== 'undefined'
-        ? undefined
-        : ('first' in req.body &&
-            req.body.first &&
-            parseInt(
-              Array.isArray(req.body.first) ? req.body.first[0] : req.body.first
-            )) ||
-          100
-
-    const beforeArg =
-      ('before' in req.body && (req.body.before as EmployeeWhereUniqueInput)) ||
-      undefined
-
     const selectArg =
       ('select' in req.body && (req.body.select as EmployeeSelect)) || undefined
 
@@ -81,10 +50,6 @@ export default handler(
       undefined
 
     const empData = await prisma.employee.findMany({
-      first: firstArg,
-      after: afterArg,
-      last: lastArg,
-      before: beforeArg,
       orderBy: { ...orderByArg },
       ...(selectArg ? { select: selectArg } : undefined),
       ...(whereArg ? { where: whereArg } : undefined),

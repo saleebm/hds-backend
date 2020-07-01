@@ -8,7 +8,7 @@ import { ArrowBack, ArrowForward, SendTwoTone } from '@material-ui/icons'
 import { Button } from '@material-ui/core'
 
 import Transaction from '@Components/Forms/sales/customer-sale/transaction'
-import CustomerInfo from '@Components/Forms/sales/customer-sale/customer-info'
+import { CustomerInfo } from '@Components/Forms/sales/customer-sale/customer-info'
 
 import { RootStateType } from '@Store/modules/types'
 import { ProductWithInventory } from '@Pages/dashboard/products'

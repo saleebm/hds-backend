@@ -1,15 +1,35 @@
----
-# Note
-Privileged to make this for a capstone project my senior year of my undergraduate career, I learned how to apply all that the past few years allotted me to absorb. Our project team delicately planned and provided great assistance in coming together for nearly two months. The output of the team includes this repository, a full network plan with multiple zones, financial and administrative planning, and a powerful presentation to the Home Design Solutions corporation.
+## Demonstration
 
-Regarding this repository, I leave it with some unfinished business. Primarily, unit testing. I have not learned yet about testing libraries, and hope to go and practice these necessary components immediately. In addition, I started this project on the highway to hell as they say... I added a bunch of dependencies I did not need, copied and pasted without proper attribution, and did some foolish planning thinking it all to be nothing. In doing so, I failed miserably. So I tore it all apart and started from scratch. No boilerplate, nothing. Thankfully, after hours of looking at blank `index.ts` files, I added some content. Slowly built up the database learning about the awesome new Prisma client. The funny thing is, I trusted the alpha version of Prisma, when it was still prisma2 in the works, so much so that I wrote up the database model using the experimental Prisma migrate. Looking up the documentation, and going through countless searches on GitHub for examples as I ashamedly do, I dropped on my knees in the streetlights to realize the only light in the streets. Kodak black taught me to push forward as a young one, now I push. Furthermore, planning the database with my team members resulted in multiple "breaking" changes down the road requiring I drop and recreate countless database models.
+### Screenshots
 
-It worked out great actually, lots of help came from looking up how to design an inventory system, how to implement a billing database, etc. In addition, learning to use ERD modeling to visualize and construct connections greatly enhanced my knowledge, especially regarding the concept of indexing later on when having to query the system. After some deliberation, I ended up using prisma:introspect script in the package file to just generate the [schema.prisma](./prisma/schema.prisma) from the database instead of using migrate. What really pushed me through after all came from the realization through my colleagues and professor that all this is for my benefit. It is quite easy to fall down the wrong road, perhaps even doubt oneself and end up flipping burgers at a burger king singing would you still love me by 50¢. I digress. I learned to stop and think for myself. Learn the native fetch method; you will not hear about it on stack overflow. Teach and learn, peanut butter and bananas, or jelly whatever. Learn to navigate the source code of the library to figure out how to make it better. Create. Struggle, recreate. Do while, continue; break; return something. Anyways, I think I have a lot to learn. Time to think some more. Peace!
+#### Production build stats
 
-Thank you, God, Jesus Christ, and to the excellent professor and staff of Seminole State College of Florida for all your incredible dedication and aspiration. Thank you to the team members I had the privilege to work with.
+![Stats of production build](./kaps/production_build.png)
 
-Please feel free to check out this repository and use it. Please criticize, even scrutinize me with all you got, as I continue to learn ECMAScript, React, and the soft skills my parents would want me to have. Peace!
+#### Side menu
+
+![Side menu open with multiple items showing](./kaps/menu.png)
+
+### Kaps (gifs)
+
+#### Login & reset password demonstration
+
+![Login and reset demonstration](./kaps/login_reset_menu.gif)
+
+#### POS view
+
+Creating a customer, or selecting a customer
+
+![Choosing a customer from dropdown and then creating one](./kaps/pos.gif)
+
+#### Customer order
+
+Adding products to the order, then submitting the order.
+
+![Adding products to the order, then submitting the order.](./kaps/customer_order.gif)
+
 ## How to Initialize
+
 ---
 
 - generate keys for encryption as stated below for the seed data and prisma authentication
@@ -114,17 +134,15 @@ sudo mysql_secure_installation
 
 nginx, if not using bionic awk it out from this snippet:
 
-follow up to date info here: 
+follow up to date info here:
 
 http://nginx.org/en/linux_packages.html#Ubuntu
-
 
 Now reboot.
 
 ```shell script
 sudo reboot
 ```
-
 
 I like to have my server automatically reboot every night so add a cron-job for this
 

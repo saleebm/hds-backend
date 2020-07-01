@@ -1,7 +1,8 @@
 import { connect } from 'react-redux'
 import React, { forwardRef, Ref } from 'react'
+import dynamic from 'next/dynamic'
 import merge from 'lodash.merge'
-import MaterialTable, { MaterialTableProps, Options } from 'material-table'
+import { MaterialTableProps, Options } from 'material-table'
 import AddBox from '@material-ui/icons/AddBox'
 import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import Check from '@material-ui/icons/Check'
@@ -20,6 +21,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn'
 
 import { RootStateType } from '@Store/modules/types'
 import { CurrentUserType } from '@Store/modules/auth/action'
+
+const MaterialTable = dynamic(() => import('material-table'), { ssr: false })
 
 const tableIcons = {
   Add: forwardRef((props, ref: Ref<any>) => <AddBox {...props} ref={ref} />),
@@ -102,14 +105,15 @@ function Table<P extends object>({
     optionsToMerge
   )
   return (
-    <MaterialTable<P>
+    // @ts-ignore
+    <MaterialTable
       {...rest}
       icons={tableIcons}
-      columns={columns}
-      data={data}
+      columns={columns as any}
+      data={data as any}
       options={opts}
       isLoading={!data}
-      editable={role === 'READ_WRITE' ? editable : undefined}
+      editable={role && role !== 'READ_WRITE' ? false : (editable as any)}
     />
   )
 }

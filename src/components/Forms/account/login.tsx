@@ -88,7 +88,10 @@ function LoginForm({
       } catch (e) {
         console.warn(e)
         // the only error possible at this point, since email has to be in system to even submit
-        setError('password', 'validate', 'An incorrect password or username')
+        setError('password', {
+          type: 'validate',
+          message: 'An incorrect password or username',
+        })
         toggleSnackbar({
           message: e.toString(),
           severity: 'error',
@@ -123,7 +126,10 @@ function LoginForm({
         })
       } catch (e) {
         console.warn(e)
-        setError('email', 'validate', 'Nonexistent email in system')
+        setError('email', {
+          type: 'validate',
+          message: 'Email does not exist',
+        })
       }
     },
     [toggleSnackbar, setError]

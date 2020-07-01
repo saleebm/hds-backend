@@ -150,7 +150,13 @@ function CustomerCreateUpdateForm({
         .map(([key, value]) => ({
           [key]: value ? value : '',
         }))
-      setValueOfForm(customerFiltered)
+      for (const fieldSet of customerFiltered) {
+        if (fieldSet && typeof fieldSet === 'object') {
+          for (const fieldElementName in fieldSet) {
+            setValueOfForm(fieldElementName, fieldSet[fieldElementName])
+          }
+        }
+      }
     }
   }, [currentCustomer, setValueOfForm])
 

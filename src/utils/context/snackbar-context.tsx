@@ -33,7 +33,7 @@ const SnackbarContext: Context<{
   toggleSnackbar: Dispatch<SnackbarState>
   snackbarContext: SnackbarState
 }> = createContext({
-  toggleSnackbar: (snackbarContext: SnackbarState) => {},
+  toggleSnackbar: (_snackbarContext: SnackbarState) => {},
   snackbarContext: initialSnackBarContext,
 })
 

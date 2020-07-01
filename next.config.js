@@ -11,10 +11,14 @@ module.exports = {
   env: {
     TOKEN_STORAGE_KEY: process.env.TOKEN_STORAGE_KEY,
   },
+  reactStrictMode: true,
+  experimental: {
+    modern: true,
+    productionBrowserSourceMaps: true,
+  },
   //todo
   // there are some little things here and there like 'className did not match from server' coming from the inputs.
   // those show up with strict mode. I want to narrow it down.
-  // reactStrictMode: true,
   webpack(config, { isServer }) {
     // its too late in production...
     if (process.env.NODE_ENV === 'development') {

@@ -4,7 +4,7 @@ import { motion, Variants } from 'framer-motion'
 
 import Container from '@material-ui/core/Container'
 import { createStyles } from '@material-ui/styles'
-import { Button, Grid, Paper, Theme, Typography } from '@material-ui/core'
+import { Button, Grid, Theme, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { AddCircleOutline, SearchOutlined } from '@material-ui/icons'
 
@@ -14,8 +14,6 @@ import CustomerCreateUpdateForm from '@Components/Forms/sales/customer-create-up
 import { RootStateType } from '@Store/modules/types'
 
 type CustomerSale = ReturnType<typeof mapStateToProps>
-
-const MotionPaper = motion.custom(Paper)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       flexGrow: 1,
       minHeight: '350px',
+      backgroundColor: theme.palette.background.paper,
     },
     customerInfoWrap: {
       position: 'relative',
@@ -55,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
  * @param customerOrderState
  * @constructor
  */
-function CustomerInfo({ customerOrderState }: CustomerSale) {
+function Form({ customerOrderState }: CustomerSale) {
   const classes = useStyles()
   // the create update form allows the user to create or update a customer's info
   const [isCreateUpdateFormHidden, setCreateUpdateFormHidden] = useState(true)
@@ -134,8 +133,6 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
           <Button
             className={classes.button}
             color={'secondary'}
-            type={'button'}
-            component={'button'}
             variant={'outlined'}
             /* if user is creating, show option to search  **/
             endIcon={isCreating ? <SearchOutlined /> : <AddCircleOutline />}
@@ -143,15 +140,18 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
             /* if user is creating, on click, set creating to false so they can search **/
             onClick={isCreating ? () => setIsCreating(false) : onAddNewClick}
           >
-            {isCreating ? 'Search' : 'Create new'}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: isCreating ? 'Search' : 'Create new',
+              }}
+            />
           </Button>
         </Grid>
       </Grid>
-      <MotionPaper
+      <motion.div
         initial={'hidden'}
         variants={hiddenVariants}
         animate={isCreateUpdateFormHidden ? 'hidden' : 'visible'}
-        elevation={3}
         className={classes.paper}
       >
         <Grid
@@ -168,7 +168,7 @@ function CustomerInfo({ customerOrderState }: CustomerSale) {
             />
           </Grid>
         </Grid>
-      </MotionPaper>
+      </motion.div>
     </Container>
   )
 }
@@ -178,4 +178,4 @@ const mapStateToProps = (state: RootStateType) => {
     customerOrderState: state.customerOrderReducer,
   }
 }
-export default connect(mapStateToProps)(CustomerInfo)
+export const CustomerInfo = connect(mapStateToProps)(Form)
