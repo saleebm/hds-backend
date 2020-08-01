@@ -38,14 +38,14 @@ Adding products to the order, then submitting the order.
   - `openssl rsa -in key.pem -pubout -out pubkey.pem`
   - `chmod 400 key.pem cert.pem pubkey.pem`
 - make sure .env has correct mysql_url for prisma in the prisma folder.
-- also make sure .env in root dir is configured properly, see [.env.example](./.env.example)
+- fill .env secrets in root dir, see [.env.example](./.env.example)
 - create user hds_user and database hds.
   - `create database hds;`
   - `create user hds_user@localhost identified by 'peaceBWithYou123!';`
   - `grant all privileges on hds.* to hds_user@localhost;`
 - finally run `npm run prisma2:init` to have prisma generate database schema
-- to seed the test data (see [seed file and dummy data](./data/seed.ts))
-  - `npm run seed`
+- to seed the test data (see [seed file and dummy data](./pages/api/v1/seed.ts))
+  - Use Postman, or any REST interface, to send a request to the host endpoint at `/api/v1/seed` with a query variable `seed_secret` set to the corresponding env variable, SEED_SECRET.
 
 ## Deploy to server
 
