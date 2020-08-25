@@ -77,43 +77,6 @@ echo "$confirmation_gpg"
 
 ssh-keygen -t ecdsa -b 521 -f ~/.ssh/id_ecdsa_521
 cat ~/.ssh/id_ecdsa_521.pub
-printf '=> Have you copied it and added it to Git?? [y/N] '
-read -r confirmation
-
-confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]')
-
-if [ "$confirmation" = 'YES' ] || [ "$confirmation" = 'Y' ]; then
-  eval "$(ssh-agent)"
-  ssh-add ~/.ssh/id_ecdsa_521
-```
-
-### zsh and Oh My ZSH setup
-
-Just prettify everything up - if anybody actually sees this and wants it to work, make sure to use your own github username where it says YOUR_GITHUB_USERNAME. Also make sure to touch a `.zshrc` file in it or use the default one presented by zsh on install.
-
-```shell script
-mkdir ~/Downloads
-
-  # todo make this public if sharing...get your own zsh dotfiles repo
-  git clone --recursive git@github.com:<YOUR_GITHUB_USERNAME>/dotfiles.git "$HOME/Downloads"
-  cd ~/Downloads/dotfiles || return
-  # this installs powerline fonts
-  git clone git@github.com:powerline/fonts.git && cd fonts && sh ./install.sh
-  # the ohmyzsh
-  sh -c "$(curl -fsSL --http2 --tlsv1.2 https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  git clone git@github.com:romkatv/powerlevel10k.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/themes/powerlevel10k
-  git clone git@github.com:lukechilds/zsh-nvm.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-nvm
-  git clone git@github.com:zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
-  git clone git@github.com:zsh-users/zsh-completions.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-completions
-  git clone git@github.com:zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
-  git clone git@github.com:lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
-
-  git clone --depth=1 git@github.com:amix/vimrc.git ~/.vim_runtime
-  sh ~/.vim_runtime/install_awesome_vimrc.sh
-else
-  # have to say please?
-  print 'please git clone yourself then!'
-fi
 ```
 
 ### mysql
