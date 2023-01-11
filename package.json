@@ -61,7 +61,7 @@
     "framer-motion": "^1.11.1",
     "immer": "^7.0.7",
     "isomorphic-unfetch": "^3.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.2",
     "lodash.some": "^4.6.0",
